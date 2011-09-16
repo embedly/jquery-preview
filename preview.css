@@ -1,0 +1,60 @@
+#selector {
+  margin: 10px auto;
+  position: relative; }
+  #selector .thumbnail {
+    width: 100px;
+    float: left;
+    margin: 0 10px 0 0; }
+    #selector .thumbnail .items {
+      position: relative;
+      overflow: hidden;
+      height: 100px;
+      padding: 0px;
+      width: 100px; }
+      #selector .thumbnail .items .images {
+        position: absolute;
+        width: 300em;
+        margin: 0px;
+        padding: 0px;
+        left: 0px; }
+        #selector .thumbnail .items .images li {
+          list-style: none;
+          float: left;
+          margin: 0px;
+          padding: 0px; }
+        #selector .thumbnail .items .images img {
+          width: 100px; }
+    #selector .thumbnail .controls {
+      top: 0px;
+      left: 0px;
+      width: 100px;
+      position: absolute;
+      height: 16px;
+      z-index: 1;
+      background-color: #222;
+      opacity: 0.5; }
+      #selector .thumbnail .controls .left, #selector .thumbnail .controls .right, #selector .thumbnail .controls .nothumb {
+        display: block;
+        position: absolute;
+        top: 2px;
+        color: #fff; }
+        #selector .thumbnail .controls .left:hover, #selector .thumbnail .controls .right:hover, #selector .thumbnail .controls .nothumb:hover {
+          text-decoration: none; }
+      #selector .thumbnail .controls .nothumb {
+        right: 2px;
+        font-weight: bold;
+        top: 1px; }
+      #selector .thumbnail .controls .left {
+        left: 2px; }
+      #selector .thumbnail .controls .right {
+        left: 16px; }
+  #selector .attributes a {
+    color: #000000; }
+    #selector .attributes a:hoover {
+      text-decoration: none;
+      background-color: #FFF6D9; }
+  #selector .action {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none; }

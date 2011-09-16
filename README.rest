@@ -1,0 +1,13 @@
+Embedly Preview
+===============
+
+Embedly Preview is a jQuery plugin that allows you to create a Facebook like
+URL picker. Basic setup::
+
+    <form action="/update" method="POST">
+        <textarea id="status"></textarea>
+    </form>
+    <script>
+        $(form).preview({key:'your_embedly_key'})
+    </script>
+
