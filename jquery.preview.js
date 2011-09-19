@@ -87,7 +87,8 @@ function Selector(elem, selector){
       this.bind();
     },
     //Clears the selector post submit.
-    clear : function(){    
+    clear : function(e){
+      if (e !== undefined) e.preventDefault();
       $('#selector').html('');
       $('.preview_input').remove();
     },
@@ -156,7 +157,7 @@ function Selector(elem, selector){
             'href' : '#'
           }).text(elem.val())
         );
-      });  
+      });
     },
     //Same as before, but for description
     description : function(e){
@@ -184,7 +185,7 @@ function Selector(elem, selector){
             'href' : '#'
           }).text(elem.val())
         );
-      });  
+      }); 
     },
     // Binds the correct events for the controls.
     bind : function(){  
@@ -289,9 +290,10 @@ function Preview(elem, options){
 
     default_data : {},
     debug : false,
+    field : null,
     options : {
       'selector' : {},
-      'status' : '#id_status',
+      'field' : null,
       'feed' : {},
       'preview' : {}
     },
@@ -315,6 +317,16 @@ function Preview(elem, options){
       //Debug used for logging
       this.debug = this.options.debug;
 
+      // Field tells us what we are working on.
+      this.field = _.reduce($(elem).find('input, textarea'), function(memo, e){
+        if (memo !== null){
+          return $(memo);
+        }
+        if ($(e).attr('name') in {'url':'', 'status':'', 'message':''}){
+          return $(e);
+        }
+      }, this.options.field)
+
       //We Need to make sure there is a Key.
       if (!this.default_data.hasOwnProperty('key')){
         log('Options did not include a Embedly API key. Aborting.')
@@ -332,7 +344,7 @@ function Preview(elem, options){
      */
     getStatusUrl : function(obj){
       // Grabs the status out of the Form.
-      var status = $(this.options.status).val();
+      var status = this.field.val();
 
       //ignore the status it's blank.
       if (status == ''){
@@ -487,7 +499,7 @@ function Preview(elem, options){
       this.submit(e, data);
       
       //Clear the form.
-      $(this.options.status).val('');
+      this.field.val('');
       $('.preview_input').remove();
       
     },
@@ -507,11 +519,11 @@ function Preview(elem, options){
     bind : function(){
       //Bind a bunch of functions.
       log('Starting Bind');
-      $(this.options.status).bind('keyup', this.keyUp);
+      this.field.bind('keyup', this.keyUp);
       
       //
-      $(this.options.status).live('blur', this.fetch);
-      $(this.options.status).bind('paste', this.paste);
+      this.field.live('blur', this.fetch);
+      this.field.bind('paste', this.paste);
 
       //Bind Submit
       $(this.elem).bind('submit', this._submit);

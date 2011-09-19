@@ -61,12 +61,42 @@
   }
   .attributes {
     a {
-      color : #000000;
-      &:hoover{
-        text-decoration:none;
-        background-color:#FFF6D9;
+      text-decoration:none;
+      &.title, &.description{
+        &:hover{
+          text-decoration:none;
+          background-color:#FFF6D9;
+        }
       }
-    }  
+      &.description{
+       color:#000;
+      }
+      &.title{
+        margin: 0 0 5px;
+        display: block;
+      }
+    }
+    input {
+      width: 420px;
+    }
+    textarea {
+      width: 420px;
+      margin: 5px 0;
+    }
+    .meta {
+      display: block;
+      .favicon{
+        width:16px;
+        height:16px;
+        vertical-align: middle;
+        margin: 0 3px 0 0;
+      }
+      .provider {
+        
+      }
+    
+    }
+    
   }
   .action{
     position: absolute;
@@ -76,5 +106,13 @@
     .close {
     
     }
+  }
+}
+
+#loading {
+  display:none;
+  img{
+    display:block;
+    margin : 10px auto;
   }
 }

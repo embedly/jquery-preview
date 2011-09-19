@@ -62,7 +62,8 @@ function Selector(elem, selector){
       this.bind();
     },
     //Clears the selector post submit.
-    clear : function(){    
+    clear : function(e){
+      if (e !== undefined) e.preventDefault();
       $('#selector').html('');
       $('.preview_input').remove();
     },
@@ -131,7 +132,7 @@ function Selector(elem, selector){
             'href' : '#'
           }).text(elem.val())
         );
-      });  
+      });
     },
     //Same as before, but for description
     description : function(e){
@@ -159,7 +160,7 @@ function Selector(elem, selector){
             'href' : '#'
           }).text(elem.val())
         );
-      });  
+      }); 
     },
     // Binds the correct events for the controls.
     bind : function(){  

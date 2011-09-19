@@ -25,6 +25,7 @@ def build():
 
 
 def wait():
+    build();
     current = None
     while 1:
         sleep(1)

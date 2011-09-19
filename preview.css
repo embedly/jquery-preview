@@ -49,12 +49,35 @@
       #selector .thumbnail .controls .right {
         left: 16px; }
   #selector .attributes a {
-    color: #000000; }
-    #selector .attributes a:hoover {
+    text-decoration: none; }
+    #selector .attributes a.title:hover, #selector .attributes a.description:hover {
       text-decoration: none;
       background-color: #FFF6D9; }
+    #selector .attributes a.description {
+      color: #000; }
+    #selector .attributes a.title {
+      margin: 0 0 5px;
+      display: block; }
+  #selector .attributes input {
+    width: 420px; }
+  #selector .attributes textarea {
+    width: 420px;
+    margin: 5px 0; }
+  #selector .attributes .meta {
+    display: block; }
+    #selector .attributes .meta .favicon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin: 0 3px 0 0; }
   #selector .action {
     position: absolute;
     top: 0;
     right: 0;
     display: none; }
+
+#loading {
+  display: none; }
+  #loading img {
+    display: block;
+    margin: 10px auto; }
