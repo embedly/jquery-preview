@@ -23,7 +23,7 @@ function log(){
     console.log(Array.prototype.slice.call(arguments));
   }
 }
-function Selector(elem, selector){
+function Selector(form, selector){
 
   //Base Selector
   var Selector = {
@@ -59,7 +59,7 @@ function Selector(elem, selector){
       if ($('#selector').length){
         $('#selector').replaceWith(this.template)
       } else {
-        elem.append(this.template);
+        form.append(this.template);
       }
 
       //Sets all the values in the template.
@@ -290,7 +290,8 @@ function Preview(elem, options){
 
     default_data : {},
     debug : false,
-    field : null,
+    form : null,
+    type : 'link',
     options : {
       'selector' : {},
       'field' : null,
@@ -316,26 +317,24 @@ function Preview(elem, options){
 
       //Debug used for logging
       this.debug = this.options.debug;
-
-      // Field tells us what we are working on.
-      this.field = _.reduce($(elem).find('input, textarea'), function(memo, e){
-        if (memo !== null){
-          return $(memo);
-        }
-        if ($(e).attr('name') in {'url':'', 'status':'', 'message':''}){
-          return $(e);
-        }
-      }, this.options.field)
+      
+      // Tells us which form we are working in.
+      this.form = this.options.form ? this.options.form : this.elem.parents('form').eq(0);
 
       //We Need to make sure there is a Key.
       if (!this.default_data.hasOwnProperty('key')){
         log('Options did not include a Embedly API key. Aborting.')
       }else{
+        //Sets up Selector
         this.selector = Selector(elem, this.options.selector);
+        
+        // Sets up Feed
         this.feed = Feed(this.options.feed);
 
+        // Overwrites any funtions
         _.extend(this, this.options.preview)
         
+        // Binds all the functions that you want.
         this.bind();
       }
     },
@@ -344,7 +343,7 @@ function Preview(elem, options){
      */
     getStatusUrl : function(obj){
       // Grabs the status out of the Form.
-      var status = this.field.val();
+      var status = this.elem.val();
 
       //ignore the status it's blank.
       if (status == ''){
@@ -499,7 +498,7 @@ function Preview(elem, options){
       this.submit(e, data);
       
       //Clear the form.
-      this.field.val('');
+      this.elem.val('');
       $('.preview_input').remove();
       
     },
@@ -519,14 +518,14 @@ function Preview(elem, options){
     bind : function(){
       //Bind a bunch of functions.
       log('Starting Bind');
-      this.field.bind('keyup', this.keyUp);
+      this.elem.bind('keyup', this.keyUp);
       
       //
-      this.field.live('blur', this.fetch);
-      this.field.bind('paste', this.paste);
+      this.elem.live('blur', this.fetch);
+      this.elem.bind('paste', this.paste);
 
       //Bind Submit
-      $(this.elem).bind('submit', this._submit);
+      $(this.form).bind('submit', this._submit);
     }
   }
 
@@ -548,9 +547,10 @@ function Preview(elem, options){
   //Return the Preview Function that will eventually be namespaced to $.preview.
   return Preview;
 }
-  //Add to jQuery
+
+  //Set up the Preview Functions for jQuery
   $.fn.preview = function(options, callback){
-    $.preview = Preview(this, options);
+    $.p = Preview(this, options);
     return this;
   }
 })(jQuery);

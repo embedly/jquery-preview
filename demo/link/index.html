@@ -26,8 +26,10 @@
           <h3>Share a link</h3>
           <form id="preview_form" class="form-stacked" method="post" action=".">
             <fieldset>
-              <input type="text" class="xxlarge" name="url" id="id_url" />
+              <input type="text" class="xlarge" name="url" id="id_url" />
+              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
               <span class="help-block">Enter a url.</span>
+              
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
             <div id="loading">
@@ -35,9 +37,6 @@
             </div>
             <!-- Placeholder that tells Preview where to put the selector-->
             <div id="selector"></div>
-            <div class="actions">
-              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
-            </div>
           </form>
         </div>
       </div>
@@ -55,7 +54,7 @@
           this.feed.create(data);
         }
       }
-      $('#preview_form').preview({key:'internal', preview:preview});
+      $('#id_url').preview({key:'internal', preview:preview});
     </script>
   </body>
 </html>

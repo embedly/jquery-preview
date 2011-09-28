@@ -1,4 +1,4 @@
-function Selector(elem, selector){
+function Selector(form, selector){
 
   //Base Selector
   var Selector = {
@@ -34,7 +34,7 @@ function Selector(elem, selector){
       if ($('#selector').length){
         $('#selector').replaceWith(this.template)
       } else {
-        elem.append(this.template);
+        form.append(this.template);
       }
 
       //Sets all the values in the template.
