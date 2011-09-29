@@ -1,16 +1,14 @@
 #selector {
   margin: 10px auto;
-  position: relative; }
+  position: relative;
+  /* URL Selector */ }
   #selector .thumbnail {
-    width: 100px;
     float: left;
     margin: 0 10px 0 0; }
     #selector .thumbnail .items {
       position: relative;
       overflow: hidden;
-      height: 100px;
-      padding: 0px;
-      width: 100px; }
+      padding: 0px; }
       #selector .thumbnail .items .images {
         position: absolute;
         width: 300em;
@@ -22,9 +20,55 @@
           float: left;
           margin: 0px;
           padding: 0px; }
-        #selector .thumbnail .items .images img {
-          width: 100px; }
-    #selector .thumbnail .controls {
+    #selector .thumbnail .nothumb {
+      right: 2px;
+      font-weight: bold;
+      top: 1px; }
+  #selector input {
+    width: 420px; }
+  #selector textarea {
+    width: 420px;
+    margin: 5px 0; }
+  #selector.large .title {
+    font-size: 14px;
+    margin: 0 0 10px;
+    display: block; }
+  #selector.large input {
+    width: 520px; }
+  #selector.large textarea {
+    width: 520px;
+    height: 70px;
+    margin: 5px 0; }
+  #selector.large .thumbnail {
+    width: 560px; }
+    #selector.large .thumbnail a.left, #selector.large .thumbnail a.right {
+      display: block;
+      float: left;
+      width: 20px;
+      text-align: center;
+      padding: 100px 0 0 0; }
+    #selector.large .thumbnail .items {
+      height: 300px;
+      width: 400px;
+      margin: 0 50px;
+      float: left; }
+      #selector.large .thumbnail .items .images li {
+        width: 400px; }
+      #selector.large .thumbnail .items .images img {
+        max-width: 400px;
+        max-height: 300px;
+        margin: 0 auto;
+        display: block; }
+  #selector.small .thumbnail {
+    width: 100px; }
+    #selector.small .thumbnail .items {
+      height: 100px;
+      width: 100px; }
+      #selector.small .thumbnail .items .images li {
+        width: 100px; }
+      #selector.small .thumbnail .items .images img {
+        width: 100px; }
+    #selector.small .thumbnail .controls {
       top: 0px;
       left: 0px;
       width: 100px;
@@ -33,20 +77,20 @@
       z-index: 1;
       background-color: #222;
       opacity: 0.5; }
-      #selector .thumbnail .controls .left, #selector .thumbnail .controls .right, #selector .thumbnail .controls .nothumb {
+      #selector.small .thumbnail .controls .left, #selector.small .thumbnail .controls .right, #selector.small .thumbnail .controls .nothumb {
         display: block;
         position: absolute;
         top: 2px;
         color: #fff; }
-        #selector .thumbnail .controls .left:hover, #selector .thumbnail .controls .right:hover, #selector .thumbnail .controls .nothumb:hover {
+        #selector.small .thumbnail .controls .left:hover, #selector.small .thumbnail .controls .right:hover, #selector.small .thumbnail .controls .nothumb:hover {
           text-decoration: none; }
-      #selector .thumbnail .controls .nothumb {
+      #selector.small .thumbnail .controls .nothumb {
         right: 2px;
         font-weight: bold;
         top: 1px; }
-      #selector .thumbnail .controls .left {
+      #selector.small .thumbnail .controls .left {
         left: 2px; }
-      #selector .thumbnail .controls .right {
+      #selector.small .thumbnail .controls .right {
         left: 16px; }
   #selector .attributes a {
     text-decoration: none; }
@@ -58,11 +102,6 @@
     #selector .attributes a.title {
       margin: 0 0 5px;
       display: block; }
-  #selector .attributes input {
-    width: 420px; }
-  #selector .attributes textarea {
-    width: 420px;
-    margin: 5px 0; }
   #selector .attributes .meta {
     display: block; }
     #selector .attributes .meta .favicon {

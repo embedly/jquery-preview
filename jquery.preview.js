@@ -23,32 +23,57 @@ function log(){
     console.log(Array.prototype.slice.call(arguments));
   }
 }
-function Selector(form, selector){
+function Selector(form, options){
 
   //Base Selector
   var Selector = {
-    template : [
-      '<div id="selector">',
-        '<div class="thumbnail">',
-          '<div class="controls">',
+    
+    options  : {
+      'size' : 'small'
+    },
+    templates : {
+      'small': [
+        '<div id="selector" class="small">',
+          '<div class="thumbnail">',
+            '<div class="controls">',
+              '<a class="left" href="#">&#9664;</a>',
+              '<a class="right" href="#">&#9654;</a>',
+              '<a class="nothumb" href="#">&#10005;</a>',
+            '</div>',
+            '<div class="items">',
+              '<ul class="images"></ul>',
+            '</div>',
+          '</div>',
+          '<div class="attributes">',
+            '<a class="title" href="#"></a>',
+            '<p><a class="description" href="#"></a></p>',
+            '<span class="meta">',
+              '<img class="favicon" src="">',
+              '<a class="provider"></a>',
+            '</span>',
+          '</div>',
+          '<div class="action"><a href="#" class="close">&#10005;</a></div>',
+        '</div>'].join(''),
+      'large' : [
+        '<div id="selector" class="large">',
+          '<a class="title" href="#"></a>',
+          '<div class="thumbnail span10">',
             '<a class="left" href="#">&#9664;</a>',
+            '<div class="items">',
+              '<ul class="images"></ul>',
+            '</div>',
             '<a class="right" href="#">&#9654;</a>',
             '<a class="nothumb" href="#">&#10005;</a>',
           '</div>',
-          '<div class="items">',
-            '<ul class="images"></ul>',
+          '<div class="attributes">',
+            '<p><a class="description" href="#"></a></p>',
+            '<span class="meta">',
+              '<img class="favicon" src="">',
+              '<a class="provider"></a>',
+            '</span>',
           '</div>',
-        '</div>',
-        '<div class="attributes">',
-          '<a class="title" href="#"></a>',
-          '<p><a class="description" href="#"></a></p>',
-          '<span class="meta">',
-            '<img class="favicon" src="">',
-            '<a class="provider"></a>',
-          '</span>',
-        '</div>',
-        '<div class="action"><a href="#" class="close">&#10005;</a></div>',
-      '</div>'].join(''),
+        '</div>'].join('')
+    },
 
     // If a developer wants complete control of the selector, they can
     // override the render function.
@@ -57,9 +82,9 @@ function Selector(form, selector){
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
       if ($('#selector').length){
-        $('#selector').replaceWith(this.template)
+        $('#selector').replaceWith(this.templates[this.options.size])
       } else {
-        form.append(this.template);
+        form.append(this.templates[this.options.size]);
       }
 
       //Sets all the values in the template.
@@ -81,7 +106,7 @@ function Selector(form, selector){
       }
       
       if (obj.images.length == 1){
-        $('.controls .left, .controls .right').hide();
+        $('#selector .left, #selector .right').hide();
       }
 
       this.bind();
@@ -96,7 +121,7 @@ function Selector(form, selector){
       e.preventDefault();
 
       //Grabs the current 'left' style
-      var width = parseInt($('#selector .thumbnail').css('width'));
+      var width = parseInt($('#selector .images li').css('width'));
 
       // Left
       var left = parseInt($('#selector .images').css('left'));
@@ -191,9 +216,9 @@ function Selector(form, selector){
     bind : function(){  
 
       // Thumbnail Controls
-      $('#selector .controls .left').bind('click', _.bind(this.scroll, {}, 'left'));
-      $('#selector .controls .right').bind('click', _.bind(this.scroll, {}, 'right'));
-      $('#selector .controls .nothumb').bind('click', this.nothumb);
+      $('#selector .left').bind('click', _.bind(this.scroll, {}, 'left'));
+      $('#selector .right').bind('click', _.bind(this.scroll, {}, 'right'));
+      $('#selector .nothumb').bind('click', this.nothumb);
       
       // Binds the close button.
       $('#selector .action .close').live('click', this.clear);
@@ -207,10 +232,20 @@ function Selector(form, selector){
       });
 
       //Edit Title and Description handlers.
-      $('#selector .attributes .title').live('click', this.title);
-      $('#selector .attributes .description').live('click', this.description);
+      $('#selector .title').live('click', this.title);
+      $('#selector .description').live('click', this.description);
+    },
+    
+    init : function(options){
+      this.options = _.extend(this.options, options)
     }
+    
   }
+
+  // Overwrites any funtions
+  _.extend(Selector, selector);
+  
+  Selector.init(options);
 
   _.bindAll(Selector);
   return Selector;
@@ -326,7 +361,7 @@ function Preview(elem, options){
         log('Options did not include a Embedly API key. Aborting.')
       }else{
         //Sets up Selector
-        this.selector = Selector(elem, this.options.selector);
+        this.selector = Selector(this.form, this.options);
         
         // Sets up Feed
         this.feed = Feed(this.options.feed);
@@ -550,7 +585,7 @@ function Preview(elem, options){
 
   //Set up the Preview Functions for jQuery
   $.fn.preview = function(options, callback){
-    $.p = Preview(this, options);
+    $.preview = Preview(this, options);
     return this;
   }
 })(jQuery);

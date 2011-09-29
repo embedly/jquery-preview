@@ -60,7 +60,7 @@ function Preview(elem, options){
         log('Options did not include a Embedly API key. Aborting.')
       }else{
         //Sets up Selector
-        this.selector = Selector(elem, this.options.selector);
+        this.selector = Selector(this.form, this.options);
         
         // Sets up Feed
         this.feed = Feed(this.options.feed);
