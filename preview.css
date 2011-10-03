@@ -59,16 +59,16 @@
         max-height: 300px;
         margin: 0 auto;
         display: block; }
-  #selector.small .thumbnail {
+  #selector.rich .thumbnail, #selector.small .thumbnail {
     width: 100px; }
-    #selector.small .thumbnail .items {
+    #selector.rich .thumbnail .items, #selector.small .thumbnail .items {
       height: 100px;
       width: 100px; }
-      #selector.small .thumbnail .items .images li {
+      #selector.rich .thumbnail .items .images li, #selector.small .thumbnail .items .images li {
         width: 100px; }
-      #selector.small .thumbnail .items .images img {
+      #selector.rich .thumbnail .items .images img, #selector.small .thumbnail .items .images img {
         width: 100px; }
-    #selector.small .thumbnail .controls {
+    #selector.rich .thumbnail .controls, #selector.small .thumbnail .controls {
       top: 0px;
       left: 0px;
       width: 100px;
@@ -77,21 +77,25 @@
       z-index: 1;
       background-color: #222;
       opacity: 0.5; }
-      #selector.small .thumbnail .controls .left, #selector.small .thumbnail .controls .right, #selector.small .thumbnail .controls .nothumb {
+      #selector.rich .thumbnail .controls .left, #selector.rich .thumbnail .controls .right, #selector.rich .thumbnail .controls .nothumb, #selector.small .thumbnail .controls .left, #selector.small .thumbnail .controls .right, #selector.small .thumbnail .controls .nothumb {
         display: block;
         position: absolute;
         top: 2px;
         color: #fff; }
-        #selector.small .thumbnail .controls .left:hover, #selector.small .thumbnail .controls .right:hover, #selector.small .thumbnail .controls .nothumb:hover {
+        #selector.rich .thumbnail .controls .left:hover, #selector.rich .thumbnail .controls .right:hover, #selector.rich .thumbnail .controls .nothumb:hover, #selector.small .thumbnail .controls .left:hover, #selector.small .thumbnail .controls .right:hover, #selector.small .thumbnail .controls .nothumb:hover {
           text-decoration: none; }
-      #selector.small .thumbnail .controls .nothumb {
+      #selector.rich .thumbnail .controls .nothumb, #selector.small .thumbnail .controls .nothumb {
         right: 2px;
         font-weight: bold;
         top: 1px; }
-      #selector.small .thumbnail .controls .left {
+      #selector.rich .thumbnail .controls .left, #selector.small .thumbnail .controls .left {
         left: 2px; }
-      #selector.small .thumbnail .controls .right {
+      #selector.rich .thumbnail .controls .right, #selector.small .thumbnail .controls .right {
         left: 16px; }
+  #selector.rich .title {
+    font-size: 14px;
+    margin: 0 0 10px;
+    display: block; }
   #selector .attributes a {
     text-decoration: none; }
     #selector .attributes a.title:hover, #selector .attributes a.description:hover {

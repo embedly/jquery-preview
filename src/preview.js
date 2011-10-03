@@ -146,17 +146,38 @@ function Preview(elem, options){
         var d = {
           name : n,
           type : 'hidden',
-          id : 'id_'+n,
-          class : 'preview_input', 
+          id : 'id_'+n, 
           value : obj.hasOwnProperty(n) && obj[n] ? encodeURIComponent(obj[n]): ''
         }
-        elem.append($('<input />').attr(d));
+        
+        // It's possible that the title or description or something else is
+        // already in the form. If it is then we need to Love them for who they
+        // are and fill in values.
+        if($('#id_'+n).length){
+          // It's hidden, use it
+          if ($('#id_'+n).attr('type') == 'hidden'){
+            $('#id_'+n).attr(d);
+          } else{
+            // Be careful here.
+            if (!$('#id_'+n).val()){
+              $('#id_'+n).val(obj[n]);
+            } else {
+              // Use the value in the obj
+              obj[n] = $('#id_'+n).val();
+            }
+            // Bind updates to the select.
+            $('#id_'+n).bind('keyup', function(e){
+              $.preview.selector.update(e);
+             });
+          }
+          $('#id_'+n).addClass('preview_input');
+        } else{
+          d['class'] ='preview_input';
+          elem.append($('<input />').attr(d));
+        }
       });
 
-      //display the display section
-      //Ext.fly('display').show();
-      //Ext.fly('id_submit').removeClass('disabled');
-      //Preview.Display.render(obj);
+      // Now use the selector obj to render the selector.
       this.selector.render(obj);
     },
     errorCallback : function(){

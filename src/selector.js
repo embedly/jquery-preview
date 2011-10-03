@@ -6,45 +6,77 @@ function Selector(form, options){
     options  : {
       'size' : 'small'
     },
+    
+    partials : {
+      'images_small' : [
+        '<div class="thumbnail">',
+          '<div class="controls">',
+            '<a class="left" href="#">&#9664;</a>',
+            '<a class="right" href="#">&#9654;</a>',
+            '<a class="nothumb" href="#">&#10005;</a>',
+          '</div>',
+          '<div class="items">',
+            '<ul class="images">',
+              '{{#images}}',
+              '<li><img src="{{url}}"/></li>',
+              '{{/images}}',
+            '</ul>',
+          '</div>',
+        '</div>'].join(''),
+      'images_large' : ['<div class="thumbnail">',
+          '<a class="left" href="#">&#9664;</a>',
+          '<div class="items">',
+            '<ul class="images">',
+              '{{#images}}',
+              '<li><img src="{{url}}"/></li>',
+              '{{/images}}',
+            '</ul>',
+          '</div>',
+          '<a class="right" href="#">&#9654;</a>',
+          '<a class="nothumb" href="#">&#10005;</a>',
+        '</div>'].join(''),
+      'attributes' : [
+          '<a class="title" href="#">{{title}}</a>',
+          '<p><a class="description" href="#">{{description}}</a></p>'].join(''),
+      'attributes_large' : '<p><a class="description" href="#">{{description}}</a></p>',
+      
+      
+      
+    },
     templates : {
       'small': [
         '<div id="selector" class="small">',
-          '<div class="thumbnail">',
-            '<div class="controls">',
-              '<a class="left" href="#">&#9664;</a>',
-              '<a class="right" href="#">&#9654;</a>',
-              '<a class="nothumb" href="#">&#10005;</a>',
-            '</div>',
-            '<div class="items">',
-              '<ul class="images"></ul>',
-            '</div>',
-          '</div>',
+          '{{>images_small}}',
           '<div class="attributes">',
-            '<a class="title" href="#"></a>',
-            '<p><a class="description" href="#"></a></p>',
+            '{{>attributes}}',
             '<span class="meta">',
-              '<img class="favicon" src="">',
-              '<a class="provider"></a>',
+              '<img class="favicon" src="{{favicon_url}}">',
+              '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
             '</span>',
           '</div>',
           '<div class="action"><a href="#" class="close">&#10005;</a></div>',
         '</div>'].join(''),
       'large' : [
         '<div id="selector" class="large">',
-          '<a class="title" href="#"></a>',
-          '<div class="thumbnail span10">',
-            '<a class="left" href="#">&#9664;</a>',
-            '<div class="items">',
-              '<ul class="images"></ul>',
-            '</div>',
-            '<a class="right" href="#">&#9654;</a>',
-            '<a class="nothumb" href="#">&#10005;</a>',
-          '</div>',
+          '<a class="title" href="#">{{title}}</a>',
+          '{{>images_large}}',
           '<div class="attributes">',
-            '<p><a class="description" href="#"></a></p>',
+            '{{>attributes_large}}',
             '<span class="meta">',
-              '<img class="favicon" src="">',
-              '<a class="provider"></a>',
+              '<img class="favicon" src="{{favicon_url}}">',
+              '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+            '</span>',
+          '</div>',
+        '</div>'].join(''),
+      'rich': [
+        '<div id="selector" class="rich">',
+            '{{>images_small}}',
+            '{{>object}}',
+          '<div class="attributes">',
+            '{{>attributes}}',
+            '<span class="meta">',
+              '<img class="favicon" src="{{favicon_url}}">',
+              '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
             '</span>',
           '</div>',
         '</div>'].join('')
@@ -56,23 +88,18 @@ function Selector(form, options){
       
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
+      
+      var template = this.templates[this.options.size];
+      var view = this.toView(obj);
+      var partials = this.toPartials(obj);
+  
+      html = Mustache.to_html(template, view, partials);      
+      
       if ($('#selector').length){
-        $('#selector').replaceWith(this.templates[this.options.size])
+        $('#selector').replaceWith(html)
       } else {
-        form.append(this.templates[this.options.size]);
+        form.append(html);
       }
-
-      //Sets all the values in the template.
-      $('#selector .title').text(obj.title);
-      $('#selector .description').text(obj.description);
-      $('#selector .favicon').attr('src', obj.favicon_url);
-
-      $('#selector .provider').attr('href', obj.provider_url);
-      $('#selector .provider').text(obj.provider_display);
-
-      _.each(obj.images, function(i){
-        $('#selector .images').append('<li><img src="'+i.url+'" /></li>');
-      });
       
       if (obj.images.length > 0){
         $('#id_thumbnail_url').val(encodeURIComponent(obj.images[0].url));
@@ -85,6 +112,32 @@ function Selector(form, options){
       }
 
       this.bind();
+    },
+    // To View. Only exists to be overwritten basiclly.
+    toView : function(obj){
+      return obj;
+    },
+    toPartials : function(obj){
+      // Clone partials for later.
+      var p = $.extend(true, {}, this.partials);
+
+      // Set up the object if it's there.
+      p['object'] = '';
+      if (obj.object && (obj.object.type == 'video' || obj.object.type == 'rich')){
+        p['object'] = '<a class="title" href="#">{{title}}</a><div class="media">{{{html}}}</div>';
+        
+      } else if (obj.object && obj.object.type == 'photo'){
+        p['object'] = '<div class="media"><img src="{{url}}"/></div>';
+      }
+      
+      // rich has seperate rules when there is an obj. Kind of a lame hack, but
+      // it works the best for us right now.
+      if (this.options.size == 'rich' && obj.object && obj.object.type != 'link'){
+        p['images_small'] = '';
+        p['attributes'] = p['attributes_large'];
+      }
+
+      return p;
     },
     //Clears the selector post submit.
     clear : function(e){
@@ -179,13 +232,15 @@ function Selector(form, options){
         // Sets the New Title in the hidden inputs
         $('#id_title').val(encodeURIComponent(elem.val()));
 
-        $(e.target).replaceWith($('<a/>').attr(
-          {
+        $(e.target).replaceWith($('<a/>').attr({
             'class':'description',
             'href' : '#'
           }).text(elem.val())
         );
       }); 
+    },
+    update : function(e){
+      $('#selector .'+$(e.target).attr('name')).text($(e.target).val());
     },
     // Binds the correct events for the controls.
     bind : function(){  

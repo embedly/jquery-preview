@@ -1,4 +1,5 @@
 #selector {
+
   margin: 10px auto;
   position:relative;
 
@@ -88,7 +89,7 @@
   }
   
   /* URL Selector */
-  &.small {  
+  &.rich, &.small {  
     .thumbnail{
       width:100px;
       .items{
@@ -133,6 +134,14 @@
           left:16px;
         }
       }
+    }
+  }
+  
+  &.rich {
+    .title {
+      font-size: 14px;
+      margin: 0 0 10px;
+      display: block;
     }
   }
 
