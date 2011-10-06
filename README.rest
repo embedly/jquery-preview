@@ -69,6 +69,6 @@ Development
 The code is broken down into modules in the ``src`` folder and built by
 ``watch.py``. If you want to modify anything in ``preview.jquery.js`` please
 find the code in the module and run ``python watch.py`` to build
-``preview.jquery.js``. ``preview.css`` is a ``sass <http://sass-lang.com/>`_
+``preview.jquery.js``. ``preview.css`` is a `sass <http://sass-lang.com/>`_
 generated file. Please modify ``preview.scss`` by running ``sass --watch
 preview.scss:preview.css``
