@@ -124,3 +124,27 @@
   #loading img {
     display: block;
     margin: 10px auto; }
+
+.item .thumbnail {
+  margin: 5px 10px 10px 0;
+  width: 105px;
+  float: left; }
+  .item .thumbnail a {
+    display: table-cell;
+    width: 100px;
+    height: 75px;
+    overflow: hidden;
+    background-color: black;
+    vertical-align: middle;
+    position: relative;
+    text-align: center; }
+  .item .thumbnail img {
+    max-width: 100px;
+    vertical-align: middle; }
+.item .meta {
+  display: block; }
+  .item .meta .favicon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin: 0 3px 0 0; }

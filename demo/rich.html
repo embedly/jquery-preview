@@ -68,14 +68,12 @@
       var preview = {
         submit : function(e, data){
           e.preventDefault();
-          this.feed.create(data);
+          this.display.create(data);
         }
       }
-      
       $('#id_url').preview({key:'internal', 
                             preview:preview, 
-                            selector : selector,
-                            size: 'rich',
+                            selector : {type:'rich'},
                             maxwidth : 500});
     </script>
   </body>

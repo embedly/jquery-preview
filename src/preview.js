@@ -29,7 +29,7 @@ function Preview(elem, options){
     options : {
       'selector' : {},
       'field' : null,
-      'feed' : {},
+      'display' : {},
       'preview' : {}
     },
 
@@ -60,10 +60,10 @@ function Preview(elem, options){
         log('Options did not include a Embedly API key. Aborting.')
       }else{
         //Sets up Selector
-        this.selector = Selector(this.form, this.options);
+        this.selector = Selector(this.form, this.options.selector);
         
-        // Sets up Feed
-        this.feed = Feed(this.options.feed);
+        // Sets up display
+        this.display = Display(this.options.display);
 
         // Overwrites any funtions
         _.extend(this, this.options.preview)
@@ -267,7 +267,7 @@ function Preview(elem, options){
         url : form.attr('action'),
         data : $.param(data),
         dataType:'json',
-        success : this.feed.create
+        success : this.display.create
       });
     },
     bind : function(){

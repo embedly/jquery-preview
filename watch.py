@@ -14,7 +14,7 @@ def build():
     
     p = open(os.path.join(DIR_PATH, 'jquery.preview.js'), 'w')
     
-    for e in ['intro.js', 'utils.js', 'selector.js', 'feed.js',
+    for e in ['intro.js', 'utils.js', 'selector.js', 'display.js',
         'preview.js', 'outro.js']:
         f = open(os.path.join(SRC_PATH, e), 'r')
         p.write(f.read())

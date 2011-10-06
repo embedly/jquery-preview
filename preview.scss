@@ -174,7 +174,6 @@
       .provider {
         
       }
-    
     }
     
   }
@@ -194,5 +193,41 @@
   img{
     display:block;
     margin : 10px auto;
+  }
+}
+
+
+.item {
+  .thumbnail {
+    margin: 5px 10px 10px 0;
+    width: 105px;
+    float: left;
+    a {
+      display: table-cell;
+      width: 100px;
+      height: 75px;
+      overflow: hidden;
+      background-color: black;
+      vertical-align: middle;
+      position:relative;
+      text-align: center;
+    }
+    img {
+      max-width: 100px;
+      vertical-align:middle;
+    }
+  }
+  
+  .meta {
+    display: block;
+    .favicon{
+      width:16px;
+      height:16px;
+      vertical-align: middle;
+      margin: 0 3px 0 0;
+    }
+    .provider {
+      
+    }
   }
 }

@@ -1,11 +1,8 @@
-function Selector(form, options){
+function Selector(form, selector){
 
   //Base Selector
   var Selector = {
-    
-    options  : {
-      'size' : 'small'
-    },
+    type : 'small',
     
     partials : {
       'images_small' : [
@@ -89,7 +86,7 @@ function Selector(form, options){
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
       
-      var template = this.templates[this.options.size];
+      var template = this.templates[this.type];
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
   
@@ -132,7 +129,7 @@ function Selector(form, options){
       
       // rich has seperate rules when there is an obj. Kind of a lame hack, but
       // it works the best for us right now.
-      if (this.options.size == 'rich' && obj.object && obj.object.type != 'link'){
+      if (this.type == 'rich' && obj.object && obj.object.type != 'link'){
         p['images_small'] = '';
         p['attributes'] = p['attributes_large'];
       }
@@ -264,19 +261,11 @@ function Selector(form, options){
       //Edit Title and Description handlers.
       $('#selector .title').live('click', this.title);
       $('#selector .description').live('click', this.description);
-    },
-    
-    init : function(options){
-      this.options = _.extend(this.options, options)
     }
-    
   }
 
   // Overwrites any funtions
   _.extend(Selector, selector);
-  
-  Selector.init(options);
-
   _.bindAll(Selector);
   return Selector;
 }

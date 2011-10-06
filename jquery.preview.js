@@ -23,14 +23,11 @@ function log(){
     console.log(Array.prototype.slice.call(arguments));
   }
 }
-function Selector(form, options){
+function Selector(form, selector){
 
   //Base Selector
   var Selector = {
-    
-    options  : {
-      'size' : 'small'
-    },
+    type : 'small',
     
     partials : {
       'images_small' : [
@@ -114,7 +111,7 @@ function Selector(form, options){
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
       
-      var template = this.templates[this.options.size];
+      var template = this.templates[this.type];
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
   
@@ -157,7 +154,7 @@ function Selector(form, options){
       
       // rich has seperate rules when there is an obj. Kind of a lame hack, but
       // it works the best for us right now.
-      if (this.options.size == 'rich' && obj.object && obj.object.type != 'link'){
+      if (this.type == 'rich' && obj.object && obj.object.type != 'link'){
         p['images_small'] = '';
         p['attributes'] = p['attributes_large'];
       }
@@ -289,43 +286,43 @@ function Selector(form, options){
       //Edit Title and Description handlers.
       $('#selector .title').live('click', this.title);
       $('#selector .description').live('click', this.description);
-    },
-    
-    init : function(options){
-      this.options = _.extend(this.options, options)
     }
-    
   }
 
   // Overwrites any funtions
   _.extend(Selector, selector);
-  
-  Selector.init(options);
-
   _.bindAll(Selector);
   return Selector;
 }
-// A set of functions that allows developers to create a feed from the responses.
-function Feed(feed){
+/* Display Allows Developers to Easily build a status or link share from the
+ * Obj that was created.
+ *
+ *
+ */
 
-  var Feed = {
-    template : [
+function Display(display){
+
+  var Display = {
+    selector : '#feed',
+    type : 'small',
+    template : null,
+    templates : {'small' : [
       '<div class="item">',
         '<div class="thumbnail">',
-          '<a>',
-            '<img>',
+          '<a href="{{orginal_url}}">',
+            '<img title="{{title}}" src="{{thumbnail_url}}"/>',
             '<span class="overlay"></span>',
           '</a>',
         '</div>',
         '<div class="attributes">',
-          '<a class="title"></a>',
-          '<p class="description"></p>',
+          '<a class="title" href="{{orginal_url}}">{{title}}</a>',
+          '<p class="description">{{description}}</p>',
           '<span class="meta">',
-            '<img class="favicon" />',
-            '<a class="provider"></a>',
+            '<img class="favicon" src="{{favicon_url}}"/>',
+            '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
           '</span>',
         '<div>',
-      '</div>'].join(''),
+      '</div>'].join('')},
 
     get : function(){
       
@@ -334,25 +331,45 @@ function Feed(feed){
     remove : function(){
       
     },
+    // Will do something with this later.
+    toView : function(obj){
+      return obj;
+    },
+    // Will do something with this later.
+    toPartials : function(obj){
+      return null;
+    },
     //Creates a feed object based on the obj we pass back.
     create : function(obj){
-      var e = $('#feed').prepend(this.template).children().first();
+      var template = null;
+      
+      // If the developer gives us a template use it.
+      if (this.template !== null){
+        template = this.template;
+      } else{
+        template = this.templates[this.type];
+      }
+  
+      // Allows us to overwrite the view and partials.
+      var view = this.toView(obj);
+      var partials = this.toPartials(obj);
+  
+      html = Mustache.to_html(template, view, partials);      
 
-      e.find('.title').text(obj.title);
-      e.find('.description').text(obj.description);
-      e.find('.favicon').attr('src', obj.favicon_url);
-      e.find('.provider').attr('href', obj.provider_url);
-      e.find('.provider').text(obj.provider_display);
-      e.find('.thumbnail img').attr('src', obj.thumbnail_url);
-    
+      var e = $(this.selector).prepend(html).children().first();
+
+      e.data('preview', obj);
     },
     play : function(e){
     
     }
   }
 
-  _.bindAll(Feed);
-  return Feed;
+  _.extend(Display, display);
+
+  _.bindAll(Display);
+
+  return Display;
 }
 /* Preview
  * 
@@ -385,7 +402,7 @@ function Preview(elem, options){
     options : {
       'selector' : {},
       'field' : null,
-      'feed' : {},
+      'display' : {},
       'preview' : {}
     },
 
@@ -416,10 +433,10 @@ function Preview(elem, options){
         log('Options did not include a Embedly API key. Aborting.')
       }else{
         //Sets up Selector
-        this.selector = Selector(this.form, this.options);
+        this.selector = Selector(this.form, this.options.selector);
         
-        // Sets up Feed
-        this.feed = Feed(this.options.feed);
+        // Sets up display
+        this.display = Display(this.options.display);
 
         // Overwrites any funtions
         _.extend(this, this.options.preview)
@@ -623,7 +640,7 @@ function Preview(elem, options){
         url : form.attr('action'),
         data : $.param(data),
         dataType:'json',
-        success : this.feed.create
+        success : this.display.create
       });
     },
     bind : function(){
