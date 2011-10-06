@@ -290,7 +290,6 @@ function Preview(elem, options){
   //Set up the defaults.
   var defaults = {
     debug : true,
-    status_selector : '#id_status',
     wmode : 'opaque',
     words : 30,
   }

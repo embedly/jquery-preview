@@ -4,6 +4,8 @@ function Selector(form, selector){
   var Selector = {
     type : 'small',
     
+    template : null,
+
     partials : {
       'images_small' : [
         '<div class="thumbnail">',
@@ -86,7 +88,14 @@ function Selector(form, selector){
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
       
-      var template = this.templates[this.type];
+      var template = null;
+      
+      if (this.template !== null){
+        template = this.template;
+      } else {
+        template = this.templates[this.type];
+      }
+
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
   
