@@ -27,8 +27,10 @@ function Selector(form, selector){
 
   //Base Selector
   var Selector = {
+    selector : '.selector',
     type : 'small',
-    
+    template : null,
+    elem : null,
     partials : {
       'images_small' : [
         '<div class="thumbnail">',
@@ -67,7 +69,7 @@ function Selector(form, selector){
     },
     templates : {
       'small': [
-        '<div id="selector" class="small">',
+        '<div class="selector small">',
           '{{>images_small}}',
           '<div class="attributes">',
             '{{>attributes}}',
@@ -79,7 +81,7 @@ function Selector(form, selector){
           '<div class="action"><a href="#" class="close">&#10005;</a></div>',
         '</div>'].join(''),
       'large' : [
-        '<div id="selector" class="large">',
+        '<div class="selector large">',
           '<a class="title" href="#">{{title}}</a>',
           '{{>images_large}}',
           '<div class="attributes">',
@@ -91,7 +93,7 @@ function Selector(form, selector){
           '</div>',
         '</div>'].join(''),
       'rich': [
-        '<div id="selector" class="rich">',
+        '<div class="selector rich">',
             '{{>images_small}}',
             '{{>object}}',
           '<div class="attributes">',
@@ -107,36 +109,49 @@ function Selector(form, selector){
     // If a developer wants complete control of the selector, they can
     // override the render function.
     render : function(obj){
-      
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
-      
-      var template = this.templates[this.type];
+      var template = null;
+
+      if (this.template !== null){
+        template = this.template;
+      } else {
+        template = this.templates[this.type];
+      }
+
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
-  
+
       html = Mustache.to_html(template, view, partials);      
-      
-      if ($('#selector').length){
-        $('#selector').replaceWith(html)
+
+      // If the developer told us where to put the selector, put it there.
+      if (form.find(this.selector).length){
+        form.find(this.selector).replaceWith(html)
       } else {
         form.append(html);
       }
       
+      // We need to keep track of the selector elem so we don't have to do
+      // form.find(this.selector) all the time.
+      this.elem = form.find(this.selector);
+
+      // If there are images, set the information in the form.
       if (obj.images.length > 0){
-        $('#id_thumbnail_url').val(encodeURIComponent(obj.images[0].url));
+        form.find('#id_thumbnail_url').val(encodeURIComponent(obj.images[0].url));
       } else{
-         $('#selector .thumbnail').hide();
+        this.elem.find('.thumbnail').hide();
       }
-      
+  
+      // If there is only one image, hide the left and right buttons.
       if (obj.images.length == 1){
-        $('#selector .left, #selector .right').hide();
+        this.elem.find('.left, .right').hide();
       }
 
       this.bind();
     },
     // To View. Only exists to be overwritten basiclly.
     toView : function(obj){
+      obj['id'] = this.id;
       return obj;
     },
     toPartials : function(obj){
@@ -164,19 +179,21 @@ function Selector(form, selector){
     //Clears the selector post submit.
     clear : function(e){
       if (e !== undefined) e.preventDefault();
-      $('#selector').html('');
-      $('.preview_input').remove();
+      this.elem.html('');
+      form.find('input[type="hidden"].preview_input').remove();
     },
     scroll : function(dir, e){
       e.preventDefault();
 
+      var images = this.elem.find('.images');
+
       //Grabs the current 'left' style
-      var width = parseInt($('#selector .images li').css('width'));
+      var width = parseInt(images.find('li').css('width'));
 
       // Left
-      var left = parseInt($('#selector .images').css('left'));
+      var left = parseInt(images.css('left'));
       //Gets the number of images
-      var len = $('#selector .images img').length * width;
+      var len = images.find('img').length * width;
 
       //General logic to set the new left value
       if (dir == 'left'){
@@ -190,18 +207,18 @@ function Selector(form, selector){
       return false;
       }
       
-      var thumb = encodeURIComponent($('#selector .images img').eq((left/-100)).attr('src'));
+      var thumb = encodeURIComponent(images.find('img').eq((left/-100)).attr('src'));
       
       //  Puts the current thumbnail into the thumbnail_url input
-      $('#id_thumbnail_url').val(thumb);
+      form.find('#id_thumbnail_url').val(thumb);
 
       // Sets the new left.
-      $('.images').css('left',left+'px');
+      images.css('left',left+'px');
     },
     nothumb : function(e){
-      e.preventDefault(); 
-      $('#selector .thumbnail').hide();
-      $('#id_thumbnail_url').val('');
+      e.preventDefault();
+      this.elem.find('.thumbnail').hide();
+      form.find('#id_thumbnail_url').val('');
     },
     // When a user wants to Edit a title or description we need to switch out
     // an input or text area
@@ -224,7 +241,7 @@ function Selector(form, selector){
       elem.one('blur', function(e){
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
-        $('#id_title').val(encodeURIComponent(elem.val()));
+        form.find('#id_title').val(encodeURIComponent(elem.val()));
         
         $(e.target).replaceWith($('<a/>').attr(
           {
@@ -252,7 +269,7 @@ function Selector(form, selector){
       elem.one('blur', function(e){
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
-        $('#id_title').val(encodeURIComponent(elem.val()));
+        form.find('#id_title').val(encodeURIComponent(elem.val()));
 
         $(e.target).replaceWith($('<a/>').attr({
             'class':'description',
@@ -262,36 +279,39 @@ function Selector(form, selector){
       }); 
     },
     update : function(e){
-      $('#selector .'+$(e.target).attr('name')).text($(e.target).val());
+      $('#'+this.id+' .'+$(e.target).attr('name')).text($(e.target).val());
     },
     // Binds the correct events for the controls.
     bind : function(){  
 
       // Thumbnail Controls
-      $('#selector .left').bind('click', _.bind(this.scroll, {}, 'left'));
-      $('#selector .right').bind('click', _.bind(this.scroll, {}, 'right'));
-      $('#selector .nothumb').bind('click', this.nothumb);
+      this.elem.find('.left').bind('click', _.bind(this.scroll, {}, 'left'));
+      this.elem.find('.right').bind('click', _.bind(this.scroll, {}, 'right'));
+      this.elem.find('.nothumb').bind('click', this.nothumb);
       
       // Binds the close button.
-      $('#selector .action .close').live('click', this.clear);
-      $('#selector').live('mouseenter mouseleave', function(){
-        $('#selector .action').toggle();
+      this.elem.find('.action .close').live('click', this.clear);
+      this.elem.live('mouseenter mouseleave', function(){
+        this.elem.find('.action').toggle();
       });
       
       //Show hide the controls.
-      $('#selector .thumbnail').one('mouseenter', function(){
-        $('#selector .thumbnail').bind('mouseenter mouseleave', function(){ $('#selector .thumbnail .controls').toggle();});
+      this.elem.find('.thumbnail').one('mouseenter', function(){
+        $(this).bind('mouseenter mouseleave', function(){
+          $(this).find('.controls').toggle();
+        });
       });
 
       //Edit Title and Description handlers.
-      $('#selector .title').live('click', this.title);
-      $('#selector .description').live('click', this.description);
+      this.elem.find('.title').live('click', this.title);
+      this.elem.find('.description').live('click', this.description);
     }
   }
 
   // Overwrites any funtions
   _.extend(Selector, selector);
   _.bindAll(Selector);
+  
   return Selector;
 }
 /* Display Allows Developers to Easily build a status or link share from the
@@ -399,6 +419,7 @@ function Preview(elem, options){
     debug : false,
     form : null,
     type : 'link',
+    loading_selector : '.loading',
     options : {
       'selector' : {},
       'field' : null,
@@ -407,10 +428,6 @@ function Preview(elem, options){
     },
 
     init : function(elem, settings){
-
-      //  Tells us what form we are working on.
-      this.elem = elem;
-
       // Sets up the data args we are going to send to the API
       var data = {};
       _.each(_.intersection(_.keys(settings),this.api_args), function(n){
@@ -419,14 +436,14 @@ function Preview(elem, options){
         if (!(_.isNull(v) || _.isUndefined(v))) data[n] = v;
       });
       this.default_data = data;
-
+      
       this.options = _.extend(this.options, settings);
+      
+      // Just reminds us which form we should be working on.
+      this.form = options.form ? options.form : elem.parents('form');
 
       //Debug used for logging
       this.debug = this.options.debug;
-      
-      // Tells us which form we are working in.
-      this.form = this.options.form ? this.options.form : this.elem.parents('form').eq(0);
 
       //We Need to make sure there is a Key.
       if (!this.default_data.hasOwnProperty('key')){
@@ -450,7 +467,7 @@ function Preview(elem, options){
      */
     getStatusUrl : function(obj){
       // Grabs the status out of the Form.
-      var status = this.elem.val();
+      var status = elem.val();
 
       //ignore the status it's blank.
       if (status == ''){
@@ -473,11 +490,13 @@ function Preview(elem, options){
       //Note that in both cases we only grab the first URL.
       return url;
     },
-
+    toggleLoading : function(){
+      this.form.find(this.loading_selector).toggle();
+    },
     //Metadata Callback
-    metadataCallback : function(obj){
+    callback : function(obj){
       //tells the loader to stop
-      $('#loading').hide();
+      this.toggleLoading();
 
       // Here is where you actually care about the obj
       log(obj);
@@ -509,44 +528,45 @@ function Preview(elem, options){
 
       // If this is a change in the URL we need to delete all the old
       // information first.
-      elem.find('input[type="hidden"]').remove();
-      
-      //We need to the selector form
-      //Ext.fly('display').select('*').remove();
+      this.form.find('input[type="hidden"].preview_input').remove();
+  
 
       //Sets all the data to a hidden inputs for the post.
+      var form = this.form;
       _.each(this.display_attrs, function(n){
-        var d = {
+        d = {
           name : n,
           type : 'hidden',
           id : 'id_'+n, 
           value : obj.hasOwnProperty(n) && obj[n] ? encodeURIComponent(obj[n]): ''
         }
-        
+  
         // It's possible that the title or description or something else is
         // already in the form. If it is then we need to Love them for who they
         // are and fill in values.
-        if($('#id_'+n).length){
+        var e = form.find('#id_'+n);
+        
+        if(e.length){
           // It's hidden, use it
-          if ($('#id_'+n).attr('type') == 'hidden'){
-            $('#id_'+n).attr(d);
+          if (e.attr('type') == 'hidden'){
+            e.attr(d);
           } else{
             // Be careful here.
-            if (!$('#id_'+n).val()){
-              $('#id_'+n).val(obj[n]);
+            if (!e.val()){
+              e.val(obj[n]);
             } else {
               // Use the value in the obj
-              obj[n] = $('#id_'+n).val();
+              obj[n] = e.val();
             }
             // Bind updates to the select.
-            $('#id_'+n).bind('keyup', function(e){
+            e.bind('keyup', function(e){
               $.preview.selector.update(e);
-             });
+            });
           }
-          $('#id_'+n).addClass('preview_input');
+          e.addClass('preview_input');
         } else{
           d['class'] ='preview_input';
-          elem.append($('<input />').attr(d));
+          form.append($('<input />').attr(d));
         }
       });
 
@@ -577,7 +597,7 @@ function Preview(elem, options){
       if (original_url == encodeURIComponent(url)) return true;
 
       //Tells the loaded to start
-      $('#loading').show();
+      this.toggleLoading();
 
       //sets up the data we are going to use in the request.
       var data = _.clone(this.default_data);
@@ -589,7 +609,7 @@ function Preview(elem, options){
         url: 'http://api.embed.ly/1/preview',
         dataType: 'jsonp',
         data: data,
-        success: this.metadataCallback,
+        success: this.callback,
         error: this.errorCallback
       });
       return true;
@@ -622,13 +642,16 @@ function Preview(elem, options){
         var n = $(e).attr('name');
         if (n !== undefined) data[n] = decodeURIComponent($(e).val());
       });
+      // Clears the Selector.
       this.selector.clear();
       this.submit(e, data);
-      
+
       //Clear the form.
-      this.elem.val('');
-      $('.preview_input').remove();
-      
+      elem.val('');
+
+      // This happens in clear, but it may not get get called there. This
+      // Makes sure it's cleared.
+      this.form.find('input[type="hidden"].preview_input').remove();
     },
     //What we are actually going to do with the data.
     submit : function(e, data){
@@ -646,14 +669,14 @@ function Preview(elem, options){
     bind : function(){
       //Bind a bunch of functions.
       log('Starting Bind');
-      this.elem.bind('keyup', this.keyUp);
+      elem.bind('keyup', this.keyUp);
       
       //
-      this.elem.live('blur', this.fetch);
-      this.elem.bind('paste', this.paste);
+      elem.live('blur', this.fetch);
+      elem.bind('paste', this.paste);
 
       //Bind Submit
-      $(this.form).bind('submit', this._submit);
+      this.form.bind('submit', this._submit);
     }
   }
 
@@ -663,7 +686,6 @@ function Preview(elem, options){
   //Set up the defaults.
   var defaults = {
     debug : true,
-    status_selector : '#id_status',
     wmode : 'opaque',
     words : 30,
   }
@@ -678,7 +700,7 @@ function Preview(elem, options){
 
   //Set up the Preview Functions for jQuery
   $.fn.preview = function(options, callback){
-    $.preview = Preview(this, options);
+    $.preview = new Preview(this, options);
     return this;
   }
 })(jQuery);

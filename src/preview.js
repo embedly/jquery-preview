@@ -26,6 +26,7 @@ function Preview(elem, options){
     debug : false,
     form : null,
     type : 'link',
+    loading_selector : '.loading',
     options : {
       'selector' : {},
       'field' : null,
@@ -34,10 +35,6 @@ function Preview(elem, options){
     },
 
     init : function(elem, settings){
-
-      //  Tells us what form we are working on.
-      this.elem = elem;
-
       // Sets up the data args we are going to send to the API
       var data = {};
       _.each(_.intersection(_.keys(settings),this.api_args), function(n){
@@ -46,14 +43,14 @@ function Preview(elem, options){
         if (!(_.isNull(v) || _.isUndefined(v))) data[n] = v;
       });
       this.default_data = data;
-
+      
       this.options = _.extend(this.options, settings);
+      
+      // Just reminds us which form we should be working on.
+      this.form = options.form ? options.form : elem.parents('form');
 
       //Debug used for logging
       this.debug = this.options.debug;
-      
-      // Tells us which form we are working in.
-      this.form = this.options.form ? this.options.form : this.elem.parents('form').eq(0);
 
       //We Need to make sure there is a Key.
       if (!this.default_data.hasOwnProperty('key')){
@@ -77,7 +74,7 @@ function Preview(elem, options){
      */
     getStatusUrl : function(obj){
       // Grabs the status out of the Form.
-      var status = this.elem.val();
+      var status = elem.val();
 
       //ignore the status it's blank.
       if (status == ''){
@@ -100,11 +97,13 @@ function Preview(elem, options){
       //Note that in both cases we only grab the first URL.
       return url;
     },
-
+    toggleLoading : function(){
+      this.form.find(this.loading_selector).toggle();
+    },
     //Metadata Callback
-    metadataCallback : function(obj){
+    callback : function(obj){
       //tells the loader to stop
-      $('#loading').hide();
+      this.toggleLoading();
 
       // Here is where you actually care about the obj
       log(obj);
@@ -136,44 +135,45 @@ function Preview(elem, options){
 
       // If this is a change in the URL we need to delete all the old
       // information first.
-      elem.find('input[type="hidden"]').remove();
-      
-      //We need to the selector form
-      //Ext.fly('display').select('*').remove();
+      this.form.find('input[type="hidden"].preview_input').remove();
+  
 
       //Sets all the data to a hidden inputs for the post.
+      var form = this.form;
       _.each(this.display_attrs, function(n){
-        var d = {
+        d = {
           name : n,
           type : 'hidden',
           id : 'id_'+n, 
           value : obj.hasOwnProperty(n) && obj[n] ? encodeURIComponent(obj[n]): ''
         }
-        
+  
         // It's possible that the title or description or something else is
         // already in the form. If it is then we need to Love them for who they
         // are and fill in values.
-        if($('#id_'+n).length){
+        var e = form.find('#id_'+n);
+        
+        if(e.length){
           // It's hidden, use it
-          if ($('#id_'+n).attr('type') == 'hidden'){
-            $('#id_'+n).attr(d);
+          if (e.attr('type') == 'hidden'){
+            e.attr(d);
           } else{
             // Be careful here.
-            if (!$('#id_'+n).val()){
-              $('#id_'+n).val(obj[n]);
+            if (!e.val()){
+              e.val(obj[n]);
             } else {
               // Use the value in the obj
-              obj[n] = $('#id_'+n).val();
+              obj[n] = e.val();
             }
             // Bind updates to the select.
-            $('#id_'+n).bind('keyup', function(e){
+            e.bind('keyup', function(e){
               $.preview.selector.update(e);
-             });
+            });
           }
-          $('#id_'+n).addClass('preview_input');
+          e.addClass('preview_input');
         } else{
           d['class'] ='preview_input';
-          elem.append($('<input />').attr(d));
+          form.append($('<input />').attr(d));
         }
       });
 
@@ -204,7 +204,7 @@ function Preview(elem, options){
       if (original_url == encodeURIComponent(url)) return true;
 
       //Tells the loaded to start
-      $('#loading').show();
+      this.toggleLoading();
 
       //sets up the data we are going to use in the request.
       var data = _.clone(this.default_data);
@@ -216,7 +216,7 @@ function Preview(elem, options){
         url: 'http://api.embed.ly/1/preview',
         dataType: 'jsonp',
         data: data,
-        success: this.metadataCallback,
+        success: this.callback,
         error: this.errorCallback
       });
       return true;
@@ -249,13 +249,16 @@ function Preview(elem, options){
         var n = $(e).attr('name');
         if (n !== undefined) data[n] = decodeURIComponent($(e).val());
       });
+      // Clears the Selector.
       this.selector.clear();
       this.submit(e, data);
-      
+
       //Clear the form.
-      this.elem.val('');
-      $('.preview_input').remove();
-      
+      elem.val('');
+
+      // This happens in clear, but it may not get get called there. This
+      // Makes sure it's cleared.
+      this.form.find('input[type="hidden"].preview_input').remove();
     },
     //What we are actually going to do with the data.
     submit : function(e, data){
@@ -273,14 +276,14 @@ function Preview(elem, options){
     bind : function(){
       //Bind a bunch of functions.
       log('Starting Bind');
-      this.elem.bind('keyup', this.keyUp);
+      elem.bind('keyup', this.keyUp);
       
       //
-      this.elem.live('blur', this.fetch);
-      this.elem.bind('paste', this.paste);
+      elem.live('blur', this.fetch);
+      elem.bind('paste', this.paste);
 
       //Bind Submit
-      $(this.form).bind('submit', this._submit);
+      this.form.bind('submit', this._submit);
     }
   }
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" ></script>
+    <script src="{{ static_url('lib/underscore-min.js')}}" type="text/javascript"></script>
+    <script src="{{ static_url('lib/mustache.js')}}" type="text/javascript"></script>
+    <script src="{{ static_url('jquery.preview.js')}}" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css">
+    <link rel="stylesheet" href="{{ static_url('preview.css')}}" />
+    <style>
+      .topbar{
+        position:relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div class="container">
+          <h3><a href="index.html">Embedly Preview</a></h3>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="span10 columns offset3">
+          <h3>Share a link</h3>
+          <form id="preview_form" class="form-stacked" method="post" action="/update">
+            <fieldset>
+              <input type="text" class="xlarge" name="url" id="id_url" />
+              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+              <span class="help-block">Enter a url.</span>
+              
+            </fieldset>
+            <!-- Placeholder that tells Preview where to put the loading icon-->
+            <div class="loading">
+              <img src='{{ static_url('images/loading-rectangle.gif')}}'>  
+            </div>
+            <!-- Placeholder that tells Preview where to put the selector-->
+            <div id="selector"></div>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div id="feed" class="span10 columns offset3">
+          
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <script>
+      $('#id_url').preview({key:'c31f5208f04511e0b79e4040d3dc5c07'}); // Sign up for a key: http://embed.ly/pricing
+
+      $.ajax(
+        {
+          url: '/posts',
+          dataType : 'json',
+          success : function(data){
+            $.each(data, function(i, e){
+              $.preview.display.create(e);
+            }); 
+          }
+      });
+    </script>
+  </body>
+</html>

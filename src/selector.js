@@ -2,10 +2,10 @@ function Selector(form, selector){
 
   //Base Selector
   var Selector = {
+    selector : '.selector',
     type : 'small',
-    
     template : null,
-
+    elem : null,
     partials : {
       'images_small' : [
         '<div class="thumbnail">',
@@ -44,7 +44,7 @@ function Selector(form, selector){
     },
     templates : {
       'small': [
-        '<div id="selector" class="small">',
+        '<div class="selector small">',
           '{{>images_small}}',
           '<div class="attributes">',
             '{{>attributes}}',
@@ -56,7 +56,7 @@ function Selector(form, selector){
           '<div class="action"><a href="#" class="close">&#10005;</a></div>',
         '</div>'].join(''),
       'large' : [
-        '<div id="selector" class="large">',
+        '<div class="selector large">',
           '<a class="title" href="#">{{title}}</a>',
           '{{>images_large}}',
           '<div class="attributes">',
@@ -68,7 +68,7 @@ function Selector(form, selector){
           '</div>',
         '</div>'].join(''),
       'rich': [
-        '<div id="selector" class="rich">',
+        '<div class="selector rich">',
             '{{>images_small}}',
             '{{>object}}',
           '<div class="attributes">',
@@ -84,12 +84,10 @@ function Selector(form, selector){
     // If a developer wants complete control of the selector, they can
     // override the render function.
     render : function(obj){
-      
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
-      
       var template = null;
-      
+
       if (this.template !== null){
         template = this.template;
       } else {
@@ -98,29 +96,37 @@ function Selector(form, selector){
 
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
-  
+
       html = Mustache.to_html(template, view, partials);      
-      
-      if ($('#selector').length){
-        $('#selector').replaceWith(html)
+
+      // If the developer told us where to put the selector, put it there.
+      if (form.find(this.selector).length){
+        form.find(this.selector).replaceWith(html)
       } else {
         form.append(html);
       }
       
+      // We need to keep track of the selector elem so we don't have to do
+      // form.find(this.selector) all the time.
+      this.elem = form.find(this.selector);
+
+      // If there are images, set the information in the form.
       if (obj.images.length > 0){
-        $('#id_thumbnail_url').val(encodeURIComponent(obj.images[0].url));
+        form.find('#id_thumbnail_url').val(encodeURIComponent(obj.images[0].url));
       } else{
-         $('#selector .thumbnail').hide();
+        this.elem.find('.thumbnail').hide();
       }
-      
+  
+      // If there is only one image, hide the left and right buttons.
       if (obj.images.length == 1){
-        $('#selector .left, #selector .right').hide();
+        this.elem.find('.left, .right').hide();
       }
 
       this.bind();
     },
     // To View. Only exists to be overwritten basiclly.
     toView : function(obj){
+      obj['id'] = this.id;
       return obj;
     },
     toPartials : function(obj){
@@ -148,19 +154,21 @@ function Selector(form, selector){
     //Clears the selector post submit.
     clear : function(e){
       if (e !== undefined) e.preventDefault();
-      $('#selector').html('');
-      $('.preview_input').remove();
+      this.elem.html('');
+      form.find('input[type="hidden"].preview_input').remove();
     },
     scroll : function(dir, e){
       e.preventDefault();
 
+      var images = this.elem.find('.images');
+
       //Grabs the current 'left' style
-      var width = parseInt($('#selector .images li').css('width'));
+      var width = parseInt(images.find('li').css('width'));
 
       // Left
-      var left = parseInt($('#selector .images').css('left'));
+      var left = parseInt(images.css('left'));
       //Gets the number of images
-      var len = $('#selector .images img').length * width;
+      var len = images.find('img').length * width;
 
       //General logic to set the new left value
       if (dir == 'left'){
@@ -174,18 +182,18 @@ function Selector(form, selector){
       return false;
       }
       
-      var thumb = encodeURIComponent($('#selector .images img').eq((left/-100)).attr('src'));
+      var thumb = encodeURIComponent(images.find('img').eq((left/-100)).attr('src'));
       
       //  Puts the current thumbnail into the thumbnail_url input
-      $('#id_thumbnail_url').val(thumb);
+      form.find('#id_thumbnail_url').val(thumb);
 
       // Sets the new left.
-      $('.images').css('left',left+'px');
+      images.css('left',left+'px');
     },
     nothumb : function(e){
-      e.preventDefault(); 
-      $('#selector .thumbnail').hide();
-      $('#id_thumbnail_url').val('');
+      e.preventDefault();
+      this.elem.find('.thumbnail').hide();
+      form.find('#id_thumbnail_url').val('');
     },
     // When a user wants to Edit a title or description we need to switch out
     // an input or text area
@@ -208,7 +216,7 @@ function Selector(form, selector){
       elem.one('blur', function(e){
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
-        $('#id_title').val(encodeURIComponent(elem.val()));
+        form.find('#id_title').val(encodeURIComponent(elem.val()));
         
         $(e.target).replaceWith($('<a/>').attr(
           {
@@ -236,7 +244,7 @@ function Selector(form, selector){
       elem.one('blur', function(e){
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
-        $('#id_title').val(encodeURIComponent(elem.val()));
+        form.find('#id_title').val(encodeURIComponent(elem.val()));
 
         $(e.target).replaceWith($('<a/>').attr({
             'class':'description',
@@ -246,35 +254,38 @@ function Selector(form, selector){
       }); 
     },
     update : function(e){
-      $('#selector .'+$(e.target).attr('name')).text($(e.target).val());
+      $('#'+this.id+' .'+$(e.target).attr('name')).text($(e.target).val());
     },
     // Binds the correct events for the controls.
     bind : function(){  
 
       // Thumbnail Controls
-      $('#selector .left').bind('click', _.bind(this.scroll, {}, 'left'));
-      $('#selector .right').bind('click', _.bind(this.scroll, {}, 'right'));
-      $('#selector .nothumb').bind('click', this.nothumb);
+      this.elem.find('.left').bind('click', _.bind(this.scroll, {}, 'left'));
+      this.elem.find('.right').bind('click', _.bind(this.scroll, {}, 'right'));
+      this.elem.find('.nothumb').bind('click', this.nothumb);
       
       // Binds the close button.
-      $('#selector .action .close').live('click', this.clear);
-      $('#selector').live('mouseenter mouseleave', function(){
-        $('#selector .action').toggle();
+      this.elem.find('.action .close').live('click', this.clear);
+      this.elem.live('mouseenter mouseleave', function(){
+        this.elem.find('.action').toggle();
       });
       
       //Show hide the controls.
-      $('#selector .thumbnail').one('mouseenter', function(){
-        $('#selector .thumbnail').bind('mouseenter mouseleave', function(){ $('#selector .thumbnail .controls').toggle();});
+      this.elem.find('.thumbnail').one('mouseenter', function(){
+        $(this).bind('mouseenter mouseleave', function(){
+          $(this).find('.controls').toggle();
+        });
       });
 
       //Edit Title and Description handlers.
-      $('#selector .title').live('click', this.title);
-      $('#selector .description').live('click', this.description);
+      this.elem.find('.title').live('click', this.title);
+      this.elem.find('.description').live('click', this.description);
     }
   }
 
   // Overwrites any funtions
   _.extend(Selector, selector);
   _.bindAll(Selector);
+  
   return Selector;
 }

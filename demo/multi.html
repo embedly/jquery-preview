@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" ></script>
+    <script src="../lib/underscore-min.js" type="text/javascript"></script>
+    <script src="../lib/mustache.js" type="text/javascript"></script>
+    <script src="../jquery.preview.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css">
+    <link rel="stylesheet" href="../preview.css" />
+    <style>
+      .topbar{
+        position:relative;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div class="container">
+          <h3><a href="index.html">Embedly Preview</a></h3>
+          <ul>
+            <li><a href="status.html">Status</a>
+            <li><a href="link.html">Link</a>
+            <li><a href="large.html">Large Link</a>
+            <li><a href="rich.html">Rich Link</a>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="span10 columns offset3">
+          <h3>Share what's new...</h3>
+          <form id="preview_form" class="form-stacked" method="post" action=".">
+            <fieldset>
+              <textarea class="xxlarge" name="status" id="id_status" ></textarea>
+              <span class="help-block">Enter a url.</span>
+            </fieldset>
+            <!-- Placeholder that tells Preview where to put the loading icon-->
+            <div class="loading">
+              <img src='../images/loading-rectangle.gif'>  
+            </div>
+            <!-- Placeholder that tells Preview where to put the selector-->
+            <div class="selector"></div>
+            <div class="actions">
+              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+            </div>
+          </form>
+          <form id="link_form" class="form-stacked" method="post" action=".">
+            <fieldset>
+              <input type="text" class="xlarge" name="url" id="id_url" />
+              <span class="help-block">Enter a url.</span>
+            </fieldset>
+            <!-- Placeholder that tells Preview where to put the loading icon-->
+            <div class="loading">
+              <img src='../images/loading-rectangle.gif'>  
+            </div>
+            <!-- Placeholder that tells Preview where to put the selector-->
+            <div class="selector"></div>
+            <div class="actions">
+              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div id="feed" class="span10 columns offset3">
+          
+        </div>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <script>
+      var preview = {
+        submit : function(e, data){
+          e.preventDefault();
+          this.display.create(data);
+        }
+      }
+      $('#id_status').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
+                                preview:preview});
+      $('#id_url').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
+                                                          preview:preview});
+    </script>
+  </body>
+</html>
