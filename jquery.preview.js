@@ -329,19 +329,20 @@ function Display(display){
     templates : {'small' : [
       '<div class="item">',
         '<div class="thumbnail">',
-          '<a href="{{orginal_url}}">',
+          '<a href="{{original_url}}" target="_blank">',
             '<img title="{{title}}" src="{{thumbnail_url}}"/>',
             '<span class="overlay"></span>',
           '</a>',
         '</div>',
         '<div class="attributes">',
-          '<a class="title" href="{{orginal_url}}">{{title}}</a>',
+          '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
           '<p class="description">{{description}}</p>',
           '<span class="meta">',
             '<img class="favicon" src="{{favicon_url}}"/>',
             '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
           '</span>',
-        '<div>',
+        '</div>',
+        '<div class="clearfix"></div>',
       '</div>'].join('')},
 
     get : function(){
@@ -593,7 +594,7 @@ function Preview(elem, options){
       // If we already looked for a url, there will be an original_url hidden
       // input that we should look for and compare values. If they are the
       // same we will ignore.
-      var original_url = $('#id_original_url').val();
+      var original_url = this.form.find('#id_original_url').val();
       if (original_url == encodeURIComponent(url)) return true;
 
       //Tells the loaded to start
@@ -700,7 +701,10 @@ function Preview(elem, options){
 
   //Set up the Preview Functions for jQuery
   $.fn.preview = function(options, callback){
-    $.preview = new Preview(this, options);
+    $(this).each(function(i,e){
+      $.preview = new Preview($(this), options);
+    });
+
     return this;
   }
 })(jQuery);

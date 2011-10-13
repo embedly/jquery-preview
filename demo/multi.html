@@ -33,7 +33,7 @@
           <h3>Share what's new...</h3>
           <form id="preview_form" class="form-stacked" method="post" action=".">
             <fieldset>
-              <textarea class="xxlarge" name="status" id="id_status" ></textarea>
+              <textarea class="xxlarge holler" name="status" id="id_status" ></textarea>
               <span class="help-block">Enter a url.</span>
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
@@ -48,7 +48,7 @@
           </form>
           <form id="link_form" class="form-stacked" method="post" action=".">
             <fieldset>
-              <input type="text" class="xlarge" name="url" id="id_url" />
+              <input type="text" class="xlarge holler" name="url" id="id_url" />
               <span class="help-block">Enter a url.</span>
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
@@ -77,10 +77,8 @@
           this.display.create(data);
         }
       }
-      $('#id_status').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
+      $('.holler').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
                                 preview:preview});
-      $('#id_url').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                                                          preview:preview});
     </script>
   </body>
 </html>

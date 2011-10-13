@@ -125,26 +125,49 @@
     display: block;
     margin: 10px auto; }
 
-.item .thumbnail {
-  margin: 5px 10px 10px 0;
-  width: 105px;
-  float: left; }
-  .item .thumbnail a {
-    display: table-cell;
-    width: 100px;
-    height: 75px;
-    overflow: hidden;
-    background-color: black;
-    vertical-align: middle;
-    position: relative;
-    text-align: center; }
-  .item .thumbnail img {
-    max-width: 100px;
-    vertical-align: middle; }
-.item .meta {
+.item {
+  margin: 10px 0;
+  border-top: 1px solid #DDD;
+  padding: 10px 0; }
+  .item .thumbnail {
+    margin: 5px 10px 10px 0;
+    width: 105px;
+    float: left; }
+    .item .thumbnail a {
+      display: table-cell;
+      width: 100px;
+      height: 75px;
+      overflow: hidden;
+      background-color: black;
+      vertical-align: middle;
+      position: relative;
+      text-align: center; }
+    .item .thumbnail img {
+      max-width: 100px;
+      vertical-align: middle; }
+  .item .attributes {
+    margin: 0 0 0 115px; }
+  .item .meta {
+    display: block; }
+    .item .meta .favicon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin: 0 3px 0 0; }
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0; }
+
+.clearfix {
+  display: inline-block; }
+
+html[xmlns] .clearfix {
   display: block; }
-  .item .meta .favicon {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin: 0 3px 0 0; }
+
+* html .clearfix {
+  height: 1%; }

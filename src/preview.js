@@ -200,7 +200,7 @@ function Preview(elem, options){
       // If we already looked for a url, there will be an original_url hidden
       // input that we should look for and compare values. If they are the
       // same we will ignore.
-      var original_url = $('#id_original_url').val();
+      var original_url = this.form.find('#id_original_url').val();
       if (original_url == encodeURIComponent(url)) return true;
 
       //Tells the loaded to start

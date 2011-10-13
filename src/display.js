@@ -13,19 +13,20 @@ function Display(display){
     templates : {'small' : [
       '<div class="item">',
         '<div class="thumbnail">',
-          '<a href="{{orginal_url}}">',
+          '<a href="{{original_url}}" target="_blank">',
             '<img title="{{title}}" src="{{thumbnail_url}}"/>',
             '<span class="overlay"></span>',
           '</a>',
         '</div>',
         '<div class="attributes">',
-          '<a class="title" href="{{orginal_url}}">{{title}}</a>',
+          '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
           '<p class="description">{{description}}</p>',
           '<span class="meta">',
             '<img class="favicon" src="{{favicon_url}}"/>',
             '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
           '</span>',
-        '<div>',
+        '</div>',
+        '<div class="clearfix"></div>',
       '</div>'].join('')},
 
     get : function(){

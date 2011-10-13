@@ -196,8 +196,11 @@
   }
 }
 
-
 .item {
+  margin : 10px 0;
+  border-top: 1px solid #DDD;
+  padding: 10px 0;
+  
   .thumbnail {
     margin: 5px 10px 10px 0;
     width: 105px;
@@ -217,6 +220,9 @@
       vertical-align:middle;
     }
   }
+  .attributes {
+    margin: 0 0 0 115px;
+  }
   
   .meta {
     display: block;
@@ -230,4 +236,26 @@
       
     }
   }
+}
+
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+ 
+.clearfix {
+	display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+	display: block;
+}
+ 
+* html .clearfix {
+	height: 1%;
 }
