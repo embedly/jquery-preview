@@ -10,24 +10,44 @@ function Display(display){
     selector : '#feed',
     type : 'small',
     template : null,
-    templates : {'small' : [
-      '<div class="item">',
-        '<div class="thumbnail">',
-          '<a href="{{original_url}}" target="_blank">',
-            '<img title="{{title}}" src="{{thumbnail_url}}"/>',
-            '<span class="overlay"></span>',
-          '</a>',
-        '</div>',
-        '<div class="attributes">',
-          '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
-          '<p class="description">{{description}}</p>',
-          '<span class="meta">',
-            '<img class="favicon" src="{{favicon_url}}"/>',
-            '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
-          '</span>',
-        '</div>',
-        '<div class="clearfix"></div>',
-      '</div>'].join('')},
+    
+    partials : {
+      'thumbnail' : ['<div class="thumbnail {{object_type}}">',
+        '<a href="{{original_url}}" target="_blank">',
+          '<img title="{{title}}" src="{{thumbnail_url}}"/>',
+          '<span class="overlay"></span>',
+        '</a>',
+      '</div>'].join('')
+    },
+    templates : {
+      'small' : [
+        '<div class="item">',
+          '{{>thumbnail}}',
+          '<div class="attributes">',
+            '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
+            '<p class="description">{{description}}</p>',
+            '<span class="meta">',
+              '<img class="favicon" src="{{favicon_url}}"/>',
+              '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+            '</span>',
+          '</div>',
+          '<div class="clearfix"></div>',
+        '</div>'].join(''),
+      'status' :[
+        '<div class="item">',
+          '<div class="status">{{{status_linked}}}</div>',
+          '{{>thumbnail}}',
+          '<div class="attributes">',
+            '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
+            '<p class="description">{{description}}</p>',
+            '<span class="meta">',
+              '<img class="favicon" src="{{favicon_url}}"/>',
+              '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+            '</span>',
+          '</div>',
+          '<div class="clearfix"></div>',
+        '</div>'].join('')
+    },
 
     get : function(){
       
@@ -38,11 +58,19 @@ function Display(display){
     },
     // Will do something with this later.
     toView : function(obj){
+      if (obj.hasOwnProperty('status')){
+        obj['status_linked'] = linkify(obj['status']);
+      }      
       return obj;
     },
     // Will do something with this later.
     toPartials : function(obj){
-      return null;
+      var p = $.extend(true, {}, this.partials);
+      
+      if (!obj.thumbnail_url){
+        p['thumbnail'] = '';
+      }
+      return p;
     },
     //Creates a feed object based on the obj we pass back.
     create : function(obj){
@@ -67,12 +95,21 @@ function Display(display){
     },
     play : function(e){
     
+    },
+    bind : function(){
+      $('.thumbnail.video a, .thumbnail.rich a').live('click', function(e){
+        e.preventDefault();
+        var preview = $(this).parents('.item').data('preview');
+        $(this).parents('.item').replaceWith(preview['html']);
+      }); 
     }
   }
 
   _.extend(Display, display);
 
   _.bindAll(Display);
+
+  Display.bind();
 
   return Display;
 }

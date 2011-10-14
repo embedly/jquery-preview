@@ -127,6 +127,7 @@ function Selector(form, selector){
     // To View. Only exists to be overwritten basiclly.
     toView : function(obj){
       obj['id'] = this.id;
+
       return obj;
     },
     toPartials : function(obj){
@@ -254,7 +255,8 @@ function Selector(form, selector){
       }); 
     },
     update : function(e){
-      $('#'+this.id+' .'+$(e.target).attr('name')).text($(e.target).val());
+
+      this.elem.find('.'+$(e.target).attr('name')).text($(e.target).val());
     },
     // Binds the correct events for the controls.
     bind : function(){  

@@ -20,7 +20,7 @@ function Preview(elem, options){
     
     // What attrs we are going to use.
     display_attrs : ['type', 'original_url', 'url', 'title', 'description', 'favicon_url', 
-          'provider_url', 'provider_display', 'safe', 'html', 'thumbnail_url'],
+          'provider_url', 'provider_display', 'safe', 'html', 'thumbnail_url', 'object_type'],
 
     default_data : {},
     debug : false,
@@ -61,6 +61,9 @@ function Preview(elem, options){
         
         // Sets up display
         this.display = Display(this.options.display);
+        
+        
+        //this.display.bind();
 
         // Overwrites any funtions
         _.extend(this, this.options.preview)
@@ -141,11 +144,32 @@ function Preview(elem, options){
       //Sets all the data to a hidden inputs for the post.
       var form = this.form;
       _.each(this.display_attrs, function(n){
+        
+        var v = null;
+        
+        // Object type let's us know what we are working with. 
+        if (n == 'object_type'){
+          if (obj.hasOwnProperty('object') && obj['object'].hasOwnProperty('type')){
+            v = obj['object']['type'];
+          } else{
+            v = 'link';
+          } 
+        }
+        else if (n == 'html'){
+          if (obj.hasOwnProperty('object') && obj['object'].hasOwnProperty('html')){
+            v = obj['object']['html'];
+          }
+        }
+        else{
+          v = obj.hasOwnProperty(n) && obj[n] ? encodeURIComponent(obj[n]): '';
+        }
+        
+        
         d = {
           name : n,
           type : 'hidden',
           id : 'id_'+n, 
-          value : obj.hasOwnProperty(n) && obj[n] ? encodeURIComponent(obj[n]): ''
+          value : v
         }
   
         // It's possible that the title or description or something else is
@@ -245,12 +269,16 @@ function Preview(elem, options){
     //The submit post back that readys the data for the actual submit.
     _submit : function(e, data){
       var data = {};
-      $('form input').each(function(i, e){
-        var n = $(e).attr('name');
-        if (n !== undefined) data[n] = decodeURIComponent($(e).val());
+      
+      this.form.find('textarea, input').not('input[type="submit"]').each(
+        function(i, e){
+          var n = $(e).attr('name');
+          if (n !== undefined) data[n] = decodeURIComponent($(e).val());
       });
       // Clears the Selector.
       this.selector.clear();
+      
+      // Submits the Event and the Data to the submit function.
       this.submit(e, data);
 
       //Clear the form.
@@ -295,6 +323,7 @@ function Preview(elem, options){
     debug : true,
     wmode : 'opaque',
     words : 30,
+    maxwidth : 560
   }
   var settings = $.extend(defaults, typeof options != "undefined" ? options : {});
 

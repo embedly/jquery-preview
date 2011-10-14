@@ -23,6 +23,7 @@
             <li><a href="link.html">Link</a>
             <li><a href="large.html">Large Link</a>
             <li><a href="rich.html">Rich Link</a>
+            <li><a href="multi.html">Multiple Inputs</a>
           </ul>
         </div>
       </div>
@@ -37,11 +38,11 @@
               <span class="help-block">Enter a url.</span>
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
-            <div id="loading">
+            <div class="loading">
               <img src='../images/loading-rectangle.gif'>  
             </div>
             <!-- Placeholder that tells Preview where to put the selector-->
-            <div id="selector"></div>
+            <div class="selector"></div>
             <div class="actions">
               <input id="id_submit" type="submit" class="btn primary" value="Share"/>
             </div>
@@ -62,8 +63,12 @@
           this.display.create(data);
         }
       }
+      var display = {
+        type : 'status' 
+      }
       $('#id_status').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                                preview:preview});
+                                preview:preview,
+                                display:display});
     </script>
   </body>
 </html>

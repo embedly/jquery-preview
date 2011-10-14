@@ -200,9 +200,13 @@
   margin : 10px 0;
   border-top: 1px solid #DDD;
   padding: 10px 0;
-  
+  .status{
+    line-height: 1.2em;
+    margin: 10px 0;
+    padding: 5px;
+  }
   .thumbnail {
-    margin: 5px 10px 10px 0;
+    margin: 10px 10px 10px 5px;
     width: 105px;
     float: left;
     a {
@@ -210,7 +214,7 @@
       width: 100px;
       height: 75px;
       overflow: hidden;
-      background-color: black;
+      background-color: #DDD;
       vertical-align: middle;
       position:relative;
       text-align: center;
@@ -219,9 +223,20 @@
       max-width: 100px;
       vertical-align:middle;
     }
+    &.video, &.rich {
+      .overlay {
+        background-image: url(images/play.png);
+        width: 26px;
+        height: 25px;
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+      }
+    }
   }
   .attributes {
-    margin: 0 0 0 115px;
+    background-color: #EFEFEF;
+    padding: 5px 5px 5px 115px;
   }
   
   .meta {
