@@ -62,9 +62,6 @@ function Preview(elem, options){
         
         // Sets up display
         this.display = Display(this.options.display);
-        
-        
-        //this.display.bind();
 
         // Overwrites any funtions
         _.extend(this, this.options.preview)
@@ -311,17 +308,21 @@ function Preview(elem, options){
         success : this.display.create
       });
     },
+    //Bind a bunch of functions.
     bind : function(){
-      //Bind a bunch of functions.
       log('Starting Bind');
+
+      // Bind Keyup, Blur and Paste
+      elem.bind('blur', this.fetch);
       elem.bind('keyup', this.keyUp);
-      
-      //
-      elem.live('blur', this.fetch);
       elem.bind('paste', this.paste);
 
       //Bind Submit
       this.form.bind('submit', this._submit);
+
+      // the event `attach` tells fetch to run on the input.
+      elem.bind('attach', this.fetch);
+      
     }
   }
 

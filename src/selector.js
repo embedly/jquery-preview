@@ -101,14 +101,19 @@ function Selector(form, selector){
 
       // If the developer told us where to put the selector, put it there.
       if (form.find(this.selector).length){
-        form.find(this.selector).replaceWith(html)
+        this.elem =form.find(this.selector).replaceWith(html)
       } else {
-        form.append(html);
+        this.elem =form.append(html);
       }
+      
       
       // We need to keep track of the selector elem so we don't have to do
       // form.find(this.selector) all the time.
       this.elem = form.find(this.selector);
+      
+      
+      // Selector may be hidden. Let's show it.
+      this.elem.show();
 
       // If there are images, set the information in the form.
       if (obj.images.length > 0){
@@ -156,6 +161,7 @@ function Selector(form, selector){
     clear : function(e){
       if (e !== undefined) e.preventDefault();
       this.elem.html('');
+      this.elem.hide();
       form.find('input[type="hidden"].preview_input').remove();
     },
     scroll : function(dir, e){
@@ -212,6 +218,9 @@ function Selector(form, selector){
       //Set the focus on this element
       elem.focus();
 
+      // Sets up for another bind.
+      var t = this.title;
+
       // puts the a tag back on blur. It's a single bind so it will be
       // trashed on blur.
       elem.one('blur', function(e){
@@ -219,12 +228,15 @@ function Selector(form, selector){
         // Sets the New Title in the hidden inputs
         form.find('#id_title').val(encodeURIComponent(elem.val()));
         
-        $(e.target).replaceWith($('<a/>').attr(
-          {
+        var a = $('<a/>').attr({
             'class':'title',
             'href' : '#'
-          }).text(elem.val())
-        );
+          }).text(elem.val());
+        
+        $(e.target).replaceWith(a);
+  
+        // Bind it back again.
+        a.bind('click', t);
       });
     },
     //Same as before, but for description
@@ -240,36 +252,42 @@ function Selector(form, selector){
       //Set the focus on this element
       elem.focus();
 
+      // Sets up for another bind.
+      var d = this.description;
+
       // puts the a tag back on blur. It's a single bind so it will be
       // trashed on blur.
       elem.one('blur', function(e){
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
-        form.find('#id_title').val(encodeURIComponent(elem.val()));
+        form.find('#id_description').val(encodeURIComponent(elem.val()));
 
-        $(e.target).replaceWith($('<a/>').attr({
+        var a = $('<a/>').attr({
             'class':'description',
             'href' : '#'
-          }).text(elem.val())
-        );
-      }); 
+          }).text(elem.val());
+
+        $(e.target).replaceWith(a);
+        
+        // Bind it back again.
+        a.bind('click', d);
+               
+      });
     },
     update : function(e){
-
       this.elem.find('.'+$(e.target).attr('name')).text($(e.target).val());
     },
     // Binds the correct events for the controls.
-    bind : function(){  
-
+    bind : function(){
       // Thumbnail Controls
       this.elem.find('.left').bind('click', _.bind(this.scroll, {}, 'left'));
       this.elem.find('.right').bind('click', _.bind(this.scroll, {}, 'right'));
       this.elem.find('.nothumb').bind('click', this.nothumb);
       
       // Binds the close button.
-      this.elem.find('.action .close').live('click', this.clear);
-      this.elem.live('mouseenter mouseleave', function(){
-        this.elem.find('.action').toggle();
+      this.elem.find('.action .close').bind('click', this.clear);
+      this.elem.bind('mouseenter mouseleave', function(){
+        $(this).find('.action').toggle();
       });
       
       //Show hide the controls.
@@ -280,8 +298,8 @@ function Selector(form, selector){
       });
 
       //Edit Title and Description handlers.
-      this.elem.find('.title').live('click', this.title);
-      this.elem.find('.description').live('click', this.description);
+      this.elem.find('.title').bind('click', this.title);
+      this.elem.find('.description').bind('click', this.description);
     }
   }
 

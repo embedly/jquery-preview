@@ -1,11 +1,12 @@
 .selector {
-
   margin: 10px auto;
   position:relative;
-
+  display: none;
+  min-height: 85px;
   .thumbnail{
     float: left;
     margin:0 10px 0 0;
+    position: relative;
     .items{
       position: relative;
       overflow:hidden;
@@ -143,6 +144,12 @@
           left:16px;
         }
       }
+    }
+  }
+  
+  &.small {
+    .attributes {
+      margin: 0 0 0 110px;
     }
   }
   
