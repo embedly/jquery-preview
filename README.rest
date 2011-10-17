@@ -1,11 +1,12 @@
-Embedly Preview
-===============
-Embedly Preview is a jQuery plugin that allows developers to create tools that
-enable users to share links with rich previews attached. This method of letting
-users select thumbnails, edit title and description has been adopted as the
-norm across the web. This plugin allows users to easily implement this
-functionality without building the entire infrastructure themselves, instead
-relying on on Embedly to generate the metadata.
+jQuery Preview
+==============
+jQuery Preview is a plugin by `Embedly <http://embed.ly>`_ that allows
+developers to create tools that enable users to share links with rich previews
+attached. This method of letting users select thumbnails, edit title and
+description has been adopted as the norm across the web. This plugin allows
+developers to easily implement this functionality without building the entire
+infrastructure themselves, instead relying on on Embedly to generate the
+metadata.
 
 We have made this plugin overly verbose and infinitely customizable. Our goal
 is not to dictate design, merely give a set of tools to make it easy to create
@@ -13,10 +14,10 @@ a custom experience. There are X different demos that you should take a look at
 before getting started. It will give you a quick overview of what you should be
 able to build.
 
-* `Link <http://embedly.github.com/embedly-jquery-preview/demo/link.html>`_
-* `Status <http://embedly.github.com/embedly-jquery-preview/demo/status.html>`_
-* `Large Embeds <http://embedly.github.com/embedly-jquery-preview/demo/large.html>`_
-* `Rich Embeds <http://embedly.github.com/embedly-jquery-preview/demo/rich.html>`_
+* `Link <http://embedly.github.com/jquery-preview/demo/link.html>`_
+* `Status <http://embedly.github.com/jquery-preview/demo/status.html>`_
+* `Large Embeds <http://embedly.github.com/jquery-preview/demo/large.html>`_
+* `Rich Embeds <http://embedly.github.com/jquery-preview/demo/rich.html>`_
 
 Basic Setup
 -----------
@@ -36,22 +37,22 @@ To get started you need to throw `jQuery <http://jquery.com/>`_, `Underscore.js
 Next set up a simple form that allows a user to input link::
 
     <form action="/update" method="POST">
-        <textarea id="status"></textarea>
+        <input id="url" type="text" name="url"/>
     </form>
     
 You then need to tell preview what field to listen to::
 
     <script>
-        $('#status').preview({key:'your_embedly_key'})
+        $('#url').preview({key:'your_embedly_key'})
     </script>
 
-And you are done setting up the front end solution for Embedly Preview. The
+And you are done setting up the front end solution for jQuery Preview. The
 rest of this document will go into how to customize Preview.
 
 How it Works
 ------------
-The plugin works by listening to the field on ``paste``, ``keyup`` and ``blur``
-. If a URL is entered a call is made to Embedly's `Preview
+The plugin works by listening to the field on ``paste``, ``keyup``, ``attach``
+and ``blur``. If a URL is entered a call is made to Embedly's `Preview
 <http://embed.ly/docs/endpoints/1/preview>`_ endpoint and the result is then
 passed to the Selector object and all the elements are added to the form as 
 hidden inputs. The Selector is then rendered using a Mustache template. The
@@ -91,13 +92,12 @@ Functions
             this.display.create(data);
           }
         }
-        $('#id_url').preview({preview:preview});
+        $('#url').preview({preview:preview});
 
 ``bind``
     Called when the preview is set up to bind all the listeners to the file and
-    the form. If you want to listen on custom events you can call it like so.
-    
-        
+    the form. If you want to listen on custom events you can call it like so::
+
         var preview = {
           bind : function(){
             // Instead of listening to the field, wait for the user to click
@@ -109,7 +109,35 @@ Functions
             $(this.form).bind('submit', this._submit);
           }
         }
-        $('#id_url').preview({preview:preview});
+        $('#url').preview({preview:preview});
+
+Using Attach
+""""""""""""
+If you missed it jQuery Preview listens to a special event ``attach`` on the
+field. If you wish to have a two step process of attaching the link to the
+status and then sharing the link you can set something up like this::
+
+
+    <form id="preview_form" class="form-stacked" method="post" action=".">
+        <input type="text" class="xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336" />
+        <button id="id_attach" class="btn primary">Attach</button>
+    </form>
+    <script>
+    $('#id_attach').bind('click', function(e){
+        e.preventDefault();
+        $('#id_url').trigger('attach');
+
+        $('#id_attach').replaceWith($('<input/>').attr({
+          'id' : 'id_submit',
+          'class' : 'btn primary',
+          'value' : 'Share',
+          'type' : 'submit'
+        }));
+    });
+    </script>
+
+This triggers the ``attach`` event on the field and that tells Preview to go
+fetch the url and show it in the Selector.
 
 Selector
 ^^^^^^^^
@@ -121,9 +149,9 @@ Attributes
 ``type``
     There are 3 different built-in types that a developer can choose from
     
-    * `small <http://embedly.github.com/embedly-jquery-preview/demo/small.html>`_
-    * `large <http://embedly.github.com/embedly-jquery-preview/demo/large.html>`_
-    * `rich <http://embedly.github.com/embedly-jquery-preview/demo/rich.html>`_
+    * `small <http://embedly.github.com/jquery-preview/demo/link.html>`_
+    * `large <http://embedly.github.com/jquery-preview/demo/large.html>`_
+    * `rich <http://embedly.github.com/jquery-preview/demo/rich.html>`_
 
     Each allows for a different type of feel. We suggest using one of them to
     get started and customizing from there.
@@ -166,13 +194,13 @@ Functions
     Allows users to click on the title in the selector and edit the text. It is
     set up like this in the ``bind`` function::
     
-        $('#selector .title').live('click', this.title);
+        $('#selector .title').bind('click', this.title);
 
 ``description``
     Allows users to click on the description in the selector and edit the text.
     It is set up like this in the ``bind`` function::
     
-        $('#selector .description').live('click', this.description);
+        $('#selector .description').bind('click', this.description);
 
 
 ``scroll``
@@ -189,9 +217,8 @@ Functions
     
         $('#selector .nothumb').bind('click', this.nothumb);
 
-
 ``clear``
-    Clears the selector and all the hidden inputs.
+    Clears the selector, hides it and all the hidden inputs.
     
 ``update``
     Update can be set to an input field to also update the value in the
@@ -225,21 +252,63 @@ Attributes
     default one looks like this::
     
         <div class="item">
-        <div class="thumbnail">
-          <a href="{{orginal_url}}">
-            <img title="{{title}}" src="{{thumbnail_url}}"/>
-            <span class="overlay"></span>
-          </a>
+          <div class="thumbnail">
+            <a href="{{orginal_url}}">
+              <img title="{{title}}" src="{{thumbnail_url}}"/>
+              <span class="overlay"></span>
+            </a>
+          </div>
+          <div class="attributes">
+            <a class="title" href="{{orginal_url}}">{{title}}</a>
+            <p class="description">{{description}}</p>
+            <span class="meta">
+              <img class="favicon" src="{{favicon_url}}"/>
+              <a class="provider" href="{{provider_url}}">{{provider_display}}</a>
+            </span>
+          <div>
         </div>
-        <div class="attributes">
-          <a class="title" href="{{orginal_url}}">{{title}}</a>
-          <p class="description">{{description}}</p>
-          <span class="meta">
-            '<img class="favicon" src="{{favicon_url}}"/>
-            '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>
-          </span>
-        <div>
-      </div>
+
+    By default Preview passes the following attributes to the template
+
+    * ``type``
+    * ``original_url``
+    * ``url``
+    * ``title``
+    * ``description``
+    * ``favicon_url``
+    * ``provider_url``
+    * ``provider_display``
+    * ``safe``
+    * ``html``
+    * ``thumbnail_url``
+    * ``object_type``
+    * ``image_url``
+
+    All these responses are defined `here
+    <http://embed.ly/docs/endpoints/1/preview#response>`_ except for the
+    following:
+
+    ``object_type``
+        The oEmbed of the preview response. Will be either ``video``,
+        ``rich``, ``photo`` or ``link``. We use this to decide weather to
+        embed the ``html`` attribute.
+
+    ``image_url`` 
+        If the ``type`` is ``image`` or the ``object_type`` is ``photo`` an
+        ``image_url`` will be the full sized image URL.
+
+    ``thumbnail_url``
+        The URL that the user selected as the thumbnail for the embed.
+
+    ``template`` can also be a dictionary if you want to use different
+    templates for different ``object_type``s. For instance::
+
+        template : {
+          'video' : 'Video Template',
+          'rich' : 'Rich Template',
+          'photo' : 'Photo Template',
+          'link' : 'Link Template'
+        }
 
 
 ``selector``
@@ -250,7 +319,6 @@ Functions
 """""""""
 
 ``create``
-
     Uses Mustache to render the template chosen by the developer. Don't
     overwrite this function unless you know what you are doing.
 
