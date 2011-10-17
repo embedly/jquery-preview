@@ -29,6 +29,11 @@
   .selector textarea {
     width: 420px;
     margin: 5px 0; }
+  .selector .media iframe, .selector .media object, .selector .media embed, .selector .media img {
+    margin: 10px auto;
+    display: block; }
+  .selector .media img {
+    max-width: 500px; }
   .selector.large .title {
     font-size: 14px;
     margin: 0 0 10px;
@@ -129,6 +134,17 @@
   margin: 10px 0;
   border-top: 1px solid #DDD;
   padding: 10px 0; }
+  .item.video .media iframe, .item.video .media object, .item.video .media embed, .item.video .media img, .item.rich .media iframe, .item.rich .media object, .item.rich .media embed, .item.rich .media img, .item.photo .media iframe, .item.photo .media object, .item.photo .media embed, .item.photo .media img {
+    margin: 10px auto;
+    display: block; }
+  .item.video .media img, .item.rich .media img, .item.photo .media img {
+    max-width: 560px; }
+  .item.video .title, .item.rich .title, .item.photo .title {
+    margin: 10px 0;
+    display: block;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333; }
   .item .status {
     line-height: 1.2em;
     margin: 10px 0;
@@ -148,7 +164,8 @@
       text-align: center; }
     .item .thumbnail img {
       max-width: 100px;
-      vertical-align: middle; }
+      vertical-align: middle;
+      max-height: 75px; }
     .item .thumbnail.video .overlay, .item .thumbnail.rich .overlay {
       background-image: url(images/play.png);
       width: 26px;
@@ -158,7 +175,7 @@
       bottom: 5px; }
   .item .attributes {
     background-color: #EFEFEF;
-    padding: 5px 5px 5px 115px; }
+    padding: 5px; }
   .item .meta {
     display: block; }
     .item .meta .favicon {

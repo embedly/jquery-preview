@@ -181,7 +181,7 @@ function Selector(form, selector){
       
       // rich has seperate rules when there is an obj. Kind of a lame hack, but
       // it works the best for us right now.
-      if (this.type == 'rich' && obj.object && obj.object.type != 'link'){
+      if (this.type == 'rich' && obj.object && obj.object.type && obj.object.type != 'link'){
         p['images_small'] = '';
         p['attributes'] = p['attributes_large'];
       }
@@ -375,21 +375,66 @@ function Display(display){
             '</span>',
           '</div>',
           '<div class="clearfix"></div>',
-        '</div>'].join('')
-    },
-
-    get : function(){
-      
-      
-    },
-    remove : function(){
-      
+        '</div>'].join(''),
+      'rich' :  {
+          'video' :['<div class="item video">',
+            '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
+            '{{>object}}',
+            '<div class="attributes">',
+              '<p class="description">{{description}}</p>',
+              '<span class="meta">',
+                '<img class="favicon" src="{{favicon_url}}"/>',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+            '<div class="clearfix"></div>',
+          '</div>'].join(''),
+          'rich' : ['<div class="item rich">',
+            '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
+            '{{>object}}',
+            '<div class="attributes">',
+              '<p class="description">{{description}}</p>',
+              '<span class="meta">',
+                '<img class="favicon" src="{{favicon_url}}"/>',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+            '<div class="clearfix"></div>',
+          '</div>'].join(''),
+          'photo' : ['<div class="item photo">',
+            '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
+            '{{>object}}',
+            '<div class="attributes">',
+              '<p class="description">{{description}}</p>',
+              '<span class="meta">',
+                '<img class="favicon" src="{{favicon_url}}"/>',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+            '<div class="clearfix"></div>',
+          '</div>'].join(''),
+          'link': ['<div class="item link">',
+            '{{>thumbnail}}',
+            '<div class="attributes">',
+              '<a class="title" href="{{original_url}}" target="_blank">{{title}}</a>',
+              '<p class="description">{{description}}</p>',
+              '<span class="meta">',
+                '<img class="favicon" src="{{favicon_url}}"/>',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+            '<div class="clearfix"></div>',
+          '</div>'].join('')
+      }
     },
     // Will do something with this later.
     toView : function(obj){
       if (obj.hasOwnProperty('status')){
         obj['status_linked'] = linkify(obj['status']);
-      }      
+      }
+
+      
+
       return obj;
     },
     // Will do something with this later.
@@ -399,23 +444,41 @@ function Display(display){
       if (!obj.thumbnail_url){
         p['thumbnail'] = '';
       }
+      
+      // Set up the object if it's there.
+      p['object'] = '';
+      if (obj.object_type == 'video' || obj.object_type == 'rich'){
+        p['object'] = '<div class="media video">{{{html}}}</div>';
+      } else if (obj.object_type == 'photo' || obj.type == 'image'){
+        p['object'] = '<div class="media image"><img alt="{{title}}" src="{{image_url}}"/></div>';
+      }
+      
+      if (this.type == 'rich' && obj.object_type != 'link'){
+        p['thumbnail'] = '';
+      }
+
       return p;
     },
     //Creates a feed object based on the obj we pass back.
     create : function(obj){
       var template = null;
-      
+
       // If the developer gives us a template use it.
       if (this.template !== null){
         template = this.template;
       } else{
         template = this.templates[this.type];
       }
-  
+
+      // A template can be a dict of all the use cases.
+      if (_.isObject(template)){
+        template = template[obj.object_type];
+      }
+
       // Allows us to overwrite the view and partials.
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
-  
+
       html = Mustache.to_html(template, view, partials);      
 
       var e = $(this.selector).prepend(html).children().first();
@@ -463,8 +526,9 @@ function Preview(elem, options){
       'videosrc', 'allowscripts', 'words', 'chars'],
     
     // What attrs we are going to use.
-    display_attrs : ['type', 'original_url', 'url', 'title', 'description', 'favicon_url', 
-          'provider_url', 'provider_display', 'safe', 'html', 'thumbnail_url', 'object_type'],
+    display_attrs : ['type', 'original_url', 'url', 'title', 'description',
+      'favicon_url', 'provider_url', 'provider_display', 'safe', 'html',
+      'thumbnail_url', 'object_type', 'image_url'],
 
     default_data : {},
     debug : false,
@@ -599,9 +663,18 @@ function Preview(elem, options){
             v = 'link';
           } 
         }
+        // Sets up HTML for the video or rich type.
         else if (n == 'html'){
-          if (obj.hasOwnProperty('object') && obj['object'].hasOwnProperty('html')){
-            v = obj['object']['html'];
+          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('html')){
+            v = obj.object.html;
+          }
+        }
+        // Set up the image URL for previews of the ful image.
+        else if (n == 'image_url'){
+          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('type') && obj.object.type == 'photo'){
+            v = obj.object.url;
+          } else if (obj.type == 'image'){
+            v = obj.url;
           }
         }
         else{

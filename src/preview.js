@@ -19,8 +19,9 @@ function Preview(elem, options){
       'videosrc', 'allowscripts', 'words', 'chars'],
     
     // What attrs we are going to use.
-    display_attrs : ['type', 'original_url', 'url', 'title', 'description', 'favicon_url', 
-          'provider_url', 'provider_display', 'safe', 'html', 'thumbnail_url', 'object_type'],
+    display_attrs : ['type', 'original_url', 'url', 'title', 'description',
+      'favicon_url', 'provider_url', 'provider_display', 'safe', 'html',
+      'thumbnail_url', 'object_type', 'image_url'],
 
     default_data : {},
     debug : false,
@@ -155,9 +156,18 @@ function Preview(elem, options){
             v = 'link';
           } 
         }
+        // Sets up HTML for the video or rich type.
         else if (n == 'html'){
-          if (obj.hasOwnProperty('object') && obj['object'].hasOwnProperty('html')){
-            v = obj['object']['html'];
+          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('html')){
+            v = obj.object.html;
+          }
+        }
+        // Set up the image URL for previews of the ful image.
+        else if (n == 'image_url'){
+          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('type') && obj.object.type == 'photo'){
+            v = obj.object.url;
+          } else if (obj.type == 'image'){
+            v = obj.url;
           }
         }
         else{

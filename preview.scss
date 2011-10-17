@@ -41,6 +41,15 @@
     width: 420px;
     margin: 5px 0;
   }
+  .media {
+    iframe, object, embed, img {
+      margin: 10px auto;
+      display: block;
+    }
+    img {
+      max-width: 500px;
+    }
+  }
   
   &.large {
     .title {
@@ -200,6 +209,26 @@
   margin : 10px 0;
   border-top: 1px solid #DDD;
   padding: 10px 0;
+  
+  &.video, &.rich, &.photo {
+    .media {
+      iframe, object, embed, img {
+        margin: 10px auto;
+        display: block;
+      }
+      img {
+        max-width: 560px;
+      }
+    }
+    .title {
+      margin: 10px 0;
+      display: block;
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #333;
+    }
+  }
+  
   .status{
     line-height: 1.2em;
     margin: 10px 0;
@@ -222,6 +251,7 @@
     img {
       max-width: 100px;
       vertical-align:middle;
+      max-height: 75px;
     }
     &.video, &.rich {
       .overlay {
@@ -236,7 +266,7 @@
   }
   .attributes {
     background-color: #EFEFEF;
-    padding: 5px 5px 5px 115px;
+    padding: 5px;
   }
   
   .meta {

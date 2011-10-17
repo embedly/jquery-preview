@@ -145,7 +145,7 @@ function Selector(form, selector){
       
       // rich has seperate rules when there is an obj. Kind of a lame hack, but
       // it works the best for us right now.
-      if (this.type == 'rich' && obj.object && obj.object.type != 'link'){
+      if (this.type == 'rich' && obj.object && obj.object.type && obj.object.type != 'link'){
         p['images_small'] = '';
         p['attributes'] = p['attributes_large'];
       }
