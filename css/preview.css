@@ -172,7 +172,7 @@
       vertical-align: middle;
       max-height: 75px; }
     .item .thumbnail.video .overlay, .item .thumbnail.rich .overlay {
-      background-image: url(images/play.png);
+      background-image: url(../images/play.png);
       width: 26px;
       height: 25px;
       position: absolute;
