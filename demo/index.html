@@ -27,7 +27,43 @@
         line-height: 20px;
       }
       #feed {
-        margin: 0 0 0 20px;
+        margin:0 100px 0 120px;
+      }
+      
+      #doc {
+        display: block;
+        width: 90px;
+        margin: 20px 20px 0 0;
+        float: right;
+      }
+      
+      #preview_form {
+        position: relative;
+        margin: 0 0 0 100px;
+        padding-top:35px;
+      }
+      
+      .arrow {
+        width:200px;
+        position: absolute;
+        top: 0;
+        right: 16px;
+      }
+      .arrow p {
+        position: absolute;
+        top: 0;
+        display:block;
+        right:75px;
+        line-height: 20px;
+      }
+      .arrow img {
+        position: absolute;
+        display:block;
+        top: 0;
+        right:45px;
+      }
+      .item .attributes {
+        padding: 0 0 0 120px;
       }
       
     </style>
@@ -50,16 +86,24 @@
     <div class="container">
       <div class="row">
         <div class="hero-unit"> 
-          <h1> jQuery Preview </h1>
+          <h1> jQuery Preview <a id="doc" href="https://github.com/embedly/jquery-preview" class="btn primary">Get the Code &raquo;</a></h1>
           <p>
-            <a href="https://github.com/embedly/embedly-jquery-preview">jQuery Preview</a>
+            <a href="https://github.com/embedly/jquery-preview">jQuery Preview</a>
             is a plugin that allows users to preview URLs before
             submitting them to be saved by an application. Facebook, Google+
             and Yammer are all examples of tools with this functionality.
+            
+            
+            <div class="clearfix"></div>
           </p>
           
           <form id="preview_form" class="form-stacked" method="post" action=".">
+            <div class="arrow">
+              <p>Try it out.</p>
+              <img src='../images/arrow.png'>  
+            </div>
             <fieldset>
+              <div class="clearfix"></div>
               <input type="text" class="xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336" />
               <button id="id_attach" class="btn primary">Attach</button>
               <span class="help-block">Enter your own url or select attach.</span>
@@ -71,8 +115,11 @@
             <!-- Placeholder that tells Preview where to put the selector-->
             <div class="selector"></div>
           </form>
-          
           <div id="feed"></div>
+          
+          
+          
+          
         </div>
         <div class="span12 columns offset1">
           <p>
@@ -98,7 +145,7 @@
           </p>
           
           <p>
-            The documentation and code is available on Embedly's Github here: <a href="https://github.com/embedly/embedly-jquery-preview">github.com/embedly/embedly-jquery-preview</a>.
+            The documentation and code is available on Embedly's Github here: <a href="https://github.com/embedly/jquery-preview">github.com/embedly/jquery-preview</a>.
           </p>
           
           
@@ -125,6 +172,8 @@
       $('#id_attach').bind('click', function(e){
         e.preventDefault();
         $('#id_url').trigger('attach');
+        
+        $('.arrow p').text('Now Share it!')
         
         $('#id_attach').replaceWith($('<input/>').attr({
           'id' : 'id_submit',
