@@ -6,10 +6,10 @@ import os
 import glob
 import shutil
 from time import sleep
-
+from docutils.core import publish_string
 from optparse import OptionParser
 
-DIR_PATH = os.path.dirname(__file__)
+DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 SRC_PATH = os.path.join(DIR_PATH, 'src/')
 
 def build():
@@ -81,10 +81,24 @@ if __name__ == '__main__':
                       dest="yui",
                       default=None,
                       help="Path to the YUI Compressor",)
+    
+    parser.add_option("--html",
+                    action="store_true",
+                    dest="html",
+                    default=False,
+                    help="Path to the YUI Compressor",)
 
     (options, args) = parser.parse_args()
 
-    if options.build:
+
+    if options.html:
+        # Don't know where else to put this, but prints out an HTML version of
+        # the README for index.html
+        f = open(os.path.join(DIR_PATH, 'README.rest'), 'r')
+        print publish_string(f.read(), writer_name='html')
+        f.close()
+
+    elif options.build:
         
         # Make Sure we have YUI
         if not options.yui:
@@ -119,9 +133,6 @@ if __name__ == '__main__':
         build()
 
         # Copy Over Files.
-        if not DIR_PATH:
-            DIR_PATH = '.'
-        
         shutil.copyfile('%s/jquery.preview.js' % DIR_PATH, '%s/jquery.preview.js' % build_path)
         shutil.copyfile('%s/jquery.preview.full.js' % DIR_PATH, '%s/jquery.preview.full.js' % build_path)
 

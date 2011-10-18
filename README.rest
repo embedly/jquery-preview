@@ -18,20 +18,35 @@ able to build.
 * `Status <http://embedly.github.com/jquery-preview/demo/status.html>`_
 * `Large Embeds <http://embedly.github.com/jquery-preview/demo/large.html>`_
 * `Rich Embeds <http://embedly.github.com/jquery-preview/demo/rich.html>`_
+* `Multipe Inputs <http://embedly.github.com/jquery-preview/demo/multi.html>`_
 
 Basic Setup
 -----------
-To get started you need to throw `jQuery <http://jquery.com/>`_, `Underscore.js
-<http://documentcloud.github.com/underscore/>`_, `Mustache.js
-<https://github.com/janl/mustache.js/>`_, jquery.preview.js and the preview.css
-.::
+To get started you need to put `jQuery <http://jquery.com/>`_, 
+`jquery.preview.full.js
+<https://github.com/embedly/jquery-preview/blob/master/jquery.preview.full.js>`_
+and `preview.css
+<https://github.com/embedly/jquery-preview/blob/master/css/preview.css>`_. into
+the ``head`` of your page::
 
     <head>
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-      <script src="lib/underscore-min.js" type="text/javascript"></script>
+      <script src="jquery.preview.full.js" type="text/javascript"></script>
+      <link rel="stylesheet" href="css/preview.css" />
+    </head>
+
+jquery.preview.full.js bundles `Underscore.js
+<http://documentcloud.github.com/underscore/>`_ and `Mustache.js
+<https://github.com/janl/mustache.js/>`_ in with jquery.preview.js. If you
+already have or use these two libs you can see up the ``head`` of the document
+like so::
+
+    <head>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
       <script src="lib/mustache.js" type="text/javascript"></script>
+      <script src="lib/underscore.js" type="text/javascript"></script>
       <script src="jquery.preview.js" type="text/javascript"></script>
-      <link rel="stylesheet" href="preview.css" />
+      <link rel="stylesheet" href="css/preview.css" />
     </head>
 
 Next set up a simple form that allows a user to input link::
@@ -119,8 +134,8 @@ status and then sharing the link you can set something up like this::
 
 
     <form id="preview_form" class="form-stacked" method="post" action=".">
-        <input type="text" class="xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336" />
-        <button id="id_attach" class="btn primary">Attach</button>
+        <input type="text" name="url" id="id_url" value="http://vimeo.com/18150336" />
+        <button id="id_attach">Attach</button>
     </form>
     <script>
     $('#id_attach').bind('click', function(e){
@@ -129,7 +144,6 @@ status and then sharing the link you can set something up like this::
 
         $('#id_attach').replaceWith($('<input/>').attr({
           'id' : 'id_submit',
-          'class' : 'btn primary',
           'value' : 'Share',
           'type' : 'submit'
         }));
@@ -194,28 +208,28 @@ Functions
     Allows users to click on the title in the selector and edit the text. It is
     set up like this in the ``bind`` function::
     
-        $('#selector .title').bind('click', this.title);
+        $('.selector .title').bind('click', this.title);
 
 ``description``
     Allows users to click on the description in the selector and edit the text.
     It is set up like this in the ``bind`` function::
     
-        $('#selector .description').bind('click', this.description);
+        $('.selector .description').bind('click', this.description);
 
 
 ``scroll``
     Simple logic that scrolls the image left and right in selector. It takes a
     direction (``left`` or ``right``) and an event. We set it up like so::
     
-        $('#selector .left').bind('click', _.bind(this.scroll, {}, 'left'));
-        $('#selector .right').bind('click', _.bind(this.scroll, {}, 'right'));
+        $('.selector .left').bind('click', _.bind(this.scroll, {}, 'left'));
+        $('.selector .right').bind('click', _.bind(this.scroll, {}, 'right'));
 
 
 ``nothumb``
     Logic that tells the form NOT to use a thumbnail when rendering a preview.
     ``bind`` calls it like so::
     
-        $('#selector .nothumb').bind('click', this.nothumb);
+        $('.selector .nothumb').bind('click', this.nothumb);
 
 ``clear``
     Clears the selector, hides it and all the hidden inputs.
@@ -231,7 +245,7 @@ Functions
     
     The element must have a ``name`` attribute of the ``title`` or 
     ``description``.
-    
+
 ``bind``
     Sets the listeners for the above functions. Don't overwrite this function
     unless you know what you are doing.
@@ -246,6 +260,18 @@ Create's a Feed item for a given object.
 
 Attributes
 """"""""""
+
+``type``
+    There are 3 different built-in types that a developer can choose from
+    
+    * `small <http://embedly.github.com/jquery-preview/demo/link.html>`_
+    * `status <http://embedly.github.com/jquery-preview/demo/status.html>`_
+    * `rich <http://embedly.github.com/jquery-preview/demo/rich.html>`_
+
+    Each allows for a different type of feel. We suggest using one of them to
+    get started and customizing from there. The ``status`` type is the same as
+    ``small``, but takes an additional field ``status`` and displays that in
+    the item as well. 
 
 ``template``
     The Mustache template that you would like to use to render the obj. The
@@ -321,6 +347,45 @@ Functions
 ``create``
     Uses Mustache to render the template chosen by the developer. Don't
     overwrite this function unless you know what you are doing.
+
+
+Server Side
+-----------
+When the user submits the link, we must save it and echo it back to the page
+so it can be displayed. The code contains a simple `Tornado
+<http://www.tornadoweb.org/>`_ example of this dance in `app.py
+<https://github.com/embedly/jquery-preview/blob/master/demo/stream/app.py>`_.
+When we set up the form we need to specify where we are going to be making the
+the AJAX post. In this case it's '/update'::
+
+    <form method="post" action="/update">
+      <input type="text" class="xlarge" name="url" id="id_url" />
+      <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+    </form>
+
+We then build a handler to deal with the form data::
+
+    class UpdateHandler(tornado.web.RequestHandler):
+
+        def post(self):
+            #Overly verbose
+            data = {}
+            for name in ['type', 'original_url', 'url', 'title', 'description',
+                'favicon_url', 'provider_url', 'provider_display', 'safe',
+                'html', 'thumbnail_url', 'object_type', 'image_url']:
+                data[name] = self.get_argument(name, None)
+
+            # This also works
+            # data = dict([(k, v[0]) for k, v in self.request.arguments.items()])
+        
+            # Save the data off and return the object that we will pass back.
+            obj = db.save(data)
+
+            # Write a json response
+            self.write(json.dumps(obj))
+
+Once the data is successfully posted the response is passed into the Display
+object to be rendered and displayed.
 
 
 Development

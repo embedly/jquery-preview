@@ -4,7 +4,20 @@ import tornado.ioloop
 import tornado.web
 
 # Going to save the posts in memory just for testing.
-posts = []
+class DB(object):
+    
+    def __init__(self):
+        self.posts = []
+    
+    def save(self,obj):
+        self.posts.append(obj)
+        return obj
+        
+    def all(self):
+        return self.posts
+
+db = DB()
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -12,15 +25,27 @@ class MainHandler(tornado.web.RequestHandler):
 
 class Posts(tornado.web.RequestHandler):
     def get(self):
-        self.write(json.dumps(posts))
+        self.write(json.dumps(db.all()))
 
 
 class UpdateHandler(tornado.web.RequestHandler):
 
     def post(self):
-        p = dict([(k, v[0]) for k, v in self.request.arguments.items()])
-        posts.append(p)
-        self.write(json.dumps(p))
+        #Overly verbose
+        data = {}
+        for name in ['type', 'original_url', 'url', 'title', 'description',
+            'favicon_url', 'provider_url', 'provider_display', 'safe',
+            'html', 'thumbnail_url', 'object_type', 'image_url']:
+            data[name] = self.get_argument(name, None)
+
+        # This also works
+        # data = dict([(k, v[0]) for k, v in self.request.arguments.items()])
+        
+        # Save the data off and return the object that we will pass back.
+        obj = db.save(data)
+
+        # Write a json response
+        self.write(json.dumps(obj))
 
 app_settings = {
     'debug' : True,
