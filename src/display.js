@@ -10,7 +10,7 @@ function Display(display){
     selector : '#feed',
     type : 'small',
     template : null,
-    
+
     partials : {
       'thumbnail' : ['<div class="thumbnail {{object_type}}">',
         '<a href="{{original_url}}" target="_blank">',
@@ -101,31 +101,28 @@ function Display(display){
     // Will do something with this later.
     toView : function(obj){
       if (obj.hasOwnProperty('status')){
-        obj['status_linked'] = linkify(obj['status']);
+        obj.status_linked = linkify(obj.status);
       }
-
-      
-
       return obj;
     },
     // Will do something with this later.
     toPartials : function(obj){
       var p = $.extend(true, {}, this.partials);
-      
+
       if (!obj.thumbnail_url){
-        p['thumbnail'] = '';
+        p.thumbnail = '';
       }
-      
+
       // Set up the object if it's there.
-      p['object'] = '';
-      if (obj.object_type == 'video' || obj.object_type == 'rich'){
-        p['object'] = '<div class="media video">{{{html}}}</div>';
-      } else if (obj.object_type == 'photo' || obj.type == 'image'){
-        p['object'] = '<div class="media image"><img alt="{{title}}" src="{{image_url}}"/></div>';
+      p.object = '';
+      if (obj.object_type === 'video' || obj.object_type === 'rich'){
+        p.object = '<div class="media video">{{{html}}}</div>';
+      } else if (obj.object_type === 'photo' || obj.type === 'image'){
+        p.object = '<div class="media image"><img alt="{{title}}" src="{{image_url}}"/></div>';
       }
-      
-      if (this.type == 'rich' && obj.object_type != 'link'){
-        p['thumbnail'] = '';
+
+      if (this.type === 'rich' && obj.object_type !== 'link'){
+        p.thumbnail = '';
       }
 
       return p;
@@ -150,23 +147,23 @@ function Display(display){
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
 
-      html = Mustache.to_html(template, view, partials);      
+      var html = Mustache.to_html(template, view, partials);
 
       var e = $(this.selector).prepend(html).children().first();
 
       e.data('preview', obj);
     },
     play : function(e){
-    
+
     },
     bind : function(){
       $('.thumbnail.video a, .thumbnail.rich a').live('click', function(e){
         e.preventDefault();
         var preview = $(this).parents('.item').data('preview');
-        $(this).parents('.item').replaceWith(preview['html']);
-      }); 
+        $(this).parents('.item').replaceWith(preview.html);
+      });
     }
-  }
+  };
 
   _.extend(Display, display);
 

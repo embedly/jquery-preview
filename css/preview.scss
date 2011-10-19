@@ -34,7 +34,7 @@
       top: 1px;
     }
   }
-  
+
   input {
     width: 420px;
   }
@@ -51,7 +51,7 @@
       max-width: 500px;
     }
   }
-  
+
   &.large {
     .title {
       font-size: 14px;
@@ -67,14 +67,14 @@
       margin: 5px 0;
     }
     .thumbnail {
-      width:560px;      
+      width:560px;
       a.left, a.right {
         display: block;
         float: left;
         width: 20px;
         text-align: center;
         padding: 100px 0 0 0;
-      } 
+      }
       .items {
         height:300px;
         width:400px;
@@ -90,16 +90,16 @@
             margin: 0 auto;
             display:block;
           }
-        
+
         }
-      
+
       }
-      
+
     }
   }
-  
+
   /* URL Selector */
-  &.rich, &.small {  
+  &.rich, &.small {
     .thumbnail{
       width:100px;
       .items{
@@ -146,13 +146,13 @@
       }
     }
   }
-  
+
   &.small {
     .attributes {
       margin: 0 0 0 110px;
     }
   }
-  
+
   &.rich {
     .title {
       font-size: 14px;
@@ -178,7 +178,7 @@
         display: block;
       }
     }
-    
+
     .meta {
       display: block;
       .favicon{
@@ -188,10 +188,10 @@
         margin: 0 3px 0 0;
       }
       .provider {
-        
+
       }
     }
-    
+
   }
   .action{
     position: absolute;
@@ -199,7 +199,7 @@
     right: 0;
     display:none;
     .close {
-    
+
     }
   }
 }
@@ -216,7 +216,7 @@
   margin : 10px 0;
   border-top: 1px solid #DDD;
   padding: 10px 0;
-  
+
   &.video, &.rich, &.photo {
     .media {
       iframe, object, embed, img {
@@ -235,7 +235,7 @@
       color: #333;
     }
   }
-  
+
   .status{
     line-height: 1.2em;
     margin: 10px 0;
@@ -275,7 +275,7 @@
     background-color: #EFEFEF;
     padding: 5px;
   }
-  
+
   .meta {
     display: block;
     .favicon{
@@ -285,7 +285,7 @@
       margin: 0 3px 0 0;
     }
     .provider {
-      
+
     }
   }
 }
@@ -299,15 +299,15 @@
 	line-height: 0;
 	height: 0;
 }
- 
+
 .clearfix {
 	display: inline-block;
 }
- 
+
 html[xmlns] .clearfix {
 	display: block;
 }
- 
+
 * html .clearfix {
 	height: 1%;
 }

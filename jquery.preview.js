@@ -14,7 +14,7 @@
  * Usage:
  * ------
  *
- * 
+ *
  */
 
 (function($){
@@ -193,7 +193,7 @@ window.linkify = (function(){
   };
   
 })();
-function Selector(form, selector){
+function Selector(form, selector) {
 
   //Base Selector
   var Selector = {
@@ -232,10 +232,9 @@ function Selector(form, selector){
       'attributes' : [
           '<a class="title" href="#">{{title}}</a>',
           '<p><a class="description" href="#">{{description}}</a></p>'].join(''),
-      'attributes_large' : '<p><a class="description" href="#">{{description}}</a></p>',
-      
-      
-      
+      'title' : '<a class="title" href="#">{{title}}</a>',
+      'description' : '<p><a class="description" href="#">{{description}}</a></p>',
+      'favicon' : '<img class="favicon" src="{{favicon_url}}">'
     },
     templates : {
       'small': [
@@ -244,7 +243,7 @@ function Selector(form, selector){
           '<div class="attributes">',
             '{{>attributes}}',
             '<span class="meta">',
-              '<img class="favicon" src="{{favicon_url}}">',
+              '{{>favicon}}',
               '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
             '</span>',
           '</div>',
@@ -252,162 +251,204 @@ function Selector(form, selector){
         '</div>'].join(''),
       'large' : [
         '<div class="selector large">',
-          '<a class="title" href="#">{{title}}</a>',
+          '{{>title}}',
           '{{>images_large}}',
           '<div class="attributes">',
-            '{{>attributes_large}}',
+            '{{>description}}',
             '<span class="meta">',
-              '<img class="favicon" src="{{favicon_url}}">',
+              '{{>favicon}}',
               '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
             '</span>',
           '</div>',
         '</div>'].join(''),
-      'rich': [
-        '<div class="selector rich">',
-            '{{>images_small}}',
-            '{{>object}}',
-          '<div class="attributes">',
-            '{{>attributes}}',
-            '<span class="meta">',
-              '<img class="favicon" src="{{favicon_url}}">',
-              '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
-            '</span>',
-          '</div>',
-        '</div>'].join('')
+      'rich': {
+        'video' : [
+          '<div class="selector rich">',
+              '{{>title}}',
+              '{{>object}}',
+            '<div class="attributes">',
+              '{{>description}}',
+              '<span class="meta">',
+                '{{>favicon}}',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+          '</div>'].join(''),
+        'rich' : [
+          '<div class="selector rich">',
+              '{{>title}}',
+              '{{>object}}',
+            '<div class="attributes">',
+              '{{>description}}',
+              '<span class="meta">',
+                '{{>favicon}}',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+          '</div>'].join(''),
+        'photo' : [
+          '<div class="selector rich">',
+              '{{>title}}',
+              '{{>object}}',
+            '<div class="attributes">',
+              '{{>description}}',
+              '<span class="meta">',
+                '{{>favicon}}',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+          '</div>'].join(''),
+        'link' : [
+          '<div class="selector rich">',
+              '{{>images_small}}',
+            '<div class="attributes">',
+              '{{>attributes}}',
+              '<span class="meta">',
+                '{{>favicon}}',
+                '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+              '</span>',
+            '</div>',
+          '</div>'].join('')
+      }
     },
 
     // If a developer wants complete control of the selector, they can
     // override the render function.
-    render : function(obj){
+    render : function (obj) {
       // If the #selector ID is there then replace it with the template. Just
       // tells us where it should be on the page.
       var template = null;
 
-      if (this.template !== null){
+      if (this.template !== null) {
         template = this.template;
       } else {
         template = this.templates[this.type];
       }
 
+      // A template can be a dict of all the use cases.
+      if (_.isObject(template)) {
+        template = template[obj.object_type];
+      }
+
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
 
-      html = Mustache.to_html(template, view, partials);      
+      var html = Mustache.to_html(template, view, partials);
 
       // If the developer told us where to put the selector, put it there.
-      if (form.find(this.selector).length){
-        this.elem =form.find(this.selector).replaceWith(html)
+      if (form.find(this.selector).length) {
+        this.elem = form.find(this.selector).replaceWith(html);
       } else {
-        this.elem =form.append(html);
+        this.elem = form.append(html);
       }
-      
-      
+
       // We need to keep track of the selector elem so we don't have to do
       // form.find(this.selector) all the time.
       this.elem = form.find(this.selector);
-      
-      
+
       // Selector may be hidden. Let's show it.
       this.elem.show();
 
       // If there are images, set the information in the form.
-      if (obj.images.length > 0){
+      if (obj.images.length > 0) {
         form.find('#id_thumbnail_url').val(encodeURIComponent(obj.images[0].url));
-      } else{
+      } else {
         this.elem.find('.thumbnail').hide();
       }
-  
+
       // If there is only one image, hide the left and right buttons.
-      if (obj.images.length == 1){
+      if (obj.images.length === 1) {
         this.elem.find('.left, .right').hide();
       }
 
       this.bind();
     },
     // To View. Only exists to be overwritten basiclly.
-    toView : function(obj){
-      obj['id'] = this.id;
-
+    toView : function (obj) {
       return obj;
     },
-    toPartials : function(obj){
+    toPartials : function (obj) {
       // Clone partials for later.
       var p = $.extend(true, {}, this.partials);
 
       // Set up the object if it's there.
-      p['object'] = '';
-      if (obj.object && (obj.object.type == 'video' || obj.object.type == 'rich')){
-        p['object'] = '<a class="title" href="#">{{title}}</a><div class="media">{{{html}}}</div>';
-        
-      } else if (obj.object && obj.object.type == 'photo'){
-        p['object'] = '<div class="media"><img src="{{url}}"/></div>';
+      p.object = '';
+      if (obj.object && (obj.object.type === 'video' || obj.object.type === 'rich')) {
+        p.object = '<div class="media">{{{html}}}</div>';
+
+      } else if (obj.object && obj.object.type === 'photo') {
+        p.object = '<div class="media"><img src="{{url}}"/></div>';
       }
-      
-      // rich has seperate rules when there is an obj. Kind of a lame hack, but
-      // it works the best for us right now.
-      if (this.type == 'rich' && obj.object && obj.object.type && obj.object.type != 'link'){
-        p['images_small'] = '';
-        p['attributes'] = p['attributes_large'];
+
+      // If there is no favicon, ignore it.
+      if (!obj.favion_url) {
+        p.favicon = '';
       }
 
       return p;
     },
     //Clears the selector post submit.
-    clear : function(e){
-      if (e !== undefined) e.preventDefault();
+    clear : function (e) {
+      if (e !== undefined) {
+        e.preventDefault();
+      }
       this.elem.html('');
       this.elem.hide();
       form.find('input[type="hidden"].preview_input').remove();
     },
-    scroll : function(dir, e){
+    scroll : function (dir, e) {
       e.preventDefault();
 
       var images = this.elem.find('.images');
 
       //Grabs the current 'left' style
-      var width = parseInt(images.find('li').css('width'));
+      var width = parseInt(images.find('li').css('width'), 10);
 
       // Left
-      var left = parseInt(images.css('left'));
+      var left = parseInt(images.css('left'), 10);
       //Gets the number of images
       var len = images.find('img').length * width;
 
       //General logic to set the new left value
-      if (dir == 'left'){
-        left = parseInt(left)+width;
-      if (left > 0) return false;
-      } else if (dir == 'right'){
-        left = parseInt(left)-width;
-      if (left <= -len) return false;
+      if (dir === 'left') {
+        left = parseInt(left, 10) + width;
+        if (left > 0) {
+          return false;
+        }
+      } else if (dir === 'right') {
+        left = parseInt(left, 10) - width;
+        if (left <= -len) {
+          return false;
+        }
       } else {
-        log('not a valid direction: '+dir)
-      return false;
+        log('not a valid direction: ' + dir);
+        return false;
       }
-      
-      var thumb = encodeURIComponent(images.find('img').eq((left/-100)).attr('src'));
-      
+
+      var thumb = encodeURIComponent(images.find('img').eq((left / -100)).attr('src'));
+
       //  Puts the current thumbnail into the thumbnail_url input
       form.find('#id_thumbnail_url').val(thumb);
 
       // Sets the new left.
-      images.css('left',left+'px');
+      images.css('left', left + 'px');
     },
-    nothumb : function(e){
+    nothumb : function (e) {
       e.preventDefault();
       this.elem.find('.thumbnail').hide();
       form.find('#id_thumbnail_url').val('');
     },
     // When a user wants to Edit a title or description we need to switch out
     // an input or text area
-    title : function(e){
-      e.preventDefault();      
+    title : function (e) {
+      e.preventDefault();
       //overwrite the a tag with the value of the tag.
       var elem = $('<input/>').attr({
         'value' : $(e.target).text(),
         'class' : 'title',
         'type' : 'text'
-        });
-      
+      });
+
       $(e.target).replaceWith(elem);
 
       //Set the focus on this element
@@ -418,29 +459,29 @@ function Selector(form, selector){
 
       // puts the a tag back on blur. It's a single bind so it will be
       // trashed on blur.
-      elem.one('blur', function(e){
+      elem.one('blur', function (e) {
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
         form.find('#id_title').val(encodeURIComponent(elem.val()));
-        
+
         var a = $('<a/>').attr({
-            'class':'title',
+            'class': 'title',
             'href' : '#'
           }).text(elem.val());
-        
+
         $(e.target).replaceWith(a);
-  
+
         // Bind it back again.
         a.bind('click', t);
       });
     },
     //Same as before, but for description
-    description : function(e){
-      e.preventDefault();      
+    description : function (e) {
+      e.preventDefault();
       //overwrite the a tag with the value of the tag.
       var elem = $('<textarea/>').attr({
-        'class' : 'description',
-        }).text($(e.target).text());
+        'class' : 'description'
+      }).text($(e.target).text());
 
       $(e.target).replaceWith(elem);
 
@@ -452,42 +493,42 @@ function Selector(form, selector){
 
       // puts the a tag back on blur. It's a single bind so it will be
       // trashed on blur.
-      elem.one('blur', function(e){
+      elem.one('blur', function (e) {
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
         form.find('#id_description').val(encodeURIComponent(elem.val()));
 
         var a = $('<a/>').attr({
-            'class':'description',
-            'href' : '#'
+            'class': 'description',
+            'href': '#'
           }).text(elem.val());
 
         $(e.target).replaceWith(a);
-        
+
         // Bind it back again.
         a.bind('click', d);
-               
+
       });
     },
-    update : function(e){
-      this.elem.find('.'+$(e.target).attr('name')).text($(e.target).val());
+    update : function (e) {
+      this.elem.find('.' + $(e.target).attr('name')).text($(e.target).val());
     },
     // Binds the correct events for the controls.
-    bind : function(){
+    bind : function () {
       // Thumbnail Controls
       this.elem.find('.left').bind('click', _.bind(this.scroll, {}, 'left'));
       this.elem.find('.right').bind('click', _.bind(this.scroll, {}, 'right'));
       this.elem.find('.nothumb').bind('click', this.nothumb);
-      
+
       // Binds the close button.
       this.elem.find('.action .close').bind('click', this.clear);
-      this.elem.bind('mouseenter mouseleave', function(){
+      this.elem.bind('mouseenter mouseleave', function () {
         $(this).find('.action').toggle();
       });
-      
+
       //Show hide the controls.
-      this.elem.find('.thumbnail').one('mouseenter', function(){
-        $(this).bind('mouseenter mouseleave', function(){
+      this.elem.find('.thumbnail').one('mouseenter', function () {
+        $(this).bind('mouseenter mouseleave', function () {
           $(this).find('.controls').toggle();
         });
       });
@@ -496,12 +537,12 @@ function Selector(form, selector){
       this.elem.find('.title').bind('click', this.title);
       this.elem.find('.description').bind('click', this.description);
     }
-  }
+  };
 
   // Overwrites any funtions
   _.extend(Selector, selector);
   _.bindAll(Selector);
-  
+
   return Selector;
 }
 /* Display Allows Developers to Easily build a status or link share from the
@@ -516,7 +557,7 @@ function Display(display){
     selector : '#feed',
     type : 'small',
     template : null,
-    
+
     partials : {
       'thumbnail' : ['<div class="thumbnail {{object_type}}">',
         '<a href="{{original_url}}" target="_blank">',
@@ -607,31 +648,28 @@ function Display(display){
     // Will do something with this later.
     toView : function(obj){
       if (obj.hasOwnProperty('status')){
-        obj['status_linked'] = linkify(obj['status']);
+        obj.status_linked = linkify(obj.status);
       }
-
-      
-
       return obj;
     },
     // Will do something with this later.
     toPartials : function(obj){
       var p = $.extend(true, {}, this.partials);
-      
+
       if (!obj.thumbnail_url){
-        p['thumbnail'] = '';
+        p.thumbnail = '';
       }
-      
+
       // Set up the object if it's there.
-      p['object'] = '';
-      if (obj.object_type == 'video' || obj.object_type == 'rich'){
-        p['object'] = '<div class="media video">{{{html}}}</div>';
-      } else if (obj.object_type == 'photo' || obj.type == 'image'){
-        p['object'] = '<div class="media image"><img alt="{{title}}" src="{{image_url}}"/></div>';
+      p.object = '';
+      if (obj.object_type === 'video' || obj.object_type === 'rich'){
+        p.object = '<div class="media video">{{{html}}}</div>';
+      } else if (obj.object_type === 'photo' || obj.type === 'image'){
+        p.object = '<div class="media image"><img alt="{{title}}" src="{{image_url}}"/></div>';
       }
-      
-      if (this.type == 'rich' && obj.object_type != 'link'){
-        p['thumbnail'] = '';
+
+      if (this.type === 'rich' && obj.object_type !== 'link'){
+        p.thumbnail = '';
       }
 
       return p;
@@ -656,23 +694,23 @@ function Display(display){
       var view = this.toView(obj);
       var partials = this.toPartials(obj);
 
-      html = Mustache.to_html(template, view, partials);      
+      var html = Mustache.to_html(template, view, partials);
 
       var e = $(this.selector).prepend(html).children().first();
 
       e.data('preview', obj);
     },
     play : function(e){
-    
+
     },
     bind : function(){
       $('.thumbnail.video a, .thumbnail.rich a').live('click', function(e){
         e.preventDefault();
         var preview = $(this).parents('.item').data('preview');
-        $(this).parents('.item').replaceWith(preview['html']);
-      }); 
+        $(this).parents('.item').replaceWith(preview.html);
+      });
     }
-  }
+  };
 
   _.extend(Display, display);
 
@@ -682,26 +720,24 @@ function Display(display){
 
   return Display;
 }
-/* Preview
- * 
+/* jQuery Preview - v0.1
  *
- *
- *
+ * jQuery Preview is a plugin by Embedly that allows developers to create tools
+ * that enable users to share links with rich previews attached.
  *
  */
 
-
 // Base Preview Object. Holds a common set of functions to interact with
 // Embedly's Preview endpoint.
-function Preview(elem, options){
+function Preview(elem, options) {
 
   //Preview Object that We build from the options passed into the function
   var Preview = {
-    
+
     // List of all the attrs that can be sent to Embedly
-    api_args : ['key', 'maxwidth', 'maxheight', 'width', 'wmode', 'autoplay', 
+    api_args : ['key', 'maxwidth', 'maxheight', 'width', 'wmode', 'autoplay',
       'videosrc', 'allowscripts', 'words', 'chars'],
-    
+
     // What attrs we are going to use.
     display_attrs : ['type', 'original_url', 'url', 'title', 'description',
       'favicon_url', 'provider_url', 'provider_display', 'safe', 'html',
@@ -713,24 +749,32 @@ function Preview(elem, options){
     type : 'link',
     loading_selector : '.loading',
     options : {
-      'selector' : {},
-      'field' : null,
-      'display' : {},
-      'preview' : {}
+      debug : false,
+      selector : {},
+      field : null,
+      display : {},
+      preview : {},
+      wmode : 'opaque',
+      words : 30,
+      maxwidth : 560
     },
 
-    init : function(elem, settings){
+    init : function (elem, settings) {
+
+      // Sets up options
+      this.options = _.extend(this.options, typeof settings !== "undefined" ? settings : {});
+
       // Sets up the data args we are going to send to the API
       var data = {};
-      _.each(_.intersection(_.keys(settings),this.api_args), function(n){
+      _.each(_.intersection(_.keys(this.options), this.api_args), function (n) {
         var v = settings[n];
         // 0 or False is ok, but not null or undefined
-        if (!(_.isNull(v) || _.isUndefined(v))) data[n] = v;
+        if (!(_.isNull(v) || _.isUndefined(v))) {
+          data[n] = v;
+        }
       });
       this.default_data = data;
-      
-      this.options = _.extend(this.options, settings);
-      
+
       // Just reminds us which form we should be working on.
       this.form = options.form ? options.form : elem.parents('form');
 
@@ -738,18 +782,18 @@ function Preview(elem, options){
       this.debug = this.options.debug;
 
       //We Need to make sure there is a Key.
-      if (!this.default_data.hasOwnProperty('key')){
-        log('Options did not include a Embedly API key. Aborting.')
+      if (!this.default_data.hasOwnProperty('key')) {
+        log('Options did not include a Embedly API key. Aborting.');
       }else{
         //Sets up Selector
         this.selector = Selector(this.form, this.options.selector);
-        
+
         // Sets up display
         this.display = Display(this.options.display);
 
         // Overwrites any funtions
-        _.extend(this, this.options.preview)
-        
+        _.extend(this, this.options.preview);
+
         // Binds all the functions that you want.
         this.bind();
       }
@@ -757,12 +801,12 @@ function Preview(elem, options){
     /*
      * Utils for handling the status.
      */
-    getStatusUrl : function(obj){
+    getStatusUrl : function (obj) {
       // Grabs the status out of the Form.
       var status = elem.val();
 
       //ignore the status it's blank.
-      if (status == ''){
+      if (status === '') {
         return null;
       }
 
@@ -770,23 +814,23 @@ function Preview(elem, options){
       var urlexp = /^http(s?):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
       var matches = status.match(urlexp);
 
-      var url = matches? matches[0] : null
+      var url = matches? matches[0] : null;
 
       //No urls is the status. Try for urls without scheme i.e. example.com
-      if (url === null){
-        var urlexp = /[-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/g;
-        var matches = status.match(urlexp);
-        url = matches? 'http://'+matches[0] : null
+      if (url === null) {
+        urlexp = /[-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/g;
+        matches = status.match(urlexp);
+        url = matches? 'http://'+matches[0] : null;
       }
 
       //Note that in both cases we only grab the first URL.
       return url;
     },
-    toggleLoading : function(){
+    toggleLoading : function () {
       this.form.find(this.loading_selector).toggle();
     },
     //Metadata Callback
-    callback : function(obj){
+    callback : function (obj) {
       //tells the loader to stop
       this.toggleLoading();
 
@@ -796,15 +840,15 @@ function Preview(elem, options){
       // Every obj should have a 'type'. This is a clear sign that
       // something is off. This is a basic check to make sure we should
       // proceed. Generally will never happen.
-      if (!obj.hasOwnProperty('type')){
-        log('Embedly returned an invalid response'); 
+      if (!obj.hasOwnProperty('type')) {
+        log('Embedly returned an invalid response');
         return false;
       }
 
       // Error. If the url was invalid, or 404'ed or something else. The
       // endpoint will pass back an obj  of type 'error'. Generally this is
       // were the default workflow should happen.
-      if (obj.type == 'error'){
+      if (obj.type === 'error') {
         log('URL ('+obj.url+') returned an error: '+ obj.error_message);
         return false;
       }
@@ -813,75 +857,76 @@ function Preview(elem, options){
       // `html` or `image`. Others could include `ppt`,`video` or `audio`
       // which I don't believe you have a good solution for yet. We could
       // wrap them in HTML5 tags, but won't work cross browser.
-      if (!(obj.type in {'html':'', 'image':''})){
-        log('URL ('+obj.url+') returned a type ('+obj.type+') not handled'); 
+      if (!(obj.type in {'html':'', 'image':''})) {
+        log('URL ('+obj.url+') returned a type ('+obj.type+') not handled');
         return false;
       }
 
       // If this is a change in the URL we need to delete all the old
       // information first.
       this.form.find('input[type="hidden"].preview_input').remove();
-  
+
 
       //Sets all the data to a hidden inputs for the post.
       var form = this.form;
-      _.each(this.display_attrs, function(n){
-        
+      _.each(this.display_attrs, function (n) {
+
         var v = null;
-        
-        // Object type let's us know what we are working with. 
-        if (n == 'object_type'){
-          if (obj.hasOwnProperty('object') && obj['object'].hasOwnProperty('type')){
-            v = obj['object']['type'];
+
+        // Object type let's us know what we are working with.
+        if (n === 'object_type') {
+          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('type')) {
+            v = obj.object.type;
           } else{
             v = 'link';
-          } 
+          }
+          obj.object_type = v;
         }
         // Sets up HTML for the video or rich type.
-        else if (n == 'html'){
-          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('html')){
+        else if (n === 'html') {
+          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('html')) {
             v = obj.object.html;
           }
         }
         // Set up the image URL for previews of the ful image.
-        else if (n == 'image_url'){
-          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('type') && obj.object.type == 'photo'){
+        else if (n === 'image_url') {
+          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('type') && obj.object.type === 'photo') {
             v = obj.object.url;
-          } else if (obj.type == 'image'){
+          } else if (obj.type === 'image') {
             v = obj.url;
           }
+          obj.image_url = v;
         }
         else{
           v = obj.hasOwnProperty(n) && obj[n] ? encodeURIComponent(obj[n]): '';
         }
-        
-        
-        d = {
+
+        var d = {
           name : n,
           type : 'hidden',
-          id : 'id_'+n, 
+          id : 'id_'+n,
           value : v
-        }
-  
+        };
+
         // It's possible that the title or description or something else is
         // already in the form. If it is then we need to Love them for who they
         // are and fill in values.
         var e = form.find('#id_'+n);
-        
-        if(e.length){
+
+        if(e.length) {
           // It's hidden, use it
-          if (e.attr('type') == 'hidden'){
+          if (e.attr('type') === 'hidden') {
             e.attr(d);
           } else{
             // Be careful here.
-            if (!e.val()){
+            if (!e.val()) {
               e.val(obj[n]);
             } else {
               // Use the value in the obj
               obj[n] = e.val();
             }
             // Bind updates to the select.
-            e.bind('keyup', function(e){
+            e.bind('keyup', function (e) {
               $.preview.selector.update(e);
             });
           }
@@ -895,14 +940,14 @@ function Preview(elem, options){
       // Now use the selector obj to render the selector.
       this.selector.render(obj);
     },
-    errorCallback : function(){
-      log('error')
+    errorCallback : function () {
+      log('error');
       log(arguments);
     },
     // Fetches the Metadata from the Embedly API
-    fetch: function(url){
+    fetch: function (url) {
       // Get a url out of the status box unless it was passed in.
-      if (typeof url == 'undefined' || !(typeof url == 'string')){
+      if (typeof url === 'undefined' || typeof url !== 'string') {
         url = this.getStatusUrl();
       }
 
@@ -916,14 +961,16 @@ function Preview(elem, options){
       // input that we should look for and compare values. If they are the
       // same we will ignore.
       var original_url = this.form.find('#id_original_url').val();
-      if (original_url == encodeURIComponent(url)) return true;
+      if (original_url === encodeURIComponent(url)) {
+        return true;
+      }
 
       //Tells the loaded to start
       this.toggleLoading();
 
       //sets up the data we are going to use in the request.
       var data = _.clone(this.default_data);
-      data['url'] = url;
+      data.url = url;
 
       // Make the request to Embedly. Note we are using the
       // preview endpoint: http://embed.ly/docs/endpoints/1/preview
@@ -936,13 +983,17 @@ function Preview(elem, options){
       });
       return true;
     },
-    keyUp : function(e){
+    keyUp : function (e) {
       // Ignore Everthing but the spacebar Key event.
-      if (e.keyCode != 32) return null;
+      if (e.keyCode !== 32) {
+        return null;
+      }
 
       //See if there is a url in the status textarea
       var url = this.getStatusUrl();
-      if (url == null) return null;
+      if (url === null) {
+        return null;
+      }
       log('onKeyUp url:'+url);
 
       // If there is a url, then we need to unbind the event so it doesn't fire
@@ -953,22 +1004,24 @@ function Preview(elem, options){
       //Fire the fetch metadata function
       this.fetch(url);
     },
-    paste : function(e){
+    paste : function (e) {
       //We delay the fire on paste.
       _.delay(this.fetch, 200);
     },
     //The submit post back that readys the data for the actual submit.
-    _submit : function(e, data){
+    _submit : function (e) {
       var data = {};
-      
+
       this.form.find('textarea, input').not('input[type="submit"]').each(
-        function(i, e){
+        function (i, e) {
           var n = $(e).attr('name');
-          if (n !== undefined) data[n] = decodeURIComponent($(e).val());
+          if (n !== undefined) {
+            data[n] = decodeURIComponent($(e).val());
+          }
       });
       // Clears the Selector.
       this.selector.clear();
-      
+
       // Submits the Event and the Data to the submit function.
       this.submit(e, data);
 
@@ -980,7 +1033,7 @@ function Preview(elem, options){
       this.form.find('input[type="hidden"].preview_input').remove();
     },
     //What we are actually going to do with the data.
-    submit : function(e, data){
+    submit : function (e, data) {
       e.preventDefault();
       // We need to submit the data back to the server via the action
       var form = $(e.target);
@@ -993,7 +1046,7 @@ function Preview(elem, options){
       });
     },
     //Bind a bunch of functions.
-    bind : function(){
+    bind : function () {
       log('Starting Bind');
 
       // Bind Keyup, Blur and Paste
@@ -1006,24 +1059,15 @@ function Preview(elem, options){
 
       // the event `attach` tells fetch to run on the input.
       elem.bind('attach', this.fetch);
-      
-    }
-  }
 
-  //Use Underscore to make ``this`` not suck. 
+    }
+  };
+
+  //Use Underscore to make ``this`` not suck.
   _.bindAll(Preview);
-  
-  //Set up the defaults.
-  var defaults = {
-    debug : true,
-    wmode : 'opaque',
-    words : 30,
-    maxwidth : 560
-  }
-  var settings = $.extend(defaults, typeof options != "undefined" ? options : {});
 
   //Bind Preview Function
-  Preview.init(elem, settings);
+  Preview.init(elem, options);
 
   //Return the Preview Function that will eventually be namespaced to $.preview.
   return Preview;
