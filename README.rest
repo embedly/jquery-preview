@@ -5,12 +5,12 @@ developers to create tools that enable users to share links with rich previews
 attached. This method of letting users select thumbnails, edit title and
 description has been adopted as the norm across the web. This plugin allows
 developers to easily implement this functionality without building the entire
-infrastructure themselves, instead relying on on Embedly to generate the
+infrastructure themselves. Instead relying on on Embedly to generate the
 metadata.
 
 We have made this plugin overly verbose and infinitely customizable. Our goal
 is not to dictate design, merely give a set of tools to make it easy to create
-a custom experience. There are X different demos that you should take a look at
+a custom experience. There are 5 different demos that you should take a look at
 before getting started. It will give you a quick overview of what you should be
 able to build.
 
@@ -22,7 +22,7 @@ able to build.
 
 Basic Setup
 -----------
-To get started you need to put `jQuery <http://jquery.com/>`_, 
+To get started you need to put `jQuery <http://jquery.com/>`_,
 `jquery.preview.full.js
 <https://github.com/embedly/jquery-preview/blob/master/jquery.preview.full.js>`_
 and `preview.css
@@ -54,7 +54,7 @@ Next set up a simple form that allows a user to input link::
     <form action="/update" method="POST">
         <input id="url" type="text" name="url"/>
     </form>
-    
+
 You then need to tell preview what field to listen to::
 
     <script>
@@ -64,12 +64,16 @@ You then need to tell preview what field to listen to::
 And you are done setting up the front end solution for jQuery Preview. The
 rest of this document will go into how to customize Preview.
 
+Note that the `Preview <http://embed.ly/docs/endpoints/1/preview>`_ endpoint is
+only available to Embedly developers with a Starter plan or above. You can sign
+up for a Starter plan at `embed.ly/pricing <http://embed.ly/pricing>`_.
+
 How it Works
 ------------
 The plugin works by listening to the field on ``paste``, ``keyup``, ``attach``
 and ``blur``. If a URL is entered a call is made to Embedly's `Preview
 <http://embed.ly/docs/endpoints/1/preview>`_ endpoint and the result is then
-passed to the Selector object and all the elements are added to the form as 
+passed to the Selector object and all the elements are added to the form as
 hidden inputs. The Selector is then rendered using a Mustache template. The
 user can use the selector to pick a thumbnail associated with the URL.
 
@@ -98,7 +102,7 @@ Functions
     Called when the form is submitted and all the attributes are passed in as
     an object. If you want to do something other than a POST to the action you
     can overwrite the method like so::
-    
+
         var preview = {
           // Instead of posting to the server, send the object to display for
           // rendering to the feed.
@@ -118,7 +122,7 @@ Functions
             // Instead of listening to the field, wait for the user to click
             // 'Attach Link'.
             $('a.attach').bind('click', this.fetch);
-            
+
             // Still bind the form to ``_submit`` that cleans up the data
             // before calling ``submit``
             $(this.form).bind('submit', this._submit);
@@ -162,7 +166,7 @@ Attributes
 
 ``type``
     There are 3 different built-in types that a developer can choose from
-    
+
     * `small <http://embedly.github.com/jquery-preview/demo/link.html>`_
     * `large <http://embedly.github.com/jquery-preview/demo/large.html>`_
     * `rich <http://embedly.github.com/jquery-preview/demo/rich.html>`_
@@ -173,7 +177,7 @@ Attributes
 ``template``
     If you would like to use your own Mustache template to render the selector
     you can add it here. The default looks like::
-    
+
         <div id="selector" class="small">
           <div class="thumbnail">
             <div class="controls">
@@ -200,6 +204,47 @@ Attributes
           <div class="action"><a href="#" class="close">&#10005;</a></div>
         </div>
 
+    By default Preview passes the following attributes to the template
+
+    * ``type``
+    * ``original_url``
+    * ``url``
+    * ``title``
+    * ``description``
+    * ``favicon_url``
+    * ``provider_url``
+    * ``provider_display``
+    * ``safe``
+    * ``html``
+    * ``thumbnail_url``
+    * ``object_type``
+    * ``image_url``
+
+    All these responses are defined `here
+    <http://embed.ly/docs/endpoints/1/preview#response>`_ except for the
+    following:
+
+    ``object_type``
+        The oEmbed of the preview response. Will be either ``video``,
+        ``rich``, ``photo`` or ``link``. We use this to decide weather to
+        embed the ``html`` attribute.
+
+    ``image_url``
+        If the ``type`` is ``image`` or the ``object_type`` is ``photo`` an
+        ``image_url`` will be the full sized image URL.
+
+    ``thumbnail_url``
+        The URL that the user selected as the thumbnail for the embed.
+
+    ``template`` can also be a dictionary if you want to use different
+    templates for different ``object_type``s. For instance::
+
+        template : {
+          'video' : 'Video Template',
+          'rich' : 'Rich Template',
+          'photo' : 'Photo Template',
+          'link' : 'Link Template'
+        }
 
 Functions
 """""""""
@@ -207,20 +252,20 @@ Functions
 ``title``
     Allows users to click on the title in the selector and edit the text. It is
     set up like this in the ``bind`` function::
-    
+
         $('.selector .title').bind('click', this.title);
 
 ``description``
     Allows users to click on the description in the selector and edit the text.
     It is set up like this in the ``bind`` function::
-    
+
         $('.selector .description').bind('click', this.description);
 
 
 ``scroll``
     Simple logic that scrolls the image left and right in selector. It takes a
     direction (``left`` or ``right``) and an event. We set it up like so::
-    
+
         $('.selector .left').bind('click', _.bind(this.scroll, {}, 'left'));
         $('.selector .right').bind('click', _.bind(this.scroll, {}, 'right'));
 
@@ -228,22 +273,22 @@ Functions
 ``nothumb``
     Logic that tells the form NOT to use a thumbnail when rendering a preview.
     ``bind`` calls it like so::
-    
+
         $('.selector .nothumb').bind('click', this.nothumb);
 
 ``clear``
     Clears the selector, hides it and all the hidden inputs.
-    
+
 ``update``
     Update can be set to an input field to also update the value in the
     selector. This is useful if you want to have a different input field for
     title and selector. We use this from the Preview object like so::
-    
+
         $('#id_title').bind('keyup', function(e){
           $.preview.selector.update(e);
         });
-    
-    The element must have a ``name`` attribute of the ``title`` or 
+
+    The element must have a ``name`` attribute of the ``title`` or
     ``description``.
 
 ``bind``
@@ -263,7 +308,7 @@ Attributes
 
 ``type``
     There are 3 different built-in types that a developer can choose from
-    
+
     * `small <http://embedly.github.com/jquery-preview/demo/link.html>`_
     * `status <http://embedly.github.com/jquery-preview/demo/status.html>`_
     * `rich <http://embedly.github.com/jquery-preview/demo/rich.html>`_
@@ -271,12 +316,12 @@ Attributes
     Each allows for a different type of feel. We suggest using one of them to
     get started and customizing from there. The ``status`` type is the same as
     ``small``, but takes an additional field ``status`` and displays that in
-    the item as well. 
+    the item as well.
 
 ``template``
     The Mustache template that you would like to use to render the obj. The
     default one looks like this::
-    
+
         <div class="item">
           <div class="thumbnail">
             <a href="{{orginal_url}}">
@@ -319,7 +364,7 @@ Attributes
         ``rich``, ``photo`` or ``link``. We use this to decide weather to
         embed the ``html`` attribute.
 
-    ``image_url`` 
+    ``image_url``
         If the ``type`` is ``image`` or the ``object_type`` is ``photo`` an
         ``image_url`` will be the full sized image URL.
 
@@ -339,7 +384,7 @@ Attributes
 
 ``selector``
     Tells create where to prepend the Feed item html to. The default value is
-    ``#feed``. 
+    ``#feed``.
 
 Functions
 """""""""
@@ -377,7 +422,7 @@ We then build a handler to deal with the form data::
 
             # This also works
             # data = dict([(k, v[0]) for k, v in self.request.arguments.items()])
-        
+
             # Save the data off and return the object that we will pass back.
             obj = db.save(data)
 
@@ -386,6 +431,22 @@ We then build a handler to deal with the form data::
 
 Once the data is successfully posted the response is passed into the Display
 object to be rendered and displayed.
+
+
+CDN
+---
+To get you going even faster, Embedly hosts all the files you need on
+scripts.embed.ly. The latest version is available here::
+
+    http://scripts.embed.ly/p/jquery.preview-0.1.min.js
+    http://scripts.embed.ly/p/jquery.preview-0.1.full.min.js
+    http://scripts.embed.ly/p/css/preview-0.1.css
+
+The most current version of jQuery Preview will be available here::
+
+    http://scripts.embed.ly/p/jquery.preview.min.js
+    http://scripts.embed.ly/p/jquery.preview.full.min.js
+    http://scripts.embed.ly/p/css/preview.css
 
 
 Development

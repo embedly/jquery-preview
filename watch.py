@@ -13,9 +13,9 @@ DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 SRC_PATH = os.path.join(DIR_PATH, 'src/')
 
 def build():
-    
+
     p = open(os.path.join(DIR_PATH, 'jquery.preview.js'), 'w')
-    
+
     f = open(os.path.join(DIR_PATH, 'jquery.preview.full.js'), 'w')
 
     for e in ['lib/mustache.js', 'lib/underscore.js']:
@@ -48,11 +48,11 @@ def wait():
 
         for f in glob.glob(SRC_PATH+'*'):
             now[f] = os.stat(f).st_mtime
-        
-        if current is None:        
+
+        if current is None:
             current = now
             continue
-        
+
         b = False
         for f,t in current.items():
             if now[f] != t:
@@ -69,7 +69,7 @@ def wait():
 if __name__ == '__main__':
     parser = OptionParser(usage="usage: %prog [options]",
                               version="%prog 1.0")
-    
+
     parser.add_option("-b", "--build",
                       action="store_true",
                       dest="build",
@@ -81,7 +81,7 @@ if __name__ == '__main__':
                       dest="yui",
                       default=None,
                       help="Path to the YUI Compressor",)
-    
+
     parser.add_option("--html",
                     action="store_true",
                     dest="html",
@@ -99,56 +99,31 @@ if __name__ == '__main__':
         f.close()
 
     elif options.build:
-        
+
         # Make Sure we have YUI
         if not options.yui:
             raise ValueError("Cannot Build. YUICommpressor path is not avalible.")
-            
+
         #Absolute Path
         if options.yui.startswith('/'):
             yui_path = options.yui
         else:
             yui_path = os.path.join(DIR_PATH, options.yui)
-        
+
         # Make sure the file exists at least
         if not os.path.exists(yui_path):
             raise ValueError("Not a valid path to the YUICommpressor: %s" % yui_path)
 
-        # We need to make sure a valid version was passed in.
-        if len(args) is not 1:
-            raise ValueError("You must pass in a valid version: %s" % args)
-
-        version = args[0]
-
-        #Let's build the file directory
-        build_path = os.path.join(DIR_PATH, 'build/%s' % version)
-        css_path = os.path.join(DIR_PATH, 'build/%s/css' % version)
-        images_path = os.path.join(DIR_PATH, 'build/%s/images' % version)
-
-        for p in [build_path, css_path, images_path]:
-            if not os.path.exists(p):
-                os.mkdir(p)
-
         # Let's build jquery.preview.js just in case.
         build()
 
-        # Copy Over Files.
-        shutil.copyfile('%s/jquery.preview.js' % DIR_PATH, '%s/jquery.preview.js' % build_path)
-        shutil.copyfile('%s/jquery.preview.full.js' % DIR_PATH, '%s/jquery.preview.full.js' % build_path)
-
         # Minify it and add it over to bulid.
-        os.system("java -jar %s -o %s/jquery.preview-%s.min.js %s/jquery.preview.js" %
-            (yui_path, build_path, version, DIR_PATH))
+        os.system("java -jar %s -o %s/jquery.preview.min.js %s/jquery.preview.js" %
+            (yui_path, DIR_PATH, DIR_PATH))
 
-        os.system("java -jar %s -o %s/jquery.preview-%s.full.min.js %s/jquery.preview.full.js" %
-            (yui_path, build_path, version, DIR_PATH))
+        os.system("java -jar %s -o %s/jquery.preview.full.min.js %s/jquery.preview.full.js" %
+            (yui_path, DIR_PATH, DIR_PATH))
 
-        # CSS
-        shutil.copyfile('%s/css/preview.css' % DIR_PATH, '%s/preview.css' % css_path)
-        
-        # Images
-        shutil.copyfile('%s/images/play.png' % DIR_PATH, '%s/play.png' % images_path)
-        shutil.copyfile('%s/images/loading-rectangle.gif' % DIR_PATH, '%s/loading-rectangle.gif' % images_path)
 
 
     else:
