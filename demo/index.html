@@ -25,20 +25,20 @@
       #feed {
         margin:0 100px 0 120px;
       }
-      
+
       #doc {
         display: block;
         width: 90px;
         margin: 20px 20px 0 0;
         float: right;
       }
-      
+
       #preview_form {
         position: relative;
         margin: 0 0 0 100px;
         padding-top:35px;
       }
-      
+
       .arrow {
         width:200px;
         position: absolute;
@@ -61,7 +61,7 @@
       .item .attributes {
         padding: 0 0 0 120px;
       }
-      
+
     </style>
   </head>
   <body>
@@ -81,22 +81,22 @@
     </div>
     <div class="container">
       <div class="row">
-        <div class="hero-unit"> 
+        <div class="hero-unit">
           <h1> jQuery Preview <a id="doc" href="https://github.com/embedly/jquery-preview" class="btn primary">Get the Code &raquo;</a></h1>
           <p>
             <a href="https://github.com/embedly/jquery-preview">jQuery Preview</a>
             is a plugin that allows users to preview URLs before
             submitting them to be saved by an application. Facebook, Google+
             and Yammer are all examples of tools with this functionality.
-            
-            
+
+
             <div class="clearfix"></div>
           </p>
-          
+
           <form id="preview_form" class="form-stacked" method="post" action=".">
             <div class="arrow">
               <p>Try it out.</p>
-              <img src='../images/arrow.png'>  
+              <img src='../images/arrow.png'>
             </div>
             <fieldset>
               <div class="clearfix"></div>
@@ -106,20 +106,20 @@
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
             <div class="loading">
-              <img src='../images/loading-rectangle.gif'>  
+              <img src='../images/loading-rectangle.gif'>
             </div>
             <!-- Placeholder that tells Preview where to put the selector-->
             <div class="selector"></div>
           </form>
           <div id="feed"></div>
-          
-          
-          
-          
+
+
+
+
         </div>
         <div class="span12 columns offset1">
 
-<!-- 
+<!--
 Generated from the README.rest.
 run python watch.py --html
 -->
@@ -128,11 +128,11 @@ developers to create tools that enable users to share links with rich previews
 attached. This method of letting users select thumbnails, edit title and
 description has been adopted as the norm across the web. This plugin allows
 developers to easily implement this functionality without building the entire
-infrastructure themselves, instead relying on on Embedly to generate the
+infrastructure themselves. Instead relying on on Embedly to generate the
 metadata.</p>
 <p>We have made this plugin overly verbose and infinitely customizable. Our goal
 is not to dictate design, merely give a set of tools to make it easy to create
-a custom experience. There are X different demos that you should take a look at
+a custom experience. There are 5 different demos that you should take a look at
 before getting started. It will give you a quick overview of what you should be
 able to build.</p>
 <ul class="simple">
@@ -181,6 +181,9 @@ like so:</p>
 </pre>
 <p>And you are done setting up the front end solution for jQuery Preview. The
 rest of this document will go into how to customize Preview.</p>
+<p>Note that the <a class="reference external" href="http://embed.ly/docs/endpoints/1/preview">Preview</a> endpoint is
+only available to Embedly developers with a Starter plan or above. You can sign
+up for a Starter plan at <a class="reference external" href="http://embed.ly/pricing">embed.ly/pricing</a>.</p>
 </div>
 <div class="section" id="how-it-works">
 <h1>How it Works</h1>
@@ -200,7 +203,7 @@ over each object and how to customize them.</p>
 <h1>Objects</h1>
 <p>There are 3 basic objects that you should get familiar with in order to
 customize the selector.</p>
-<div class="section" id="id1">
+<div class="section" id="id2">
 <h2>Preview</h2>
 <p>Preview holds all the logic for calls to Embedly. You shouldn't have to do a
 ton of customizations here.</p>
@@ -289,7 +292,7 @@ get started and customizing from there.</p>
 <dt><tt class="docutils literal">template</tt></dt>
 <dd><p class="first">If you would like to use your own Mustache template to render the selector
 you can add it here. The default looks like:</p>
-<pre class="last literal-block">
+<pre class="literal-block">
 &lt;div id=&quot;selector&quot; class=&quot;small&quot;&gt;
   &lt;div class=&quot;thumbnail&quot;&gt;
     &lt;div class=&quot;controls&quot;&gt;
@@ -316,10 +319,52 @@ you can add it here. The default looks like:</p>
   &lt;div class=&quot;action&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;close&quot;&gt;&amp;#10005;&lt;/a&gt;&lt;/div&gt;
 &lt;/div&gt;
 </pre>
+<p>By default Preview passes the following attributes to the template</p>
+<ul class="simple">
+<li><tt class="docutils literal">type</tt></li>
+<li><tt class="docutils literal">original_url</tt></li>
+<li><tt class="docutils literal">url</tt></li>
+<li><tt class="docutils literal">title</tt></li>
+<li><tt class="docutils literal">description</tt></li>
+<li><tt class="docutils literal">favicon_url</tt></li>
+<li><tt class="docutils literal">provider_url</tt></li>
+<li><tt class="docutils literal">provider_display</tt></li>
+<li><tt class="docutils literal">safe</tt></li>
+<li><tt class="docutils literal">html</tt></li>
+<li><tt class="docutils literal">thumbnail_url</tt></li>
+<li><tt class="docutils literal">object_type</tt></li>
+<li><tt class="docutils literal">image_url</tt></li>
+</ul>
+<p>All these responses are defined <a class="reference external" href="http://embed.ly/docs/endpoints/1/preview#response">here</a> except for the
+following:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal">object_type</tt></dt>
+<dd>The oEmbed of the preview response. Will be either <tt class="docutils literal">video</tt>,
+<tt class="docutils literal">rich</tt>, <tt class="docutils literal">photo</tt> or <tt class="docutils literal">link</tt>. We use this to decide weather to
+embed the <tt class="docutils literal">html</tt> attribute.</dd>
+<dt><tt class="docutils literal">image_url</tt></dt>
+<dd>If the <tt class="docutils literal">type</tt> is <tt class="docutils literal">image</tt> or the <tt class="docutils literal">object_type</tt> is <tt class="docutils literal">photo</tt> an
+<tt class="docutils literal">image_url</tt> will be the full sized image URL.</dd>
+<dt><tt class="docutils literal">thumbnail_url</tt></dt>
+<dd>The URL that the user selected as the thumbnail for the embed.</dd>
+</dl>
+<p><tt class="docutils literal">template</tt> can also be a dictionary if you want to use different
+templates for different <a href="#id3"><span class="problematic" id="id4">``</span></a>object_type``s. For instance:</p>
+<div class="system-message" id="id3">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 239); <em><a href="#id4">backlink</a></em></p>
+Inline literal start-string without end-string.</div>
+<pre class="last literal-block">
+template : {
+  'video' : 'Video Template',
+  'rich' : 'Rich Template',
+  'photo' : 'Photo Template',
+  'link' : 'Link Template'
+}
+</pre>
 </dd>
 </dl>
 </div>
-<div class="section" id="id2">
+<div class="section" id="id5">
 <h3>Functions</h3>
 <dl class="docutils">
 <dt><tt class="docutils literal">title</tt></dt>
@@ -377,7 +422,7 @@ overwrite this function unless you know what you are doing.</dd>
 <div class="section" id="display">
 <h2>Display</h2>
 <p>Create's a Feed item for a given object.</p>
-<div class="section" id="id3">
+<div class="section" id="id6">
 <h3>Attributes</h3>
 <dl class="docutils">
 <dt><tt class="docutils literal">type</tt></dt>
@@ -443,9 +488,9 @@ embed the <tt class="docutils literal">html</tt> attribute.</dd>
 <dd>The URL that the user selected as the thumbnail for the embed.</dd>
 </dl>
 <p><tt class="docutils literal">template</tt> can also be a dictionary if you want to use different
-templates for different <a href="#id7"><span class="problematic" id="id8">``</span></a>object_type``s. For instance:</p>
-<div class="system-message" id="id7">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 329); <em><a href="#id8">backlink</a></em></p>
+templates for different <a href="#id11"><span class="problematic" id="id12">``</span></a>object_type``s. For instance:</p>
+<div class="system-message" id="id11">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 374); <em><a href="#id12">backlink</a></em></p>
 Inline literal start-string without end-string.</div>
 <pre class="last literal-block">
 template : {
@@ -461,7 +506,7 @@ template : {
 <tt class="docutils literal">#feed</tt>.</dd>
 </dl>
 </div>
-<div class="section" id="id9">
+<div class="section" id="id13">
 <h3>Functions</h3>
 <dl class="docutils">
 <dt><tt class="docutils literal">create</tt></dt>
@@ -507,6 +552,22 @@ class UpdateHandler(tornado.web.RequestHandler):
 <p>Once the data is successfully posted the response is passed into the Display
 object to be rendered and displayed.</p>
 </div>
+<div class="section" id="cdn">
+<h1>CDN</h1>
+<p>To get you going even faster, Embedly hosts all the files you need on
+scripts.embed.ly. The latest version is available here:</p>
+<pre class="literal-block">
+http://scripts.embed.ly/p/0.1/jquery.preview.min.js
+http://scripts.embed.ly/p/0.1/jquery.preview.full.min.js
+http://scripts.embed.ly/p/0.1/css/preview.css
+</pre>
+<p>The most current version of jQuery Preview will be available here:</p>
+<pre class="literal-block">
+http://scripts.embed.ly/p/jquery.preview.min.js
+http://scripts.embed.ly/p/jquery.preview.full.min.js
+http://scripts.embed.ly/p/css/preview.css
+</pre>
+</div>
 <div class="section" id="development">
 <h1>Development</h1>
 <p>The code is broken down into modules in the <tt class="docutils literal">src</tt> folder and built by
@@ -518,14 +579,14 @@ preview.scss:preview.css</tt></p>
 </div>
 </div>
 <!-- End Generated -->
-          
+
         </div>
       </div>
       <div class="clear"></div>
     </div>
-    
+
     <script>
-    
+
     $(document).ready(function(){
       var preview = {
         submit : function(e, data){
@@ -537,13 +598,13 @@ preview.scss:preview.css</tt></p>
                             preview:preview,
                             autoplay : 1,
                             maxwidth: 600});
-                            
+
       $('#id_attach').bind('click', function(e){
         e.preventDefault();
         $('#id_url').trigger('attach');
-        
+
         $('.arrow p').text('Now Share it!')
-        
+
         $('#id_attach').replaceWith($('<input/>').attr({
           'id' : 'id_submit',
           'class' : 'btn primary',
@@ -551,12 +612,12 @@ preview.scss:preview.css</tt></p>
           'type' : 'submit'
         }));
       });
-      
+
     });
-    
-    
-    
+
+
+
     </script>
-    
+
   </body>
 </html>

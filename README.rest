@@ -438,9 +438,9 @@ CDN
 To get you going even faster, Embedly hosts all the files you need on
 scripts.embed.ly. The latest version is available here::
 
-    http://scripts.embed.ly/p/jquery.preview-0.1.min.js
-    http://scripts.embed.ly/p/jquery.preview-0.1.full.min.js
-    http://scripts.embed.ly/p/css/preview-0.1.css
+    http://scripts.embed.ly/p/0.1/jquery.preview.min.js
+    http://scripts.embed.ly/p/0.1/jquery.preview.full.min.js
+    http://scripts.embed.ly/p/0.1/css/preview.css
 
 The most current version of jQuery Preview will be available here::
 
