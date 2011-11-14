@@ -14,7 +14,7 @@ function Preview(elem, options) {
 
     // List of all the attrs that can be sent to Embedly
     api_args : ['key', 'maxwidth', 'maxheight', 'width', 'wmode', 'autoplay',
-      'videosrc', 'allowscripts', 'words', 'chars'],
+      'videosrc', 'allowscripts', 'words', 'chars', 'secure', 'frame'],
 
     // What attrs we are going to use.
     display_attrs : ['type', 'original_url', 'url', 'title', 'description',
