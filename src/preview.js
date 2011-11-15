@@ -18,7 +18,7 @@ function Preview(elem, options) {
 
     // What attrs we are going to use.
     display_attrs : ['type', 'original_url', 'url', 'title', 'description',
-      'favicon_url', 'provider_url', 'provider_display', 'safe', 'html',
+      'favicon_url', 'provider_url', 'provider_display', 'provider_name', 'safe', 'html',
       'thumbnail_url', 'object_type', 'image_url'],
 
     default_data : {},
