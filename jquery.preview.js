@@ -740,7 +740,7 @@ function Preview(elem, options) {
 
     // What attrs we are going to use.
     display_attrs : ['type', 'original_url', 'url', 'title', 'description',
-      'favicon_url', 'provider_url', 'provider_display', 'safe', 'html',
+      'favicon_url', 'provider_url', 'provider_display', 'provider_name', 'safe', 'html',
       'thumbnail_url', 'object_type', 'image_url'],
 
     default_data : {},
@@ -829,8 +829,11 @@ function Preview(elem, options) {
     toggleLoading : function () {
       this.form.find(this.loading_selector).toggle();
     },
+    callback : function(obj) {
+      // empty. can be overridden by user
+    },
     //Metadata Callback
-    callback : function (obj) {
+    _callback : function (obj) {
       //tells the loader to stop
       this.toggleLoading();
 
@@ -939,6 +942,7 @@ function Preview(elem, options) {
 
       // Now use the selector obj to render the selector.
       this.selector.render(obj);
+      this.callback(obj);
     },
     errorCallback : function () {
       log('error');
@@ -954,7 +958,7 @@ function Preview(elem, options) {
         url: 'http://api.embed.ly/1/preview',
         dataType: 'jsonp',
         data: data,
-        success: this.callback,
+        success: this._callback,
         error: this.errorCallback
       });
     },
