@@ -222,6 +222,20 @@ function Preview(elem, options) {
       log('error');
       log(arguments);
     },
+    // Actually makes the ajax call to Embedly. We make this a seperate
+    // function because implementations like Chrome Plugins need to overwrite
+    // how the call is made.
+    ajax : function(data){
+      // Make the request to Embedly. Note we are using the
+      // preview endpoint: http://embed.ly/docs/endpoints/1/preview
+      $.ajax({
+        url: 'http://api.embed.ly/1/preview',
+        dataType: 'jsonp',
+        data: data,
+        success: this.callback,
+        error: this.errorCallback
+      });
+    },
     // Fetches the Metadata from the Embedly API
     fetch: function (url) {
       // Get a url out of the status box unless it was passed in.
@@ -250,15 +264,9 @@ function Preview(elem, options) {
       var data = _.clone(this.default_data);
       data.url = url;
 
-      // Make the request to Embedly. Note we are using the
-      // preview endpoint: http://embed.ly/docs/endpoints/1/preview
-      $.ajax({
-        url: 'http://api.embed.ly/1/preview',
-        dataType: 'jsonp',
-        data: data,
-        success: this.callback,
-        error: this.errorCallback
-      });
+      // make the ajax call
+      this.ajax(data);
+
       return true;
     },
     keyUp : function (e) {
