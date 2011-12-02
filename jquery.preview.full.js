@@ -2041,20 +2041,17 @@ function Preview(elem, options) {
       //Debug used for logging
       this.debug = this.options.debug;
 
-      //We Need to make sure there is a Key.
-      if (!this.default_data.hasOwnProperty('key')) {
-        log('Options did not include a Embedly API key. Aborting.');
-      }else{
-        //Sets up Selector
-        this.selector = Selector(this.form, this.options.selector);
+      //Sets up Selector
+      this.selector = Selector(this.form, this.options.selector);
 
-        // Sets up display
-        this.display = Display(this.options.display);
+      // Sets up display
+      this.display = Display(this.options.display);
 
-        // Overwrites any funtions
-        _.extend(this, this.options.preview);
+      // Overwrites any funtions
+      _.extend(this, this.options.preview);
 
-        // Binds all the functions that you want.
+      // Binds all the functions that you want.
+      if (elem){
         this.bind();
       }
     },
