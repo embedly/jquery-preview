@@ -31,8 +31,8 @@ the ``head`` of your page::
 
     <head>
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-      <script src="http://scripts.embed.ly/p/0.1/jquery.preview.full.min.js" type="text/javascript"></script>
-      <link rel="stylesheet" href="http://scripts.embed.ly/p/0.1/css/preview.css" />
+      <script src="http://scripts.embed.ly/p/0.2/jquery.preview.full.min.js" type="text/javascript"></script>
+      <link rel="stylesheet" href="http://scripts.embed.ly/p/0.2/css/preview.css" />
     </head>
 
 jquery.preview.full.js bundles `Underscore.js
@@ -45,8 +45,8 @@ like so::
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
       <script src="lib/mustache.js" type="text/javascript"></script>
       <script src="lib/underscore.js" type="text/javascript"></script>
-      <script src="http://scripts.embed.ly/p/0.1/jquery.preview.min.js" type="text/javascript"></script>
-      <link rel="stylesheet" href="http://scripts.embed.ly/p/0.1/css/preview.css" />
+      <script src="http://scripts.embed.ly/p/0.2/jquery.preview.min.js" type="text/javascript"></script>
+      <link rel="stylesheet" href="http://scripts.embed.ly/p/0.2/css/preview.css" />
     </head>
 
 Next set up a simple form that allows a user to input link::
@@ -126,6 +126,32 @@ Functions
             // Still bind the form to ``_submit`` that cleans up the data
             // before calling ``submit``
             $(this.form).bind('submit', this._submit);
+          }
+        }
+        $('#url').preview({preview:preview});
+
+``error``
+    Called when the url that the user inputed throws an error somewhere along
+    the way. Depending on the use case you may want notify the user or hide it
+    from them. The default behavior is to not notify the user. To notify them
+    you can use::
+
+        var preview = {
+          error : function(){
+            alert('The URL you entered was not processed.');
+          }
+        }
+        $('#url').preview({preview:preview});
+
+``callback``
+    Called after a URL has been successfully rendered by the selector. Useful
+    if you want to change state after the URL has been successfully processed.
+    For example if you want to change a button from 'Share' to 'Attach' you can
+    do it like so::
+
+        var preview = {
+          callback : function(){
+            $('button').text('Attach');
           }
         }
         $('#url').preview({preview:preview});
@@ -438,9 +464,9 @@ CDN
 To get you going even faster, Embedly hosts all the files you need on
 scripts.embed.ly. The latest version is available here::
 
-    http://scripts.embed.ly/p/0.1/jquery.preview.min.js
-    http://scripts.embed.ly/p/0.1/jquery.preview.full.min.js
-    http://scripts.embed.ly/p/0.1/css/preview.css
+    http://scripts.embed.ly/p/0.2/jquery.preview.min.js
+    http://scripts.embed.ly/p/0.2/jquery.preview.full.min.js
+    http://scripts.embed.ly/p/0.2/css/preview.css
 
 The most current version of jQuery Preview will be available here::
 
@@ -457,3 +483,12 @@ find the code in the module and run ``python watch.py`` to build
 ``preview.jquery.js``. ``preview.css`` is a `sass <http://sass-lang.com/>`_
 generated file. Please modify ``preview.scss`` by running ``sass --watch
 preview.scss:preview.css``
+
+
+Changelog
+---------
+
+0.2
+^^^
+* Added the $.preview so it can be used before the a form is initialized.
+* Added ``error`` and ``callback`` to the Preview object.

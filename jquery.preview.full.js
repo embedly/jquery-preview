@@ -1256,7 +1256,7 @@ var Mustache = function() {
 
 })();
 /*
- * Embedly Preview JQuery v0.0.1
+ * Embedly Preview JQuery v0.0.2
  * =============================
  * This library allows you to easily create a status or url submisstion tool
  * utilizing Embedly's Preview API. For more information see:
@@ -1977,7 +1977,7 @@ function Display(display){
 
   return Display;
 }
-/* jQuery Preview - v0.1
+/* jQuery Preview - v0.2
  *
  * jQuery Preview is a plugin by Embedly that allows developers to create tools
  * that enable users to share links with rich previews attached.
@@ -2033,7 +2033,10 @@ function Preview(elem, options) {
       this.default_data = data;
 
       // Just reminds us which form we should be working on.
-      this.form = options.form ? options.form : elem.parents('form');
+      this.form = null;
+      if (elem){
+        this.form = options.form ? options.form : elem.parents('form');
+      }
 
       //Debug used for logging
       this.debug = this.options.debug;
@@ -2102,6 +2105,7 @@ function Preview(elem, options) {
       // proceed. Generally will never happen.
       if (!obj.hasOwnProperty('type')) {
         log('Embedly returned an invalid response');
+        this.error(obj);
         return false;
       }
 
@@ -2110,6 +2114,7 @@ function Preview(elem, options) {
       // were the default workflow should happen.
       if (obj.type === 'error') {
         log('URL ('+obj.url+') returned an error: '+ obj.error_message);
+        this.error(obj);
         return false;
       }
 
@@ -2119,6 +2124,7 @@ function Preview(elem, options) {
       // wrap them in HTML5 tags, but won't work cross browser.
       if (!(obj.type in {'html':'', 'image':''})) {
         log('URL ('+obj.url+') returned a type ('+obj.type+') not handled');
+        this.error(obj);
         return false;
       }
 
@@ -2201,7 +2207,8 @@ function Preview(elem, options) {
       this.selector.render(obj);
       this.callback(obj);
     },
-    errorCallback : function () {
+    // Used as a generic error callback if something fails.
+    error : function () {
       log('error');
       log(arguments);
     },
@@ -2216,7 +2223,7 @@ function Preview(elem, options) {
         dataType: 'jsonp',
         data: data,
         success: this._callback,
-        error: this.errorCallback
+        error: this.error
       });
     },
     // Fetches the Metadata from the Embedly API
@@ -2341,6 +2348,10 @@ function Preview(elem, options) {
   //Return the Preview Function that will eventually be namespaced to $.preview.
   return Preview;
 }
+
+  // Sets up an initial $.preview for use before the form is initialized.
+  // Useful for early access to display if needed.
+  $.preview = new Preview(null, {});
 
   //Set up the Preview Functions for jQuery
   $.fn.preview = function(options, callback){

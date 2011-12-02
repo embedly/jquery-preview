@@ -151,8 +151,8 @@ the <tt class="docutils literal">head</tt> of your page:</p>
 <pre class="literal-block">
 &lt;head&gt;
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;script src=&quot;jquery.preview.full.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;css/preview.css&quot; /&gt;
+  &lt;script src=&quot;http://scripts.embed.ly/p/0.2/jquery.preview.full.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;http://scripts.embed.ly/p/0.2/css/preview.css&quot; /&gt;
 &lt;/head&gt;
 </pre>
 <p>jquery.preview.full.js bundles <a class="reference external" href="http://documentcloud.github.com/underscore/">Underscore.js</a> and <a class="reference external" href="https://github.com/janl/mustache.js/">Mustache.js</a> in with jquery.preview.js. If you
@@ -163,8 +163,8 @@ like so:</p>
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
   &lt;script src=&quot;lib/mustache.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
   &lt;script src=&quot;lib/underscore.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;script src=&quot;jquery.preview.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;css/preview.css&quot; /&gt;
+  &lt;script src=&quot;http://scripts.embed.ly/p/0.2/jquery.preview.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;http://scripts.embed.ly/p/0.2/css/preview.css&quot; /&gt;
 &lt;/head&gt;
 </pre>
 <p>Next set up a simple form that allows a user to input link:</p>
@@ -239,6 +239,34 @@ var preview = {
     // Still bind the form to ``_submit`` that cleans up the data
     // before calling ``submit``
     $(this.form).bind('submit', this._submit);
+  }
+}
+$('#url').preview({preview:preview});
+</pre>
+</dd>
+<dt><tt class="docutils literal">error</tt></dt>
+<dd><p class="first">Called when the url that the user inputed throws an error somewhere along
+the way. Depending on the use case you may want notify the user or hide it
+from them. The default behavior is to not notify the user. To notify them
+you can use:</p>
+<pre class="last literal-block">
+var preview = {
+  error : function(){
+    alert('The URL you entered was not processed.');
+  }
+}
+$('#url').preview({preview:preview});
+</pre>
+</dd>
+<dt><tt class="docutils literal">callback</tt></dt>
+<dd><p class="first">Called after a URL has been successfully rendered by the selector. Useful
+if you want to change state after the URL has been successfully processed.
+For example if you want to change a button from 'Share' to 'Attach' you can
+do it like so:</p>
+<pre class="last literal-block">
+var preview = {
+  callback : function(){
+    $('button').text('Attach');
   }
 }
 $('#url').preview({preview:preview});
@@ -351,7 +379,7 @@ embed the <tt class="docutils literal">html</tt> attribute.</dd>
 <p><tt class="docutils literal">template</tt> can also be a dictionary if you want to use different
 templates for different <a href="#id3"><span class="problematic" id="id4">``</span></a>object_type``s. For instance:</p>
 <div class="system-message" id="id3">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 239); <em><a href="#id4">backlink</a></em></p>
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 265); <em><a href="#id4">backlink</a></em></p>
 Inline literal start-string without end-string.</div>
 <pre class="last literal-block">
 template : {
@@ -490,7 +518,7 @@ embed the <tt class="docutils literal">html</tt> attribute.</dd>
 <p><tt class="docutils literal">template</tt> can also be a dictionary if you want to use different
 templates for different <a href="#id11"><span class="problematic" id="id12">``</span></a>object_type``s. For instance:</p>
 <div class="system-message" id="id11">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 374); <em><a href="#id12">backlink</a></em></p>
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 400); <em><a href="#id12">backlink</a></em></p>
 Inline literal start-string without end-string.</div>
 <pre class="last literal-block">
 template : {
@@ -557,9 +585,9 @@ object to be rendered and displayed.</p>
 <p>To get you going even faster, Embedly hosts all the files you need on
 scripts.embed.ly. The latest version is available here:</p>
 <pre class="literal-block">
-http://scripts.embed.ly/p/0.1/jquery.preview.min.js
-http://scripts.embed.ly/p/0.1/jquery.preview.full.min.js
-http://scripts.embed.ly/p/0.1/css/preview.css
+http://scripts.embed.ly/p/0.2/jquery.preview.min.js
+http://scripts.embed.ly/p/0.2/jquery.preview.full.min.js
+http://scripts.embed.ly/p/0.2/css/preview.css
 </pre>
 <p>The most current version of jQuery Preview will be available here:</p>
 <pre class="literal-block">
@@ -576,6 +604,15 @@ find the code in the module and run <tt class="docutils literal">python watch.py
 <tt class="docutils literal">preview.jquery.js</tt>. <tt class="docutils literal">preview.css</tt> is a <a class="reference external" href="http://sass-lang.com/">sass</a>
 generated file. Please modify <tt class="docutils literal">preview.scss</tt> by running <tt class="docutils literal">sass <span class="pre">--watch</span>
 preview.scss:preview.css</tt></p>
+</div>
+<div class="section" id="changelog">
+<h1>Changelog</h1>
+<div class="section" id="id14">
+<h2>0.2</h2>
+<ul class="simple">
+<li>Added the $.preview so it can be used before the a form is initialized.</li>
+<li>Added <tt class="docutils literal">error</tt> and <tt class="docutils literal">callback</tt> to the Preview object.</li>
+</ul>
 </div>
 </div>
 <!-- End Generated -->

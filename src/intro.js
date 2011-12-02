@@ -1,5 +1,5 @@
 /*
- * Embedly Preview JQuery v0.0.1
+ * Embedly Preview JQuery v0.0.2
  * =============================
  * This library allows you to easily create a status or url submisstion tool
  * utilizing Embedly's Preview API. For more information see:
