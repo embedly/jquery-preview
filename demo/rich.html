@@ -30,6 +30,7 @@
             <li><a href="large.html">Large Link</a>
             <li class="active"><a href="rich.html">Rich Link</a>
             <li><a href="multi.html">Multiple Inputs</a>
+            <li><a href="editable.html">Editable</a></li>
           </ul>
         </div>
       </div>
@@ -39,30 +40,30 @@
         <div class="span10 columns offset3">
           <h3>Share a link</h3>
           <form id="preview_form" class="form-stacked" method="post" action=".">
-            <fieldset>              
+            <fieldset>
               <div class="clearfix">
                 <label for="url">URL</label>
                 <input type="text" class="xxlarge" name="url" id="id_url" />
                 <span class="help-block">Enter a url.</span>
-              </div>    
+              </div>
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
             <div class="loading">
-              <img src='../images/loading-rectangle.gif'>  
+              <img src='../images/loading-rectangle.gif'>
             </div>
             <!-- Placeholder that tells Preview where to put the selector-->
             <div class="selector"></div>
-            
+
             <div class="actions">
               <input id="id_submit" type="submit" class="btn primary" value="Post"/>
             </div>
-            
+
           </form>
         </div>
       </div>
       <div class="row">
         <div id="feed" class="span10 columns offset3">
-          
+
         </div>
       </div>
       <div class="clear"></div>
@@ -75,7 +76,7 @@
         }
       }
       $('#id_url').preview({key:'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                            preview:preview, 
+                            preview:preview,
                             selector : {type:'rich'},
                             maxwidth : 500,
                             display : {display : 'rich'}});

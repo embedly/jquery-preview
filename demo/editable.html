@@ -8,7 +8,7 @@
     <script src="../jquery.preview.js" type="text/javascript"></script>
     <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.2.0.min.css">
     <link rel="stylesheet" href="../css/preview.css" />
-    <title>jQuery Preview - Link</title>
+    <title>jQuery Preview - Editable</title>
     <style>
       .topbar{
         position:relative;
@@ -22,11 +22,11 @@
           <h3><a href="index.html">jQuery Preview</a></h3>
           <ul>
             <li><a href="status.html">Status</a></li>
-            <li class="active"><a href="link.html">Link</a></li>
+            <li><a href="link.html">Link</a></li>
             <li><a href="large.html">Large Link</a></li>
             <li><a href="rich.html">Rich Link</a></li>
             <li><a href="multi.html">Multiple Inputs</a></li>
-            <li><a href="editable.html">Editable</a></li>
+            <li class="active"><a href="editable.html">Editable</a></li>
           </ul>
         </div>
       </div>
@@ -35,6 +35,10 @@
       <div class="row">
         <div class="span10 columns offset3">
           <h3>Share a link</h3>
+          <p>
+            This demo makes the title and description instantly editable
+            instead of click to edit.
+          </p>
           <form id="preview_form" class="form-stacked" method="post" action=".">
             <fieldset>
               <input type="text" class="xlarge" name="url" id="id_url" />
@@ -65,8 +69,49 @@
           this.display.create(data);
         }
       }
+      var selector = {
+        template : ['<div class="selector small">',
+          '{{>images_small}}',
+          '<div class="attributes">',
+            '<input class="title" value="{{title}}" />',
+            '<textarea class="description">{{description}}</textarea>',
+            '<span class="meta">',
+              '{{>favicon}}',
+              '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
+            '</span>',
+          '</div>',
+          '<div class="action"><a href="#" class="close">&#10005;</a></div>',
+        '</div>'].join(''),
+        bind : function () {
+          // Thumbnail Controls
+          this.elem.find('.left').bind('click', _.bind(this.scroll, {}, 'left'));
+          this.elem.find('.right').bind('click', _.bind(this.scroll, {}, 'right'));
+          this.elem.find('.nothumb').bind('click', this.nothumb);
+
+          // Binds the close button.
+          this.elem.find('.action .close').bind('click', this.clear);
+          this.elem.bind('mouseenter mouseleave', function () {
+            $(this).find('.action').toggle();
+          });
+
+          //Show hide the controls.
+          this.elem.find('.thumbnail').one('mouseenter', function () {
+            $(this).bind('mouseenter mouseleave', function () {
+              $(this).find('.controls').toggle();
+            });
+          });
+
+          //Edit Title and Description handlers.
+          this.elem.find('.title').bind('blur', function(e){
+            $(e.target).parents('form').find('#id_title').val(encodeURIComponent($(e.target).val()));
+          });
+          this.elem.find('.description').bind('blur', function(e){
+            $(e.target).parents('form').find('#id_description').val(encodeURIComponent($(e.target).val()));
+          });
+        }
+      }
       $('#id_url').preview({key:'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                            preview:preview});
+                            preview:preview, selector:selector});
     </script>
   </body>
 </html>
