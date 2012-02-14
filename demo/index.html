@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="../css/preview.css" />
     <title>jQuery Preview</title>
     <style>
+      body {
+        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
+      }
       .navbar{
         position:relative;
       }
@@ -43,7 +46,7 @@
         width:200px;
         position: absolute;
         top: 0;
-        right: 16px;
+        right: 46px;
       }
       .arrow p {
         position: absolute;
@@ -61,7 +64,9 @@
       .item .attributes {
         padding: 0 0 0 120px;
       }
-
+      .section { padding-top:60px; }
+      #id_attach { position:relative; top:-4px;}
+      fieldset .help-block { clear:both; display:block;}
     </style>
   </head>
   <body>
@@ -83,7 +88,7 @@
     <div class="container">
       <div class="row">
         <div class="hero-unit">
-          <h1> jQuery Preview <a id="doc" href="https://github.com/embedly/jquery-preview" class="btn primary">Get the Code &raquo;</a></h1>
+          <h1> jQuery Preview <a id="doc" href="https://github.com/embedly/jquery-preview" class="btn btn-primary">Get the Code &raquo;</a></h1>
           <p>
             <a href="https://github.com/embedly/jquery-preview">jQuery Preview</a>
             is a plugin that allows users to preview URLs before
@@ -94,15 +99,15 @@
             <div class="clearfix"></div>
           </p>
 
-          <form id="preview_form" class="form-stacked" method="post" action=".">
+          <form id="preview_form" class="form-vertical" method="post" action=".">
             <div class="arrow">
               <p>Try it out.</p>
               <img src='../images/arrow.png'>
             </div>
             <fieldset>
               <div class="clearfix"></div>
-              <input type="text" class="xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336" />
-              <button id="id_attach" class="btn primary">Attach</button>
+              <input type="text" class="input-xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336" />
+              <button id="id_attach" class="btn btn-primary">Attach</button>
               <span class="help-block">Enter your own url or select attach.</span>
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
@@ -118,7 +123,7 @@
 
 
         </div>
-        <div class="span12 columns offset1">
+        <div class="span12 columns">
 
 <!--
 Generated from the README.rest.
@@ -281,7 +286,7 @@ $('#url').preview({preview:preview});
 field. If you wish to have a two step process of attaching the link to the
 status and then sharing the link you can set something up like this:</p>
 <pre class="literal-block">
-&lt;form id=&quot;preview_form&quot; class=&quot;form-stacked&quot; method=&quot;post&quot; action=&quot;.&quot;&gt;
+&lt;form id=&quot;preview_form&quot; class=&quot;form-vertical&quot; method=&quot;post&quot; action=&quot;.&quot;&gt;
     &lt;input type=&quot;text&quot; name=&quot;url&quot; id=&quot;id_url&quot; value=&quot;http://vimeo.com/18150336&quot; /&gt;
     &lt;button id=&quot;id_attach&quot;&gt;Attach&lt;/button&gt;
 &lt;/form&gt;
@@ -554,7 +559,7 @@ the AJAX post. In this case it's '/update':</p>
 <pre class="literal-block">
 &lt;form method=&quot;post&quot; action=&quot;/update&quot;&gt;
   &lt;input type=&quot;text&quot; class=&quot;xlarge&quot; name=&quot;url&quot; id=&quot;id_url&quot; /&gt;
-  &lt;input id=&quot;id_submit&quot; type=&quot;submit&quot; class=&quot;btn primary&quot; value=&quot;Share&quot;/&gt;
+  &lt;input id=&quot;id_submit&quot; type=&quot;submit&quot; class=&quot;btn btn-primary&quot; value=&quot;Share&quot;/&gt;
 &lt;/form&gt;
 </pre>
 <p>We then build a handler to deal with the form data:</p>
@@ -645,7 +650,7 @@ preview.scss:preview.css</tt></p>
 
         $('#id_attach').replaceWith($('<input/>').attr({
           'id' : 'id_submit',
-          'class' : 'btn primary',
+          'class' : 'btn btn-primary',
           'value' : 'Share',
           'type' : 'submit'
         }));

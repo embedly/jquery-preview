@@ -6,16 +6,19 @@
     <link rel="stylesheet" href="common/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ static_url('css/preview.css')}}" />
     <style>
+      body {
+        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
+      }
       .topbar{
         position:relative;
       }
     </style>
   </head>
   <body>
-    <div class="topbar">
-      <div class="topbar-inner">
+    <div class="navbar">
+      <div class="navbar-inner">
         <div class="container">
-          <h3><a href="index.html">Embedly Preview</a></h3>
+          <a class="brand" href="index.html">Embedly Preview</a>
         </div>
       </div>
     </div>
@@ -23,10 +26,10 @@
       <div class="row">
         <div class="span10 columns offset3">
           <h3>Share a link</h3>
-          <form id="preview_form" class="form-stacked" method="post" action="/update">
+          <form id="preview_form" class="form-vertical" method="post" action="/update">
             <fieldset>
               <input type="text" class="xlarge" name="url" id="id_url" />
-              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+              <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
               <span class="help-block">Enter a url.</span>
               
             </fieldset>

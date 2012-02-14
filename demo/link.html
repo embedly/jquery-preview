@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="../css/preview.css" />
     <title>jQuery Preview - Link</title>
     <style>
+      body {
+        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
+      }
       .navbar{
         position:relative;
       }
@@ -35,10 +38,10 @@
       <div class="row">
         <div class="span10 columns offset3">
           <h3>Share a link</h3>
-          <form id="preview_form" class="form-stacked" method="post" action=".">
+          <form id="preview_form" class="form-vertical" method="post" action=".">
             <fieldset>
               <input type="text" class="xlarge" name="url" id="id_url" />
-              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+              <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
               <span class="help-block">Enter a url.</span>
 
             </fieldset>

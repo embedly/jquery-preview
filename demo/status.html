@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="../css/preview.css" />
     <title>jQuery Preview - Status</title>
     <style>
+      body {
+        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
+      }
       .navbar{
         position:relative;
       }
@@ -35,9 +38,9 @@
       <div class="row">
         <div class="span10 columns offset3">
           <h3>Share what's new...</h3>
-          <form id="preview_form" class="form-stacked" method="post" action=".">
+          <form id="preview_form" class="form-vertical" method="post" action=".">
             <fieldset>
-              <textarea class="xxlarge" name="status" id="id_status" ></textarea>
+              <textarea class="input-xxlarge" name="status" id="id_status" ></textarea>
               <span class="help-block">Enter a url.</span>
             </fieldset>
             <!-- Placeholder that tells Preview where to put the loading icon-->
@@ -48,7 +51,7 @@
             <div class="selector"></div>
 
             <div class="actions">
-              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+              <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
             </div>
           </form>
         </div>

@@ -10,10 +10,13 @@
     <link rel="stylesheet" href="../css/preview.css" />
     <title>jQuery Preview - Large</title>
     <style>
+      body {
+        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
+      }
       .navbar{
         position:relative;
       }
-      input.xxlarge {
+      input.input-xxlarge {
         padding: 8px;
         font-size: 14px;
       }
@@ -39,22 +42,22 @@
       <div class="row">
         <div class="span10 columns offset3">
           <h3>Share a link</h3>
-          <form id="preview_form" class="form-stacked" method="post" action=".">
+          <form id="preview_form" class="form-vertical" method="post" action=".">
             <fieldset>
 
               <div class="clearfix">
                 <label for="title">Title</label>
-                <input type="text" class="xxlarge" name="title" id="id_title" />
+                <input type="text" class="input-xxlarge" name="title" id="id_title" />
               </div>
 
               <div class="clearfix">
                 <label for="url">URL</label>
-                <input type="text" class="xxlarge" name="url" id="id_url" />
+                <input type="text" class="input-xxlarge" name="url" id="id_url" />
                 <span class="help-block">Enter a url.</span>
               </div>
 
               <div class="actions">
-                <input id="id_submit" type="submit" class="btn primary" value="Post"/>
+                <input id="id_submit" type="submit" class="btn btn-primary" value="Post"/>
               </div>
 
             </fieldset>

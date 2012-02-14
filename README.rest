@@ -163,7 +163,7 @@ field. If you wish to have a two step process of attaching the link to the
 status and then sharing the link you can set something up like this::
 
 
-    <form id="preview_form" class="form-stacked" method="post" action=".">
+    <form id="preview_form" class="form-vertical" method="post" action=".">
         <input type="text" name="url" id="id_url" value="http://vimeo.com/18150336" />
         <button id="id_attach">Attach</button>
     </form>
@@ -431,7 +431,7 @@ the AJAX post. In this case it's '/update'::
 
     <form method="post" action="/update">
       <input type="text" class="xlarge" name="url" id="id_url" />
-      <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+      <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
     </form>
 
 We then build a handler to deal with the form data::

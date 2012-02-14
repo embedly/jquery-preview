@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="../css/preview.css" />
     <title>jQuery Preview - Editable</title>
     <style>
+      body {
+        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
+      }
       .navbar{
         position:relative;
       }
@@ -39,10 +42,10 @@
             This demo makes the title and description instantly editable
             instead of click to edit.
           </p>
-          <form id="preview_form" class="form-stacked" method="post" action=".">
+          <form id="preview_form" class="form-vertical" method="post" action=".">
             <fieldset>
               <input type="text" class="xlarge" name="url" id="id_url" />
-              <input id="id_submit" type="submit" class="btn primary" value="Share"/>
+              <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
               <span class="help-block">Enter a url.</span>
 
             </fieldset>
