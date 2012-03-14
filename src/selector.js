@@ -230,7 +230,7 @@ function Selector(form, selector) {
         return false;
       }
 
-      var thumb = encodeURIComponent(images.find('img').eq((left / -100)).attr('src'));
+      var thumb = encodeURIComponent(images.find('img').eq((left / -width)).attr('src'));
 
       //  Puts the current thumbnail into the thumbnail_url input
       form.find('#id_thumbnail_url').val(thumb);
