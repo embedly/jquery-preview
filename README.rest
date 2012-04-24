@@ -350,19 +350,19 @@ Attributes
 
         <div class="item">
           <div class="thumbnail">
-            <a href="{{orginal_url}}">
+            <a href="{{original_url}}">
               <img title="{{title}}" src="{{thumbnail_url}}"/>
               <span class="overlay"></span>
             </a>
           </div>
           <div class="attributes">
-            <a class="title" href="{{orginal_url}}">{{title}}</a>
+            <a class="title" href="{{original_url}}">{{title}}</a>
             <p class="description">{{description}}</p>
             <span class="meta">
               <img class="favicon" src="{{favicon_url}}"/>
               <a class="provider" href="{{provider_url}}">{{provider_display}}</a>
             </span>
-          <div>
+          </div>
         </div>
 
     By default Preview passes the following attributes to the template
