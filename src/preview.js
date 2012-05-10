@@ -181,8 +181,8 @@ function Preview(elem, options) {
           }
           obj.image_url = v;
         }
-        else{
-          v = obj.hasOwnProperty(n) && obj[n] ? encodeURIComponent(obj[n]): '';
+        else {
+          v = obj[n];
         }
 
         var d = {
@@ -264,7 +264,7 @@ function Preview(elem, options) {
       // input that we should look for and compare values. If they are the
       // same we will ignore.
       var original_url = this.form.find('#id_original_url').val();
-      if (original_url === encodeURIComponent(url)) {
+      if (original_url === url) {
         return true;
       }
 
@@ -313,7 +313,7 @@ function Preview(elem, options) {
         function (i, e) {
           var n = $(e).attr('name');
           if (n !== undefined) {
-            data[n] = decodeURIComponent($(e).val());
+            data[n] = $(e).val();
           }
       });
       // Clears the Selector.
