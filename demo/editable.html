@@ -106,10 +106,10 @@
 
           //Edit Title and Description handlers.
           this.elem.find('.title').bind('blur', function(e){
-            $(e.target).parents('form').find('#id_title').val(encodeURIComponent($(e.target).val()));
+            $(e.target).parents('form').find('#id_title').val($(e.target).val());
           });
           this.elem.find('.description').bind('blur', function(e){
-            $(e.target).parents('form').find('#id_description').val(encodeURIComponent($(e.target).val()));
+            $(e.target).parents('form').find('#id_description').val($(e.target).val());
           });
         }
       }

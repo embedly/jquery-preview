@@ -1608,7 +1608,7 @@ function Selector(form, selector) {
 
       // If there are images, set the information in the form.
       if (obj.images.length > 0) {
-        form.find('#id_thumbnail_url').val(encodeURIComponent(obj.images[0].url));
+        form.find('#id_thumbnail_url').val(obj.images[0].url);
       } else {
         this.elem.find('.thumbnail').hide();
       }
@@ -1682,7 +1682,7 @@ function Selector(form, selector) {
         return false;
       }
 
-      var thumb = encodeURIComponent(images.find('img').eq((left / -width)).attr('src'));
+      var thumb = images.find('img').eq((left / -width)).attr('src');
 
       //  Puts the current thumbnail into the thumbnail_url input
       form.find('#id_thumbnail_url').val(thumb);
@@ -1719,7 +1719,7 @@ function Selector(form, selector) {
       elem.one('blur', function (e) {
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
-        form.find('#id_title').val(encodeURIComponent(elem.val()));
+        form.find('#id_title').val(elem.val());
 
         var a = $('<a/>').attr({
             'class': 'title',
@@ -1753,7 +1753,7 @@ function Selector(form, selector) {
       elem.one('blur', function (e) {
         var elem = $(e.target);
         // Sets the New Title in the hidden inputs
-        form.find('#id_description').val(encodeURIComponent(elem.val()));
+        form.find('#id_description').val(elem.val());
 
         var a = $('<a/>').attr({
             'class': 'description',
