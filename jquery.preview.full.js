@@ -2179,6 +2179,9 @@ function Preview(elem, options) {
         if(e.length) {
           // It's hidden, use it
           if (e.attr('type') === 'hidden') {
+            // jQuery doesn't allow changing the 'type' attribute
+            delete d.type;
+            
             e.attr(d);
           } else{
             // Be careful here.
