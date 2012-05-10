@@ -858,6 +858,12 @@ function Preview(elem, options) {
         return false;
       }
 
+      if (!obj.safe) {
+        log('URL ('+obj.url+') was deemed unsafe: ' + obj.safe_message);
+        this.error(obj);
+        return false;
+      }
+
       // Generally you only want to handle preview objs that are of type
       // `html` or `image`. Others could include `ppt`,`video` or `audio`
       // which I don't believe you have a good solution for yet. We could
