@@ -281,8 +281,8 @@ function Preview(elem, options) {
       return true;
     },
     keyUp : function (e) {
-      // Ignore Everthing but the spacebar Key event.
-      if (e.keyCode !== 32) {
+      // Only respond to keys that insert whitespace (spacebar, enter)
+      if (e.which !== 32 && e.which !== 13) {
         return null;
       }
 
