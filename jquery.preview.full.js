@@ -2068,14 +2068,14 @@ function Preview(elem, options) {
       }
 
       // Simple regex to make sure the url with a scheme is valid.
-      var urlexp = /^http(s?):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+      var urlexp = /^http(s?):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i;
       var matches = status.match(urlexp);
 
       var url = matches? matches[0] : null;
 
       //No urls is the status. Try for urls without scheme i.e. example.com
       if (url === null) {
-        urlexp = /[-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/g;
+        urlexp = /[-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/gi;
         matches = status.match(urlexp);
         url = matches? 'http://'+matches[0] : null;
       }
@@ -2354,6 +2354,7 @@ function Preview(elem, options) {
   //Return the Preview Function that will eventually be namespaced to $.preview.
   return Preview;
 }
+
 
   // Sets up an initial $.preview for use before the form is initialized.
   // Useful for early access to display if needed.
