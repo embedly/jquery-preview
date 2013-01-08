@@ -2225,7 +2225,7 @@ function Preview(elem, options) {
       // Make the request to Embedly. Note we are using the
       // preview endpoint: http://embed.ly/docs/endpoints/1/preview
       $.ajax({
-        url: 'http://api.embed.ly/1/preview',
+        url: document.location.protocol + '//api.embed.ly/1/preview',
         dataType: 'jsonp',
         data: data,
         success: this._callback,
