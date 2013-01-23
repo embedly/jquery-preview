@@ -1,0 +1,29 @@
+{
+  "name": "jquery.preview",
+  "title": "jQuery Preview",
+  "description": "Create an input that lets users preview the URL.",
+  "version": "3.0.0",
+  "homepage": "https://github.com/embedly/jquery-preview",
+  "author": {
+    "name": "Sean Creeley",
+    "email": "sean@embed.ly",
+    "url": "http://embed.ly"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/embedly/jquery-preview"
+  },
+  "bugs": {
+    "url": "https://github.com/embedly/jquery-preview/issues"
+  },
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "https://github.com/embedly/jquery-preview/blob/master/LICENSE"
+    }
+  ],
+  "dependencies": {
+    "jquery": "*"
+  },
+  "keywords": []
+}
