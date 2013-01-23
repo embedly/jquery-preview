@@ -1,29 +1,57 @@
 .selector {
   margin: 10px auto;
   position: relative;
-  display: none;
   min-height: 85px;
   /* URL Selector */ }
-  .selector .thumbnail {
+  .selector .thumb {
     float: left;
     margin: 0 10px 0 0;
-    position: relative; }
-    .selector .thumbnail .items {
+    position: relative;
+    width: 100px; }
+    .selector .thumb .items {
       position: relative;
       overflow: hidden;
-      padding: 0px; }
-      .selector .thumbnail .items .images {
+      padding: 0px;
+      height: 100px;
+      width: 100px; }
+      .selector .thumb .items .images {
         position: absolute;
         width: 300em;
         margin: 0px;
         padding: 0px;
         left: 0px; }
-        .selector .thumbnail .items .images li {
+        .selector .thumb .items .images li {
           list-style: none;
           float: left;
           margin: 0px;
           padding: 0px; }
-    .selector .thumbnail .nothumb {
+        .selector .thumb .items .images img {
+          width: 100px; }
+    .selector .thumb .controls {
+      top: 0px;
+      left: 0px;
+      width: 100px;
+      position: absolute;
+      height: 16px;
+      z-index: 1;
+      background-color: #222;
+      opacity: 0.5; }
+      .selector .thumb .controls .left, .selector .thumb .controls .right, .selector .thumb .controls .nothumb {
+        display: block;
+        position: absolute;
+        top: 2px;
+        color: #fff; }
+        .selector .thumb .controls .left:hover, .selector .thumb .controls .right:hover, .selector .thumb .controls .nothumb:hover {
+          text-decoration: none; }
+      .selector .thumb .controls .nothumb {
+        right: 2px;
+        font-weight: bold;
+        top: 1px; }
+      .selector .thumb .controls .left {
+        left: 2px; }
+      .selector .thumb .controls .right {
+        left: 16px; }
+    .selector .thumb .nothumb {
       right: 2px;
       font-weight: bold;
       top: 1px; }
@@ -76,30 +104,6 @@
         width: 100px; }
       .selector.rich .thumbnail .items .images img, .selector.small .thumbnail .items .images img {
         width: 100px; }
-    .selector.rich .thumbnail .controls, .selector.small .thumbnail .controls {
-      top: 0px;
-      left: 0px;
-      width: 100px;
-      position: absolute;
-      height: 16px;
-      z-index: 1;
-      background-color: #222;
-      opacity: 0.5; }
-      .selector.rich .thumbnail .controls .left, .selector.rich .thumbnail .controls .right, .selector.rich .thumbnail .controls .nothumb, .selector.small .thumbnail .controls .left, .selector.small .thumbnail .controls .right, .selector.small .thumbnail .controls .nothumb {
-        display: block;
-        position: absolute;
-        top: 2px;
-        color: #fff; }
-        .selector.rich .thumbnail .controls .left:hover, .selector.rich .thumbnail .controls .right:hover, .selector.rich .thumbnail .controls .nothumb:hover, .selector.small .thumbnail .controls .left:hover, .selector.small .thumbnail .controls .right:hover, .selector.small .thumbnail .controls .nothumb:hover {
-          text-decoration: none; }
-      .selector.rich .thumbnail .controls .nothumb, .selector.small .thumbnail .controls .nothumb {
-        right: 2px;
-        font-weight: bold;
-        top: 1px; }
-      .selector.rich .thumbnail .controls .left, .selector.small .thumbnail .controls .left {
-        left: 2px; }
-      .selector.rich .thumbnail .controls .right, .selector.small .thumbnail .controls .right {
-        left: 16px; }
   .selector.small .attributes {
     margin: 0 0 0 110px; }
   .selector.rich .title {
@@ -137,7 +141,7 @@
 
 .item {
   margin: 10px 0;
-  border-top: 1px solid #DDD;
+  border-top: 1px solid #dddddd;
   padding: 10px 0; }
   .item.video .media iframe, .item.video .media object, .item.video .media embed, .item.video .media img, .item.rich .media iframe, .item.rich .media object, .item.rich .media embed, .item.rich .media img, .item.photo .media iframe, .item.photo .media object, .item.photo .media embed, .item.photo .media img {
     margin: 10px auto;

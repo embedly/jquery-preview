@@ -2,10 +2,11 @@
 <html>
   <head>
     <link rel="shortcut icon" href="http://embed.ly/static/favicon.ico">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" ></script>
-    <script src="../lib/underscore.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" ></script>
+    <script src="../lib/jquery.embedly.js" type="text/javascript"></script>
     <script src="../lib/mustache.js" type="text/javascript"></script>
-    <script src="../jquery.preview.js" type="text/javascript"></script>
+    <script src="../lib/sprintf-0.7-beta1.js" type="text/javascript"></script>
+    <script src="../src/share.js" type="text/javascript"></script>
     <link rel="stylesheet" href="common/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/preview.css" />
     <title>jQuery Preview - Status</title>
@@ -48,7 +49,7 @@
               <img src='../images/loading-rectangle.gif'>
             </div>
             <!-- Placeholder that tells Preview where to put the selector-->
-            <div class="selector"></div>
+            <div class="selector-wrapper"></div>
 
             <div class="actions">
               <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
@@ -64,18 +65,41 @@
       <div class="clear"></div>
     </div>
     <script>
-      var preview = {
-        submit : function(e, data){
-          e.preventDefault();
-          this.display.create(data);
-        }
-      }
-      var display = {
-        type : 'status'
-      }
-      $('#id_status').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                                preview:preview,
-                                display:display});
+      $('#id_status').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07'}); // Sign up for a key: http://embed.ly/pricing
+
+      $('#preview_form').on('submit', function(){
+        // Preview data.
+        var preview = $('#id_status').data('preview');
+        preview.status = $('#id_status').val();
+
+        // Close the selector
+        $('#id_status').trigger('close');
+        // Clear the url form.
+        $('#id_status').val('');
+
+        // Create a post using mustache, i.e. the nice way.
+        var template = [
+        '<div class="row">',
+          '<div class="span10">',
+            '<p>{{status}}</p>',
+          '</div>',
+        '</div>',
+        '<div class="row">',
+          '<div class="span3">',
+            '<img class="thumb" src="{{thumbnail_url}}"></img>',
+          '</div>',
+          '<div class="span7">',
+            '<a href="{{original_url}}">{{title}}</a>',
+            '<p>{{description}}</p>',
+          '</div>',
+        '</div>'].join('');
+
+        html = Mustache.to_html(template, preview);
+        $('#feed').append(html);
+
+
+        return false;
+      });
     </script>
   </body>
 </html>

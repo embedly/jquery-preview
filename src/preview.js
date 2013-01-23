@@ -7,6 +7,12 @@
 
 // Base Preview Object. Holds a common set of functions to interact with
 // Embedly's Preview endpoint.
+
+
+
+
+
+
 function Preview(elem, options) {
 
   //Preview Object that We build from the options passed into the function
