@@ -2,10 +2,11 @@
 <html>
   <head>
     <link rel="shortcut icon" href="http://embed.ly/static/favicon.ico">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" ></script>
+    <script src="../lib/jquery.min.js" type="text/javascript" ></script>
     <script src="../lib/underscore.js" type="text/javascript"></script>
     <script src="../lib/mustache.js" type="text/javascript"></script>
-    <script src="../jquery.preview.js" type="text/javascript"></script>
+    <script src="../lib/handlebars.js" type="text/javascript"></script>
+    <script src="../dist/jquery.preview.js" type="text/javascript"></script>
     <link rel="stylesheet" href="common/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/preview.css" />
     <title>jQuery Preview - Rich</title>
@@ -20,6 +21,28 @@
         padding: 8px;
         font-size: 14px;
       }
+      .rich-header {
+        background-color: #efefef;
+        padding: 10px 10px 0 10px;
+        border-right: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+      }
+      .rich-body {
+        background-color: #fff;
+        padding: 10px;
+        border-right: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+      }
+      .rich-body iframe, .rich-body object {
+        margin:0 auto;
+        display: block;
+      }
+      .rich-body p {
+        margin:2px;
+        padding:5px;
+      }
     </style>
   </head>
   <body>
@@ -30,7 +53,6 @@
           <ul class="nav">
             <li><a href="status.html">Status</a></li>
             <li><a href="link.html">Link</a></li>
-            <li><a href="large.html">Large Link</a></li>
             <li class="active"><a href="rich.html">Rich Link</a></li>
             <li><a href="multi.html">Multiple Inputs</a></li>
             <li><a href="editable.html">Editable</a></li>
@@ -40,7 +62,7 @@
     </div>
     <div class="container">
       <div class="row">
-        <div class="span10 columns offset3">
+        <div class="span8 columns offset3">
           <h3>Share a link</h3>
           <form id="preview_form" class="form-vertical" method="post" action=".">
             <fieldset>
@@ -55,7 +77,7 @@
               <img src='../images/loading-rectangle.gif'>
             </div>
             <!-- Placeholder that tells Preview where to put the selector-->
-            <div class="selector"></div>
+            <div class="selector-wrapper"></div>
 
             <div class="actions">
               <input id="id_submit" type="submit" class="btn btn-primary" value="Post"/>
@@ -65,24 +87,93 @@
         </div>
       </div>
       <div class="row">
-        <div id="feed" class="span10 columns offset3">
+        <div id="feed" class="span8 columns offset3">
 
         </div>
       </div>
       <div class="clear"></div>
     </div>
-    <script>
-      var preview = {
-        submit : function(e, data){
-          e.preventDefault();
-          this.display.create(data);
+
+    <script id="selector-template" type="text/x-handlebars-template">
+      <div class="row">
+        <div class="span7 rich-header">
+          <div class="thumb">
+            <div class="controls">
+              <a class="left" href="#">&#9664;</a>
+              <a class="right" href="#">&#9654;</a>
+              <a class="nothumb" href="#">&#10005;</a>
+            </div>
+            <div class="items">
+              <ul class="images">
+                {{#each images }}
+                  <li><img src="{{this.url}}"/></li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+          <div>
+            <h4>{{title}}<h4>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span7 rich-body">
+          {{#if_eq object.type 'photo' }}
+            <img src="{{object.url}}"/>
+          {{/if_eq}}
+
+          {{#if_eq object.type 'video' }}
+            {{{object.html}}}
+          {{/if_eq}}
+
+          {{#if_eq object.type 'rich' }}
+            {{{object.html}}}
+          {{/if_eq}}
+
+          {{#if_eq object.type null }}
+            <p>
+              {{description}}
+            </p>
+          {{/if_eq}}
+        </div>
+      </div>
+    </script>
+    <script type="text/javascript">
+      Handlebars.registerHelper('if_eq', function(v1, v2, options) {
+        if(v1 == v2) {
+          return options.fn(this);
+        }
+        return options.inverse(this);
+      });
+      var source = $("#selector-template").html();
+      var template = Handlebars.compile(source);
+      var selector = {
+        render: function($elem, data, preview){
+          console.log('test')
+          var html = template(data)
+          $('.selector-wrapper').html(html);
+          $('.thumb').thumb({
+            onchange: function(img){
+              if (img === null){
+                preview.update('thumbnail_url', null);
+              } else {
+                preview.update('thumbnail_url', $(img).attr('src'));
+              }
+            }
+          })
         }
       }
-      $('#id_url').preview({key:'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                            preview:preview,
-                            selector : {type:'rich'},
-                            maxwidth : 500,
-                            display : {display : 'rich'}});
+      $('#id_url').preview({key:'internal', // Sign up for a key: http://embed.ly/pricing
+                            query:{ maxwidth : 500},
+                            selector: selector});
+
+      $('preview_form').on('submit', function(){
+
+
+
+
+      });
+
     </script>
   </body>
 </html>

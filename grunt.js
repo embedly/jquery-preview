@@ -14,7 +14,7 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         src: ['<banner:meta.banner>', 'src/intro.js', 'lib/sprintf-0.7-beta1.js',
-          'lib/jquery.embedly.js', 'src/preview.js', 'src/outro.js'],
+          'lib/jquery.embedly.js', 'src/hidden.js', 'src/thumb.js', 'src/preview.js', 'src/outro.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
       files: ['test/**/*.html']
     },
     lint: {
-      files: ['grunt.js', 'src/preview.js', 'test/**/*.js']
+      files: ['grunt.js', 'src/hidden.js', 'src/thumb.js', 'src/preview.js', 'test/**/*.js']
     },
     watch: {
       files: '<config:lint.files>',

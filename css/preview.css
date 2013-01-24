@@ -1,60 +1,63 @@
-.selector {
-  margin: 10px auto;
+.thumb {
+  float: left;
+  margin: 0 10px 0 0;
   position: relative;
-  min-height: 85px;
-  /* URL Selector */ }
-  .selector .thumb {
-    float: left;
-    margin: 0 10px 0 0;
+  width: 100px; }
+  .thumb .items {
     position: relative;
+    overflow: hidden;
+    padding: 0px;
+    height: 100px;
     width: 100px; }
-    .selector .thumb .items {
-      position: relative;
-      overflow: hidden;
+    .thumb .items .images {
+      position: absolute;
+      width: 300em;
+      margin: 0px;
       padding: 0px;
-      height: 100px;
-      width: 100px; }
-      .selector .thumb .items .images {
-        position: absolute;
-        width: 300em;
+      left: 0px; }
+      .thumb .items .images li {
+        list-style: none;
+        float: left;
         margin: 0px;
         padding: 0px;
-        left: 0px; }
-        .selector .thumb .items .images li {
-          list-style: none;
-          float: left;
-          margin: 0px;
-          padding: 0px; }
-        .selector .thumb .items .images img {
-          width: 100px; }
-    .selector .thumb .controls {
-      top: 0px;
-      left: 0px;
-      width: 100px;
+        width: 100px;
+        height: 100px; }
+      .thumb .items .images img {
+        max-width: 100px;
+        max-height: 100px; }
+  .thumb .controls {
+    top: 0px;
+    left: 0px;
+    width: 100px;
+    position: absolute;
+    height: 16px;
+    z-index: 1;
+    background-color: #222;
+    opacity: 0.5; }
+    .thumb .controls .left, .thumb .controls .right, .thumb .controls .nothumb {
+      display: block;
       position: absolute;
-      height: 16px;
-      z-index: 1;
-      background-color: #222;
-      opacity: 0.5; }
-      .selector .thumb .controls .left, .selector .thumb .controls .right, .selector .thumb .controls .nothumb {
-        display: block;
-        position: absolute;
-        top: 2px;
-        color: #fff; }
-        .selector .thumb .controls .left:hover, .selector .thumb .controls .right:hover, .selector .thumb .controls .nothumb:hover {
-          text-decoration: none; }
-      .selector .thumb .controls .nothumb {
-        right: 2px;
-        font-weight: bold;
-        top: 1px; }
-      .selector .thumb .controls .left {
-        left: 2px; }
-      .selector .thumb .controls .right {
-        left: 16px; }
-    .selector .thumb .nothumb {
+      top: 2px;
+      color: #fff; }
+      .thumb .controls .left:hover, .thumb .controls .right:hover, .thumb .controls .nothumb:hover {
+        text-decoration: none; }
+    .thumb .controls .nothumb {
       right: 2px;
       font-weight: bold;
       top: 1px; }
+    .thumb .controls .left {
+      left: 2px; }
+    .thumb .controls .right {
+      left: 16px; }
+  .thumb .nothumb {
+    right: 2px;
+    font-weight: bold;
+    top: 1px; }
+
+.selector {
+  margin: 10px auto;
+  position: relative;
+  min-height: 85px; }
   .selector input {
     width: 420px; }
   .selector textarea {
@@ -65,51 +68,6 @@
     display: block; }
   .selector .media img {
     max-width: 500px; }
-  .selector.large .title {
-    font-size: 14px;
-    margin: 0 0 10px;
-    display: block; }
-  .selector.large input {
-    width: 520px; }
-  .selector.large textarea {
-    width: 520px;
-    height: 70px;
-    margin: 5px 0; }
-  .selector.large .thumbnail {
-    width: 560px; }
-    .selector.large .thumbnail a.left, .selector.large .thumbnail a.right {
-      display: block;
-      float: left;
-      width: 20px;
-      text-align: center;
-      padding: 100px 0 0 0; }
-    .selector.large .thumbnail .items {
-      height: 300px;
-      width: 400px;
-      margin: 0 50px;
-      float: left; }
-      .selector.large .thumbnail .items .images li {
-        width: 400px; }
-      .selector.large .thumbnail .items .images img {
-        max-width: 400px;
-        max-height: 300px;
-        margin: 0 auto;
-        display: block; }
-  .selector.rich .thumbnail, .selector.small .thumbnail {
-    width: 100px; }
-    .selector.rich .thumbnail .items, .selector.small .thumbnail .items {
-      height: 100px;
-      width: 100px; }
-      .selector.rich .thumbnail .items .images li, .selector.small .thumbnail .items .images li {
-        width: 100px; }
-      .selector.rich .thumbnail .items .images img, .selector.small .thumbnail .items .images img {
-        width: 100px; }
-  .selector.small .attributes {
-    margin: 0 0 0 110px; }
-  .selector.rich .title {
-    font-size: 14px;
-    margin: 0 0 10px;
-    display: block; }
   .selector .attributes a {
     text-decoration: none; }
     .selector .attributes a.title:hover, .selector .attributes a.description:hover {

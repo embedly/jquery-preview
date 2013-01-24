@@ -1,63 +1,51 @@
-.selector {
-  margin: 10px auto;
-  position:relative;
-  min-height: 85px;
-  .thumb{
-    float: left;
-    margin:0 10px 0 0;
+
+.thumb{
+  float: left;
+  margin:0 10px 0 0;
+  position: relative;
+  width:100px;
+  .items{
     position: relative;
-    width:100px;
-    .items{
-      position: relative;
-      overflow:hidden;
+    overflow:hidden;
+    padding: 0px;
+    height:100px;
+    width: 100px;
+    .images {
+      position:absolute;
+      width:300em;
+      margin: 0px;
       padding: 0px;
-      height:100px;
-      width: 100px;
-      .images {
-        position:absolute;
-        width:300em;
+      left:0px;
+      li{
+        list-style:none;
+        float:left;
         margin: 0px;
         padding: 0px;
-        left:0px;
-        li{
-          list-style:none;
-          float:left;
-          margin: 0px;
-          padding: 0px;
-        }
-        img{
-          width:100px;
-        }
+        width: 100px;
+        height: 100px;
+      }
+      img{
+        max-width:100px;
+        max-height:100px;
       }
     }
-    .controls {
-      top: 0px;
-      left: 0px;
-      width: 100px;
-      position: absolute;
-      height: 16px;
-      z-index: 1;
-      background-color:#222;
-      opacity:0.5;
-      .left, .right, .nothumb {
-        display:block;
-        position:absolute;
-        top:2px;
-        color: #fff;
-        &:hover{
-          text-decoration:none;
-        }
-      }
-      .nothumb{
-        right: 2px;
-        font-weight: bold;
-        top: 1px;
-      }
-      .left {
-        left:2px;
-      }
-      .right{
-        left:16px;
+  }
+  .controls {
+    top: 0px;
+    left: 0px;
+    width: 100px;
+    position: absolute;
+    height: 16px;
+    z-index: 1;
+    background-color:#222;
+    opacity:0.5;
+    .left, .right, .nothumb {
+      display:block;
+      position:absolute;
+      top:2px;
+      color: #fff;
+      &:hover{
+        text-decoration:none;
       }
     }
     .nothumb{
@@ -65,7 +53,24 @@
       font-weight: bold;
       top: 1px;
     }
+    .left {
+      left:2px;
+    }
+    .right{
+      left:16px;
+    }
   }
+  .nothumb{
+    right: 2px;
+    font-weight: bold;
+    top: 1px;
+  }
+}
+.selector {
+  margin: 10px auto;
+  position:relative;
+  min-height: 85px;
+
 
   input {
     width: 420px;
@@ -84,85 +89,6 @@
     }
   }
 
-  &.large {
-    .title {
-      font-size: 14px;
-      margin: 0 0 10px;
-      display: block;
-    }
-    input {
-      width: 520px;
-    }
-    textarea {
-      width: 520px;
-      height:70px;
-      margin: 5px 0;
-    }
-    .thumbnail {
-      width:560px;
-      a.left, a.right {
-        display: block;
-        float: left;
-        width: 20px;
-        text-align: center;
-        padding: 100px 0 0 0;
-      }
-      .items {
-        height:300px;
-        width:400px;
-        margin: 0 50px;
-        float: left;
-        .images {
-          li {
-            width: 400px;
-          }
-          img {
-            max-width:400px;
-            max-height:300px;
-            margin: 0 auto;
-            display:block;
-          }
-
-        }
-
-      }
-
-    }
-  }
-
-  /* URL Selector */
-  &.rich, &.small {
-    .thumbnail{
-      width:100px;
-      .items{
-        height:100px;
-        width: 100px;
-        .images {
-          li{
-            width:100px
-          }
-          img{
-            width:100px;
-          }
-        }
-      }
-
-    }
-  }
-
-  &.small {
-    .attributes {
-      margin: 0 0 0 110px;
-    }
-  }
-
-  &.rich {
-    .title {
-      font-size: 14px;
-      margin: 0 0 10px;
-      display: block;
-    }
-  }
 
   .attributes {
     a {

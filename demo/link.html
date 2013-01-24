@@ -2,7 +2,7 @@
 <html>
   <head>
     <link rel="shortcut icon" href="http://embed.ly/static/favicon.ico">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript" ></script>
+    <script src="../lib/jquery.min.js" type="text/javascript" ></script>
     <script src="../lib/mustache.js" type="text/javascript"></script>
     <script src="../dist/jquery.preview.js" type="text/javascript"></script>
     <link rel="stylesheet" href="common/css/bootstrap.min.css">
@@ -25,7 +25,6 @@
           <ul class="nav">
             <li><a href="status.html">Status</a></li>
             <li class="active"><a href="link.html">Link</a></li>
-            <li><a href="large.html">Large Link</a></li>
             <li><a href="rich.html">Rich Link</a></li>
             <li><a href="multi.html">Multiple Inputs</a></li>
             <li><a href="editable.html">Editable</a></li>
@@ -54,7 +53,7 @@
         </div>
       </div>
       <div class="row">
-        <div id="feed" class="span10 columns offset3">
+        <div id="feed" class="span8 columns offset3">
 
         </div>
       </div>
@@ -62,31 +61,59 @@
     </div>
     <script>
 
-      $('#id_url').preview({key:'c31f5208f04511e0b79e4040d3dc5c07'}); // Sign up for a key: http://embed.ly/pricing
+      $('#id_url').preview({key: 'internal'})//'c31f5208f04511e0b79e4040d3dc5c07'}) // Sign up for a key: http://embed.ly/pricing
+        .on('loading', function(){
+          $(this).prop('disabled', true);
+          $('.loading').show();
+        }).on('loaded', function(){
+          $(this).prop('disabled', false);
+          $('.loading').hide();
+        }).on('closed', function(){
+          $(this).val('');
+        }).on('close', function(){
+          // triggered whenever the selector should not be there.
+          // There actually might not even be a selector, but we
+          // can listen no matter what.
+        });
+
 
       $('#preview_form').on('submit', function(){
         // Preview data.
         var preview = $('#id_url').data('preview');
 
-        // Clear the url form.
-        $('#id_url').val('');
+        // add the preview data to the form if you are into that sort of thing.
+        $('#preview_form').addInputs(preview,
+            ['title', 'description', 'thumbnail_url',
+            'favicon_url', 'provider_name', 'provider_url', 'html']);
+
+
+        // Close the selector
+        $('#id_url').trigger('close');
 
         // Create a post using mustache, i.e. the nice way.
         var template = ['<div class="row">',
-          '<div class="span3">',
+          '<div class="span2">',
             '<img class="thumb" src="{{thumbnail_url}}"></img>',
           '</div>',
-          '<div class="span7">',
+          '<div class="span6">',
             '<a href="{{original_url}}">{{title}}</a>',
             '<p>{{description}}</p>',
           '</div>',
         '</div>'].join('');
 
-        html = Mustache.to_html(template, preview);
+        html = $(Mustache.to_html(template, preview));
+        html.data('preview', preview);
+        html.on('click', function(){
+          var data = $(this).data('preview');
+          // Insert the video or rich object.
+          if (data.object.type === 'video' || data.object.type === 'rich'){
+            $(this).html(data.object.html);
+            return false;
+          }
+          return true;
+        })
         $('#feed').append(html);
 
-        // Close the selector
-        $('#id_url').trigger('close');
         return false;
       });
     </script>

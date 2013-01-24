@@ -1,71 +1,5 @@
 ;(function($){
-  var Thumb = function(elem, options){
-    this.init(elem, options);
-  };
 
-  Thumb.prototype = {
-    init : function (elem, options) {
-      this.$elem = $(elem);
-      this.options = $.extend({}, {onchange: $.noop}, options);
-
-      // Thumbnail Controls
-      this.$elem.find('.left').on('click', $.proxy(this.scroll, this));
-      this.$elem.find('.right').on('click', $.proxy(this.scroll, this));
-      this.$elem.find('.nothumb').on('click', $.proxy(this.nothumb, this));
-
-      //Show hide the controls.
-      this.$elem.one('mouseenter', function () {
-        $(this).on('mouseenter mouseleave', function () {
-          $(this).find('.controls').toggle();
-        });
-      });
-    },
-    scroll : function (e) {
-      e.preventDefault();
-
-      var images = this.$elem.find('.images');
-
-      //Grabs the current 'left' style
-      var width = parseInt(images.find('li').css('width'), 10);
-
-      // Left
-      var left = parseInt(images.css('left'), 10);
-      //Gets the number of images
-      var len = images.find('img').length * width;
-
-      //General logic to set the new left value
-      if ($(e.target).hasClass('left')) {
-        left = parseInt(left, 10) + width;
-        if (left > 0) {
-          return false;
-        }
-      } else {
-        left = parseInt(left, 10) - width;
-        if (left <= -len) {
-          return false;
-        }
-      }
-      // Get the current image selected
-      var thumb = images.find('img').eq((left / -width));
-
-      // Callback
-      this.options.onchange.call(thumb, thumb);
-
-      // Sets the new left.
-      images.css('left', left + 'px');
-    },
-    nothumb : function (e) {
-      e.preventDefault();
-      this.$elem.hide();
-      // tell onchange that there is no thumb.
-      this.options.onchange.call(null, null);
-    }
-  };
-  $.fn.thumb = function(options){
-    return $(this).each(function(){
-      $(this).data('thumb', new Thumb(this, options));
-    });
-  };
 
   // Bunch of randoms that we will use throughout
   var PreviewUtils = function(){};
@@ -110,22 +44,16 @@
   // We use this a bunch of places.
   var utils = new PreviewUtils();
 
-  var Selector = function(){};
+  var Selector = function(options){
+    this.init(options);
+  };
 
   Selector.prototype = {
 
-    template: ['<div class="selector">',
-      '%(image_html)s',
-      '<div class="attributes">',
-        '{{>attributes}}',
-        '<span class="meta">',
-          '{{>favicon}}',
-          '<a class="provider" href="{{provider_url}}">{{provider_display}}</a>',
-        '</span>',
-      '</div>',
-      '<div class="action"><a href="#" class="close">&#10005;</a></div>',
-    '</div>'].join(''),
-    render: function($elem, data, preview, options){
+    init: function(options){
+      this.options = options;
+    },
+    render: function($elem, data, preview){
       // We use simple sprintf to create this, you however should use something
       // like Mustache or Handlebars.
       this.preview = preview;
@@ -171,11 +99,11 @@
       // render the html.
       var html = sprintf(template, obj);
 
-      // Figure out where to put it.
-      var $wrapper = $elem.closest('form').find(options.selector).eq(0);
+      // Figure out where to put it. If there is a contianer, then use that.
+      var $wrapper = $elem.closest(this.options.container).find(this.options.wrapper).eq(0);
 
       if ($wrapper.length === 0){
-        $wrapper = $('.selector-wrapper').eq(0);
+        $wrapper = $(this.options.wrapper).eq(0);
       }
 
       // If we found a wrapper, use it.
@@ -207,6 +135,8 @@
       // Binds the close button.
       $wrapper.find('.action .close').bind('click', $.proxy(function(e){
         this.preview.clear();
+        // Let elem know that the selector was closed
+        $elem.trigger('closed');
         $wrapper.find('.selector').remove();
       }, this));
 
@@ -216,17 +146,17 @@
       });
 
       // bind to the close event on the element.
-      $elem.on('close', $.proxy(function(){
-        this.preview.clear();
+      $elem.on('close', function(){
         $wrapper.find('.selector').remove();
-      }, this));
+      });
     }
   };
 
   var defaults = {
     debug : true,
     selector : {
-      selector: '.selector-wrapper'
+      wrapper: '.selector-wrapper',
+      container: 'form'
     },
     preview : {},
     field : null,
@@ -251,6 +181,9 @@
       this.elem = elem;
       this.$elem = $(elem);
 
+      // Helps us key track so we don't make duplicate requests.
+      this.url = null;
+
       // If the elem is inside a form, add it here.
       var $form = this.$elem.parents('form').eq(0);
       if ($form.length === 1){
@@ -263,6 +196,7 @@
       this.$elem.on('keyup', $.proxy(this.keyUp, this));
       this.$elem.on('paste', $.proxy(this.paste, this));
       this.$elem.on('blur', $.proxy(this.paste, this));
+      this.$elem.on('close', $.proxy(this.clear, this));
       this.$elem.data('preview', {});
     },
     log: function(){
@@ -270,7 +204,6 @@
         window.console.log(Array.prototype.slice.call(arguments));
       }
     },
-
     // data upkeep.
     update: function(key, value){
       var data = this.$elem.data('preview');
@@ -281,21 +214,23 @@
     },
     /* EVENTS */
     keyUp : function (e) {
-      // Only respond to keys that insert whitespace (spacebar, enter)
-      if (e.which !== 32 && e.which !== 13) {
+      // Only respond to keys that insert whitespace (spacebar, enter) or
+      // on delete 8.
+      if (e.which !== 32 && e.which !== 13 && e.which !== 8) {
         return null;
       }
       //See if there is a url in the status textarea
       var url = utils.url(this.$elem.val());
+      this.log('onKeyUp url:'+url);
       if (url === null) {
+        // Close the selector
+        this.$elem.trigger('close');
         return null;
       }
-      this.log('onKeyUp url:'+url);
-
       // If there is a url, then we need to unbind the event so it doesn't fire
       // again. This is very common for all status updaters as otherwise it
       // would create a ton of unwanted requests.
-      this.$elem.off('keyup');
+      //this.$elem.off('keyup');
 
       //Fire the fetch metadata function
       this.fetch(url);
@@ -313,9 +248,17 @@
       }
       this.log(url);
 
-      if (url === null || this.data.original_url === url){
+      if (url === null || this.url === url){
         return false;
       }
+      // Close the old selector if there was one.
+      this.$elem.trigger('close');
+
+      // Let's us know what URL we are currently working on.
+      this.url = url;
+
+      // Trigger loading.
+      this.$elem.trigger('loading');
 
       // use Embedly jQuery to make the call.
       $.embedly.preview(url, {
@@ -330,6 +273,9 @@
     _callback: function(obj){
       // Here is where you actually care about the obj
       this.log(obj);
+
+      // Trigger loaded
+      this.$elem.trigger('loaded');
 
       // Every obj should have a 'type'. This is a clear sign that
       // something is off. This is a basic check to make sure we should
@@ -375,8 +321,14 @@
       this.$elem.data('preview', obj);
 
       // Create a selector to render the bad boy.
-      var selector = new Selector();
-      selector.render(this.$elem, obj, this, this.options.selector);
+      var selector;
+      if (this.options.selector.hasOwnProperty('render')){
+        selector = this.options.selector;
+      } else {
+        selector = new Selector(this.options.selector);
+      }
+
+      selector.render(this.$elem, obj, this);
 
       this.log('done', obj);
     }
