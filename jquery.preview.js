@@ -704,7 +704,7 @@ function Display(display){
 
     },
     bind : function(){
-      $('.thumbnail.video a, .thumbnail.rich a').live('click', function(e){
+      $('.thumbnail.video a, .thumbnail.rich a').on('click', function(e){
         e.preventDefault();
         var preview = $(this).parents('.item').data('preview');
         $(this).parents('.item').replaceWith(preview.html);
