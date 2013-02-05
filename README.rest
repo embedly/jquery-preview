@@ -14,6 +14,8 @@ a custom experience. There are 5 different demos that you should take a look at
 before getting started. It will give you a quick overview of what you should be
 able to build.
 
+Note: The Preview endpoint is available on our Paid plans, http://embed.ly/pricing.
+
 * `Link <http://embedly.github.com/jquery-preview/demo/link.html>`_
 * `Status <http://embedly.github.com/jquery-preview/demo/status.html>`_
 * `Large Embeds <http://embedly.github.com/jquery-preview/demo/large.html>`_
