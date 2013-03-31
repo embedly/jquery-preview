@@ -1,5 +1,5 @@
+/*globals jQuery:true, sprintf:true, escape:true*/
 // Simple util to add embedly data to the form as hidden inputs.
-
 ;(function($){
 
   var default_args = [
@@ -15,11 +15,11 @@
     'thumbnail_url',
     'author_name',
     'author_url',
-    'object_type',
-    'object_html',
-    'object_url',
-    'object_width',
-    'object_height'
+    'media_type',
+    'media_html',
+    'media_url',
+    'media_width',
+    'media_height'
   ];
 
   $.fn.addInputs = function(data, args){

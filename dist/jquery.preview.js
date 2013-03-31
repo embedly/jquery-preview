@@ -1,7 +1,3 @@
-/*! jQuery Preview - v3.0.0 - 2013-01-24
-* https://github.com/embedly/jquery-preview
-* Copyright (c) 2013 Sean Creeley; Licensed BSD */
-
 /*
  * Embedly Preview JQuery v0.0.2
  * =============================
@@ -206,8 +202,8 @@ var vsprintf = function(fmt, argv) {
 	return sprintf.apply(null, argv);
 };
 
+/*globals jQuery:true, sprintf:true, escape:true*/
 // Simple util to add embedly data to the form as hidden inputs.
-
 ;(function($){
 
   var default_args = [
@@ -223,11 +219,11 @@ var vsprintf = function(fmt, argv) {
     'thumbnail_url',
     'author_name',
     'author_url',
-    'object_type',
-    'object_html',
-    'object_url',
-    'object_width',
-    'object_height'
+    'media_type',
+    'media_html',
+    'media_url',
+    'media_width',
+    'media_height'
   ];
 
   $.fn.addInputs = function(data, args){
@@ -260,6 +256,7 @@ var vsprintf = function(fmt, argv) {
     });
   };
 })(jQuery, window, document);
+/*globals jQuery:true, sprintf:true*/
 ;(function($){
 
   var Thumb = function(elem, options){
@@ -268,12 +265,24 @@ var vsprintf = function(fmt, argv) {
   Thumb.prototype = {
     init : function (elem, options) {
       this.$elem = $(elem);
-      this.options = $.extend({}, {onchange: $.noop}, options);
+      this.options = $.extend({}, {preview:null, onchange: $.noop}, options);
 
       // Thumbnail Controls
-      this.$elem.find('.left').on('click', $.proxy(this.scroll, this));
-      this.$elem.find('.right').on('click', $.proxy(this.scroll, this));
-      this.$elem.find('.nothumb').on('click', $.proxy(this.nothumb, this));
+      this.$elem.find('.controls .left').on('click', $.proxy(this.left, this));
+      this.$elem.find('.controls .right').on('click', $.proxy(this.right, this));
+      this.$elem.find('.controls .nothumb').on('click', $.proxy(function(e){
+        e.preventDefault();
+        this.$elem.hide();
+      }, this));
+
+      // Bind triggers so that we can have other elements controller the scroll
+      // and none selectors
+      this.$elem.on('right', $.proxy(this.right, this));
+      this.$elem.on('left', $.proxy(this.left, this));
+
+      // Keep track of everything when we show and hide the thumbnail_url
+      this.$elem.on('hide', $.proxy(this.hide, this));
+      this.$elem.on('show', $.proxy(this.show, this));
 
       //Show hide the controls.
       this.$elem.one('mouseenter', function () {
@@ -281,10 +290,26 @@ var vsprintf = function(fmt, argv) {
           $(this).find('.controls').toggle();
         });
       });
-    },
-    scroll : function (e) {
-      e.preventDefault();
 
+      // set some data on the thumb so that we can use it later on.
+      this.$elem.data('length', this.$elem.find('.images li').length);
+      this.$elem.data('current', 1);
+    },
+    left: function(e){
+      e.preventDefault();
+      this.scroll(-1);
+    },
+    right: function(e){
+      e.preventDefault();
+      this.scroll(1);
+    },
+    update: function(img){
+      if (img === undefined){
+        img = null;
+      }
+      this.options.onchange.call(img, img);
+    },
+    scroll : function (dir) {
       var images = this.$elem.find('.images');
 
       //Grabs the current 'left' style
@@ -296,7 +321,7 @@ var vsprintf = function(fmt, argv) {
       var len = images.find('img').length * width;
 
       //General logic to set the new left value
-      if ($(e.target).hasClass('left')) {
+      if (dir < 0) {
         left = parseInt(left, 10) + width;
         if (left > 0) {
           return false;
@@ -307,21 +332,34 @@ var vsprintf = function(fmt, argv) {
           return false;
         }
       }
+      // Set the current thumb.
+      var current = this.$elem.data('current');
+      this.$elem.data('current', current+dir);
+
       // Get the current image selected
-      var thumb = images.find('img').eq((left / -width));
+      var thumb = images.find('img').eq((left / -width)).get(0);
 
       // Callback
-      this.options.onchange.call(thumb, thumb);
+      this.update(thumb);
 
       // Sets the new left.
       images.css('left', left + 'px');
     },
-    nothumb : function (e) {
-      e.preventDefault();
-      this.$elem.hide();
+    hide : function (e) {
       // tell onchange that there is no thumb.
-      this.options.onchange.call(null, null);
+      this.$elem.hide();
+      this.update(null);
+    },
+    show: function(){
+      this.$elem.show();
+      // Reset the current URL
+      var current = this.$elem.data('current');
+      var img = this.$elem.find('.images img').eq(current-1).get(0);
+
+      // tell onchange that there is a thumb
+      this.update(img);
     }
+
   };
   $.fn.thumb = function(options){
     return $(this).each(function(){
@@ -329,6 +367,8 @@ var vsprintf = function(fmt, argv) {
     });
   };
 })(jQuery);
+/*globals jQuery:true, sprintf:true*/
+
 ;(function($){
 
 
@@ -336,7 +376,7 @@ var vsprintf = function(fmt, argv) {
   var PreviewUtils = function(){};
   PreviewUtils.prototype = {
     protocolExp: /^http(s?):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i,
-    urlExp : /[-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/gi,
+    urlExp : /[\-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/gi,
 
     // Finds the first URL in the status, we only ever work on one.
     url: function(text){
@@ -379,117 +419,112 @@ var vsprintf = function(fmt, argv) {
     this.init(options);
   };
 
-  Selector.prototype = {
+  var render = function(data, options){
 
-    init: function(options){
-      this.options = options;
-    },
-    render: function($elem, data, preview){
-      // We use simple sprintf to create this, you however should use something
-      // like Mustache or Handlebars.
-      this.preview = preview;
+    var $elem = $(this);
 
-      // Clone the data obj so we can add to it.
-      var obj = $.extend(true, {}, data);
-      obj.title = obj.title ? obj.title : obj.url;
+    // Clone the data obj so we can add to it.
+    var obj = $.extend(true, {}, data);
+    obj.title = obj.title ? obj.title : obj.url;
 
-      // If there is a favicon we should add it.
-      var favicon = obj.favicon_url? '<img class="favicon" src="%(favicon_url)s">': '';
-      var images = obj.images.map(function(i){return sprintf('<li><img src="%(url)s"/></li>', i);}).join('');
+    // If there is a favicon we should add it.
+    var favicon = obj.favicon_url? '<img class="favicon" src="%(favicon_url)s">': '';
+    var images = $.map(obj.images, function(i){return sprintf('<li><img src="%(url)s"/></li>', i);}).join('');
 
-      // add the thumbnail controls.
-      if (images !== ''){
-        images = ['<div class="thumb">',
-          '<div class="controls">',
-            '<a class="left" href="#">&#9664;</a>',
-            '<a class="right" href="#">&#9654;</a>',
-            '<a class="nothumb" href="#">&#10005;</a>',
-          '</div>',
-          '<div class="items">',
-            '<ul class="images">',
-              images,
-            '</ul>',
-          '</div>',
-        '</div>'].join('');
-      }
-
-      // Create the final template.
-      var template = ['<div class="selector">',
-        images,
-        '<div class="attributes">',
-          '<a class="title" href="#" contenteditable=true>%(title)s</a>',
-          '<p><a class="description" href="#" contenteditable=true>%(description)s</a></p>',
-          '<span class="meta">',
-            favicon,
-            '<a class="provider" href="%(provider_url)s">%(provider_display)s</a>',
-          '</span>',
+    // add the thumbnail controls.
+    if (images !== ''){
+      images = ['<div class="thumb">',
+        '<div class="controls">',
+          '<a class="left" href="#">&#9664;</a>',
+          '<a class="right" href="#">&#9654;</a>',
+          '<a class="nothumb" href="#">&#10005;</a>',
         '</div>',
-        '<div class="action"><a href="#" class="close">&#10005;</a></div>',
+        '<div class="items">',
+          '<ul class="images">',
+            images,
+          '</ul>',
+        '</div>',
       '</div>'].join('');
-
-      // render the html.
-      var html = sprintf(template, obj);
-
-      // Figure out where to put it. If there is a contianer, then use that.
-      var $wrapper = $elem.closest(this.options.container).find(this.options.wrapper).eq(0);
-
-      if ($wrapper.length === 0){
-        $wrapper = $(this.options.wrapper).eq(0);
-      }
-
-      // If we found a wrapper, use it.
-      if ($wrapper.length !== 1){
-        return false;
-      }
-      // Set the URL
-      $wrapper.html($(html));
-
-      // Add the thumb scroller.
-      $wrapper.find('.thumb').thumb({
-        onchange: $.proxy(function(elem){
-          if (utils.none(elem)){
-            this.preview.update('thumbnail_url', null);
-          } else {
-            this.preview.update('thumbnail_url', $(elem).attr('src'));
-          }
-        }, this)
-      });
-
-      // Add the blur on the title and description.
-      $wrapper.find('.title').on('blur', $.proxy(function(e){
-        this.preview.update('title', $(e.target).text());
-      }, this));
-      $wrapper.find('.description').on('blur', $.proxy(function(e){
-        this.preview.update('description', $(e.target).text());
-      }, this));
-
-      // Binds the close button.
-      $wrapper.find('.action .close').bind('click', $.proxy(function(e){
-        this.preview.clear();
-        // Let elem know that the selector was closed
-        $elem.trigger('closed');
-        $wrapper.find('.selector').remove();
-      }, this));
-
-      // the close button.
-      $wrapper.find('.selector').bind('mouseenter mouseleave', function () {
-        $(this).find('.action').toggle();
-      });
-
-      // bind to the close event on the element.
-      $elem.on('close', function(){
-        $wrapper.find('.selector').remove();
-      });
     }
+
+    // Create the final template.
+    var template = ['<div class="selector">',
+      images,
+      '<div class="attributes">',
+        '<a class="title" href="#" contenteditable=true>%(title)s</a>',
+        '<p><a class="description" href="#" contenteditable=true>%(description)s</a></p>',
+        '<span class="meta">',
+          favicon,
+          '<a class="provider" href="%(provider_url)s">%(provider_display)s</a>',
+        '</span>',
+      '</div>',
+      '<div class="action"><a href="#" class="close">&#10005;</a></div>',
+    '</div>'].join('');
+
+    // render the html.
+    var html = sprintf(template, obj);
+
+    // Figure out where to put it. If there is a contianer, then use that.
+    var $wrapper = $elem.closest(options.container).find(options.wrapper).eq(0);
+
+    if ($wrapper.length === 0){
+      $wrapper = $(options.wrapper).eq(0);
+    }
+
+    // If we found a wrapper, use it.
+    if ($wrapper.length !== 1){
+      return false;
+    }
+    // Set the URL
+    $wrapper.html($(html));
+
+    // Add the thumb scroller.
+    $wrapper.find('.thumb').thumb({
+      onchange: function(elem){
+        // Update the data.
+        var val = null;
+        if (!utils.none(elem)){
+          val = $(elem).attr('src');
+        }
+        $elem.data('preview').thumbnail_url = val;
+      }
+    });
+
+    // Add the blur on the title and description.
+    $wrapper.find('.title').on('blur', function(e){
+      $elem.data('preview').title = $(e.target).text();
+    });
+    $wrapper.find('.description').on('blur',function(e){
+      $elem.data('preview').description = $(e.target).text();
+    });
+
+    // Binds the close button.
+    $wrapper.find('.action .close').bind('click', $.proxy(function(e){
+      // Let elem know that the selector was closed
+      $elem.trigger('close');
+      $wrapper.find('.selector').remove();
+    }, this));
+
+    // the close button.
+    $wrapper.find('.selector').bind('mouseenter mouseleave', function () {
+      $(this).find('.action').toggle();
+    });
+
+    // bind to the close event on the element.
+    $elem.on('close', function(){
+      $wrapper.find('.selector').remove();
+    });
   };
 
   var defaults = {
     debug : true,
-    selector : {
-      wrapper: '.selector-wrapper',
-      container: 'form'
-    },
-    preview : {},
+    bind : true,
+    error: null,
+    success: null,
+    render: render,
+
+    wrapper: '.selector-wrapper',
+    container: 'form',
     field : null,
     query: {
       wmode : 'opaque',
@@ -523,12 +558,28 @@ var vsprintf = function(fmt, argv) {
       // Set up options.
       this.options = $.extend({}, defaults, options);
 
-      // Attach events, proxy so "this" is correct.
-      this.$elem.on('keyup', $.proxy(this.keyUp, this));
-      this.$elem.on('paste', $.proxy(this.paste, this));
-      this.$elem.on('blur', $.proxy(this.paste, this));
-      this.$elem.on('close', $.proxy(this.clear, this));
+      // Allow people to do change the bind functionality.
+      if (this.options.bind === true){
+        // Attach events, proxy so "this" is correct.
+        this.$elem.on('keyup', $.proxy(this.keyUp, this));
+        this.$elem.on('paste', $.proxy(this.paste, this));
+        this.$elem.on('blur', $.proxy(this.paste, this));
+      }
+
+      // Set the data attr.
       this.$elem.data('preview', {});
+
+      // A couple of custom events.
+      this.$elem.on('close', $.proxy(this.clear, this));
+      this.$elem.on('clear', $.proxy(this.clear, this));
+      this.$elem.on('preview', $.proxy(this.fetch, this));
+
+      // Update the preview data.
+      this.$elem.on('update', $.proxy(function(e, name, value){
+        this.$elem.data('preview')[name] = value;
+      }, this));
+
+
     },
     log: function(){
       if (this.options.debug  && window.console){
@@ -574,7 +625,7 @@ var vsprintf = function(fmt, argv) {
     },
     /* AJAX */
     fetch: function(url){
-      if (url === undefined){
+      if ($.type(url) !== "string"){
         url = utils.url(this.$elem.val());
       }
       this.log(url);
@@ -592,7 +643,7 @@ var vsprintf = function(fmt, argv) {
       this.$elem.trigger('loading');
 
       // use Embedly jQuery to make the call.
-      $.embedly.preview(url, {
+      $.embedly.extract(url, {
         key: this.options.key,
         query : this.options.query
       }).progress($.proxy(this._callback,this));
@@ -600,6 +651,9 @@ var vsprintf = function(fmt, argv) {
     error: function(obj){
       // By default Preview does nothing for error cases. If you would
       // like to do something else, you should overwrite this funciton.
+      if (this.options.error !== null){
+        $.proxy(this.options.error, this.elem)(obj);
+      }
     },
     _callback: function(obj){
       // Here is where you actually care about the obj
@@ -652,14 +706,11 @@ var vsprintf = function(fmt, argv) {
       this.$elem.data('preview', obj);
 
       // Create a selector to render the bad boy.
-      var selector;
-      if (this.options.selector.hasOwnProperty('render')){
-        selector = this.options.selector;
-      } else {
-        selector = new Selector(this.options.selector);
-      }
+      $.proxy(this.options.render, this.elem)(obj, this.options);
 
-      selector.render(this.$elem, obj, this);
+      if (this.options.success !== null){
+        $.proxy(this.options.success, this.elem)(obj);
+      }
 
       this.log('done', obj);
     }
