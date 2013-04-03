@@ -31,33 +31,20 @@
       <div class="large-8 large-centered columns">
         <h3>Share what's new...</h3>
         <form id="preview_form" class="form-vertical" method="post" action=".">
-          <fieldset>
-            <textarea class="xxlarge holler" name="status" id="id_status" ></textarea>
-            <span class="help-block">Enter a url.</span>
-          </fieldset>
-          <!-- Placeholder that tells Preview where to put the loading icon-->
-          <div class="loading">
-            <img src='../images/loading-rectangle.gif'>
-          </div>
+          <textarea class="xxlarge holler" name="status" id="id_status" ></textarea>
+
           <!-- Placeholder that tells Preview where to put the selector-->
-          <div class="selector"></div>
+          <div class="selector-wrapper"></div>
           <div class="actions">
-            <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
+            <input id="id_submit" type="submit" class="button" value="Share"/>
           </div>
         </form>
         <form id="link_form" class="form-vertical" method="post" action=".">
-          <fieldset>
-            <input type="text" class="xlarge holler" name="url" id="id_url" />
-            <span class="help-block">Enter a url.</span>
-          </fieldset>
-          <!-- Placeholder that tells Preview where to put the loading icon-->
-          <div class="loading">
-            <img src='../images/loading-rectangle.gif'>
-          </div>
+          <input type="text" class="xlarge holler" name="url" id="id_url" placeholder="Enter a URL" />
           <!-- Placeholder that tells Preview where to put the selector-->
-          <div class="selector"></div>
+          <div class="selector-wrapper"></div>
           <div class="actions">
-            <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
+            <input id="id_submit" type="submit" class="button" value="Share"/>
           </div>
         </form>
         <div id="feed"></div>
@@ -65,14 +52,12 @@
       </div>
     </div>
     <script>
-      var preview = {
-        submit : function(e, data){
-          e.preventDefault();
-          this.display.create(data);
-        }
-      }
       $('.holler').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                                preview:preview});
+                                });
+      $('form').on('submit', function(){
+        alert('You Selected: ' + $(this).find('.holler').data('preview').title);
+        return false;
+      });
     </script>
   </body>
 </html>

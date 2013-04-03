@@ -210,7 +210,6 @@
         this.$elem.data('preview')[name] = value;
       }, this));
 
-
     },
     log: function(){
       if (this.options.debug  && window.console){

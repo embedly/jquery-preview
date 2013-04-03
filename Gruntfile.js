@@ -13,18 +13,20 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('jquery-preview.jquery.json'),
     meta: {
       banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
+        '<%= grunt.template.today("yyyy-mm-dd") + "\\n" %>' +
+        '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */<%= "\\n" %>'
     },
     qunit: {
       all: ['test/**/*.html']
     },
     concat: {
+      options:  {
+        banner: '<%= meta.banner %>'
+      },
       dist: {
         src: [
-          '<banner:meta.banner>',
           'src/intro.js',
           'lib/sprintf-0.7-beta1.js',
           'src/hidden.js',

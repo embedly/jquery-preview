@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="shortcut icon" href="http://embed.ly/static/favicon.ico">
+    <script src="../lib/jquery.min.js" type="text/javascript" ></script>
+        <script src="common/js/prettify.js" type="text/javascript"></script>
+    <script src="../lib/jquery.embedly.js" type="text/javascript"></script>
+    <script src="../lib/mustache.js" type="text/javascript"></script>
+    <script src="../dist/jquery.preview.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="common/css/foundation.min.css">
+    <link rel="stylesheet" href="common/css/font-awesome.min.css">
+    <link rel="stylesheet" href="common/css/prettify.css" />
+    <link rel="stylesheet" href="common/css/demo.css" />
+    <link rel="stylesheet" href="../css/preview.css" />
+    <title>jQuery Preview</title>
+  </head>
+  <body>
+    <nav class="top-bar">
+      <ul class="title-area">
+        <li class="name">
+          <h1><a href="index.html">jQuery Preview</a></h1>
+        </li>
+      </ul>
+      <section class="top-bar-section">
+        <ul class="right">
+          <li><a href="status.html">Status</a></li>
+          <li><a href="link.html">Link</a></li>
+          <li><a href="multi.html">Multiple Inputs</a></li>
+        </ul>
+      </section>
+    </nav>
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="panel">
+          <h1> jQuery Preview <a id="doc" href="https://github.com/embedly/jquery-preview" class="button">Get the Code &raquo;</a></h1>
+          <p>
+            <a href="https://github.com/embedly/jquery-preview">jQuery Preview</a>
+            is a plugin that allows users to preview URLs before
+            submitting them to be saved by an application. Facebook, Google+
+            and Yammer are all examples of tools with this functionality.
+          </p>
+
+          <form id="preview_form" class="form-vertical" method="post" action=".">
+            <div class="arrow">
+              <p>Try it out.</p>
+              <img src='../images/arrow.png'>
+            </div>
+            <div class="row collapse">
+              <div class="large-8 columns">
+                <input type="text" class="input-xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336" />
+              </div>
+              <div class="large-3 end columns">
+                <a id="id_attach" class="button postfix">Attach</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="large-11 columns end">
+                <div class="selector-wrapper"></div>
+              </div>
+            </div>
+          </form>
+          <div id="feed"></div>
+        </div>
+        <div class="row">
+          <div id="document" class="large-11 large-centered columns">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    $(document).ready(function(){
+      prettyPrint();
+      $('#id_url').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
+                            bind: false,
+                            query : {
+                              autoplay : 1,
+                              maxwidth: 600
+                            }})
+                  .on('loading', function(){
+                    $(this).prop('disabled', true);
+                    $('form .button').html('<i class="icon-spinner icon-spin"></i>');
+                  }).on('loaded', function(){
+                    $(this).prop('disabled', false);
+                    $('form .button').text('Share');
+                    $('.arrow p').text('Now Share it!');
+                  })
+
+      $('#id_attach').bind('click', function(e){
+        if ($(this).text() == 'Attach'){
+          $('#id_url').trigger('preview');
+        } else {
+
+          var preview = $('#id_url').data('preview');
+          $('#id_url').trigger('close');
+          $('#id_url').val('');
+
+          // Create a post using mustache, i.e. the nice way.
+          var template = ['<div class="row">',
+            '<div class="large-3 columns">',
+              '<img class="thumb" src="{{thumbnail_url}}"></img>',
+            '</div>',
+            '<div class="large-9 column">',
+              '<a href="{{original_url}}">{{title}}</a>',
+              '<p>{{description}}</p>',
+            '</div>',
+          '</div>'].join('');
+
+          html = $(Mustache.to_html(template, preview));
+          html.data('preview', preview);
+          html.on('click', function(){
+            var data = $(this).data('preview');
+            // Insert the video or rich object.
+            if (data.media.type === 'video' || data.media.type === 'rich'){
+              $(this).html(data.media.html);
+              return false;
+            }
+            return true;
+          })
+          $('#feed').append(html);
+        }
+      });
+    });
+    </script>
+  </body>
+</html>

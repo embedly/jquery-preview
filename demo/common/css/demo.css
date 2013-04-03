@@ -14,6 +14,7 @@ body {
 
 .panel {
   padding:3em;
+  margin-bottom: 2em;
 }
 
 .panel .selector {
@@ -67,5 +68,17 @@ body {
 .item .attributes {
   padding: 0 0 0 120px;
 }
-.section { padding-top:60px; }
-fieldset .help-block { clear:both; display:block;}
+.section { padding-top:10px; }
+
+pre.prettyprint {
+  padding:5px 2px;
+  overflow-x:scroll;
+  border:1px solid #ddd;
+  margin-bottom: 1.25em
+}
+
+pre ol {
+    list-style-position: inside;
+}
+
+
