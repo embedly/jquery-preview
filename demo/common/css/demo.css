@@ -1,0 +1,84 @@
+body {
+  background:#fff url(../img/grid-18px-masked.png) repeat-x top left;
+}
+.button i {
+  color:#fff;
+}
+
+.actions {
+  text-align: right;
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.panel {
+  padding:3em;
+  margin-bottom: 2em;
+}
+
+.panel .selector {
+  margin: 10px 0;
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #BBB;
+}
+.panel .selector p {
+  font-size: 14px;
+  line-height: 20px;
+}
+.panel h1{
+  font-size: 4em;
+}
+
+#feed {
+  margin:0 100px 0 120px;
+}
+
+#doc {
+  display: block;
+  font-size: 20px;
+  float: right;
+}
+
+#preview_form {
+  position: relative;
+  padding-top:40px;
+}
+
+.arrow {
+  width:200px;
+  position: absolute;
+  top: 0;
+  right: 46px;
+}
+.arrow p {
+  position: absolute;
+  top: 0;
+  display:block;
+  right:25px;
+  line-height: 20px;
+}
+.arrow img {
+  position: absolute;
+  display:block;
+  top: 0;
+  right:-10px;
+}
+.item .attributes {
+  padding: 0 0 0 120px;
+}
+.section { padding-top:10px; }
+
+pre.prettyprint {
+  padding:5px 2px;
+  overflow-x:scroll;
+  border:1px solid #ddd;
+  margin-bottom: 1.25em
+}
+
+pre ol {
+    list-style-position: inside;
+}
+
+

@@ -1,135 +1,43 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="shortcut icon" href="http://embed.ly/static/favicon.ico">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" ></script>
-    <script src="../jquery.preview.full.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="common/css/bootstrap.min.css?v=2">
-    <link rel="stylesheet" href="../css/preview.css" />
-    <title>jQuery Preview</title>
-    <style>
-      body {
-        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
-      }
-      .navbar{
-        position:relative;
-      }
-      .selector {
-        width: 620px;
-        margin: 10px 0;
-        background-color: white;
-        padding: 10px;
-        border: 1px solid #BBB;
-      }
-      .selector p {
-        font-size: 14px;
-        line-height: 20px;
-      }
-      #feed {
-        margin:0 100px 0 120px;
-      }
-
-      #doc {
-        display: block;
-        width: 90px;
-        margin: 20px 20px 0 0;
-        float: right;
-      }
-
-      #preview_form {
-        position: relative;
-        margin: 0 0 0 100px;
-        padding-top:35px;
-      }
-
-      .arrow {
-        width:200px;
-        position: absolute;
-        top: 0;
-        right: 46px;
-      }
-      .arrow p {
-        position: absolute;
-        top: 0;
-        display:block;
-        right:75px;
-        line-height: 20px;
-      }
-      .arrow img {
-        position: absolute;
-        display:block;
-        top: 0;
-        right:45px;
-      }
-      .item .attributes {
-        padding: 0 0 0 120px;
-      }
-      .section { padding-top:60px; }
-      #id_attach { position:relative; top:-4px;}
-      fieldset .help-block { clear:both; display:block;}
-    </style>
-  </head>
-  <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href="index.html">jQuery Preview</a>
-          <ul class="nav">
-            <li><a href="status.html">Status</a></li>
-            <li><a href="link.html">Link</a></li>
-            <li><a href="large.html">Large Link</a></li>
-            <li><a href="rich.html">Rich Link</a></li>
-            <li><a href="multi.html">Multiple Inputs</a></li>
-            <li><a href="editable.html">Editable</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="hero-unit">
-          <h1> jQuery Preview <a id="doc" href="https://github.com/embedly/jquery-preview" class="btn btn-primary">Get the Code &raquo;</a></h1>
+<html><head><link rel="shortcut icon" href="http://embed.ly/static/favicon.ico"><script src="../lib/jquery.min.js" type="text/javascript"></script><script src="common/js/prettify.js" type="text/javascript"></script><script src="../lib/jquery.embedly.js" type="text/javascript"></script><script src="../lib/mustache.js" type="text/javascript"></script><script src="../dist/jquery.preview.js" type="text/javascript"></script><link rel="stylesheet" href="common/css/foundation.min.css"><link rel="stylesheet" href="common/css/font-awesome.min.css"><link rel="stylesheet" href="common/css/prettify.css"><link rel="stylesheet" href="common/css/demo.css"><link rel="stylesheet" href="../css/preview.css"><title>jQuery Preview</title></head><body>
+    <nav class="top-bar"><ul class="title-area"><li class="name">
+          <h1><a href="index.html">jQuery Preview</a></h1>
+        </li>
+      </ul><section class="top-bar-section"><ul class="right"><li><a href="status.html">Status</a></li>
+          <li><a href="link.html">Link</a></li>
+          <li><a href="multi.html">Multiple Inputs</a></li>
+        </ul></section></nav><div class="row">
+      <div class="large-12 columns">
+        <div class="panel">
+          <h1> jQuery Preview <a id="doc" href="https://github.com/embedly/jquery-preview" class="button">Get the Code &#187;</a></h1>
           <p>
             <a href="https://github.com/embedly/jquery-preview">jQuery Preview</a>
             is a plugin that allows users to preview URLs before
             submitting them to be saved by an application. Facebook, Google+
             and Yammer are all examples of tools with this functionality.
-
-
-            <div class="clearfix"></div>
           </p>
 
           <form id="preview_form" class="form-vertical" method="post" action=".">
             <div class="arrow">
               <p>Try it out.</p>
-              <img src='../images/arrow.png'>
+              <img src="../images/arrow.png"></div>
+            <div class="row collapse">
+              <div class="large-8 columns">
+                <input type="text" class="input-xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336"></div>
+              <div class="large-3 end columns">
+                <a id="id_attach" class="button postfix">Attach</a>
+              </div>
             </div>
-            <fieldset>
-              <div class="clearfix"></div>
-              <input type="text" class="input-xxlarge" name="url" id="id_url" value="http://vimeo.com/18150336" />
-              <button id="id_attach" class="btn btn-primary">Attach</button>
-              <span class="help-block">Enter your own url or select attach.</span>
-            </fieldset>
-            <!-- Placeholder that tells Preview where to put the loading icon-->
-            <div class="loading">
-              <img src='../images/loading-rectangle.gif'>
+            <div class="row">
+              <div class="large-11 columns end">
+                <div class="selector-wrapper"></div>
+              </div>
             </div>
-            <!-- Placeholder that tells Preview where to put the selector-->
-            <div class="selector"></div>
           </form>
           <div id="feed"></div>
-
-
-
-
         </div>
-        <div class="span12 columns">
-
-<!--
-Generated from the README.rest.
-run python watch.py --html
--->
-<p>jQuery Preview is a plugin by <a class="reference external" href="http://embed.ly">Embedly</a> that allows
+        <div class="row">
+          <div id="document" class="large-11 large-centered columns">
+          <p>jQuery Preview is a plugin by <a class="reference external" href="http://embed.ly">Embedly</a> that allows
 developers to create tools that enable users to share links with rich previews
 attached. This method of letting users select thumbnails, edit title and
 description has been adopted as the norm across the web. This plugin allows
@@ -138,116 +46,83 @@ infrastructure themselves. Instead relying on on Embedly to generate the
 metadata.</p>
 <p>We have made this plugin overly verbose and infinitely customizable. Our goal
 is not to dictate design, merely give a set of tools to make it easy to create
-a custom experience. There are 5 different demos that you should take a look at
-before getting started. It will give you a quick overview of what you should be
-able to build.</p>
-<ul class="simple">
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/link.html">Link</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/status.html">Status</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/large.html">Large Embeds</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/rich.html">Rich Embeds</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/multi.html">Multipe Inputs</a></li>
-</ul>
+a custom experience.</p>
 <div class="section" id="basic-setup">
-<h1>Basic Setup</h1>
+<h2>Basic Setup</h2>
 <p>To get started you need to put <a class="reference external" href="http://jquery.com/">jQuery</a>,
-<a class="reference external" href="https://github.com/embedly/jquery-preview/blob/master/jquery.preview.full.js">jquery.preview.full.js</a>
+<a class="reference external" href="https://github.com/embedly/embedly-jquery">Embedly jQuery</a>,
+<a class="reference external" href="https://github.com/embedly/jquery-preview/blob/master/jquery.preview.js">jquery.preview.js</a>
 and <a class="reference external" href="https://github.com/embedly/jquery-preview/blob/master/css/preview.css">preview.css</a>. into
-the <tt class="docutils literal">head</tt> of your page:</p>
-<pre class="literal-block">
+your page:</p>
+<pre class="prettyprint linenums">
 &lt;head&gt;
-  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;script src=&quot;http://scripts.embed.ly/p/0.2/jquery.preview.full.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;http://scripts.embed.ly/p/0.2/css/preview.css&quot; /&gt;
-&lt;/head&gt;
-</pre>
-<p>jquery.preview.full.js bundles <a class="reference external" href="http://documentcloud.github.com/underscore/">Underscore.js</a> and <a class="reference external" href="https://github.com/janl/mustache.js/">Mustache.js</a> in with jquery.preview.js. If you
-already have or use these two libs you can see up the <tt class="docutils literal">head</tt> of the document
-like so:</p>
-<pre class="literal-block">
-&lt;head&gt;
-  &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;script src=&quot;lib/mustache.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;script src=&quot;lib/underscore.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;script src=&quot;http://scripts.embed.ly/p/0.2/jquery.preview.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;http://scripts.embed.ly/p/0.2/css/preview.css&quot; /&gt;
+  &lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;script src="http://cdn.embed.ly/jquery.embedly-3.0.5.min.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;script src="http://cdn.embed.ly/jquery.preview-0.3.0.min.js" type="text/javascript"&gt;&lt;/script&gt;
+  &lt;link rel="stylesheet" href="http://cdn.embed.ly/jquery.preview-0.3.0.css" /&gt;
 &lt;/head&gt;
 </pre>
 <p>Next set up a simple form that allows a user to input link:</p>
-<pre class="literal-block">
-&lt;form action=&quot;/update&quot; method=&quot;POST&quot;&gt;
-    &lt;input id=&quot;url&quot; type=&quot;text&quot; name=&quot;url&quot;/&gt;
+<pre class="prettyprint linenums">
+&lt;form action="/update" method="POST"&gt;
+    &lt;input id="url" type="text" name="url"/&gt;
+
+    &lt;!-- Placeholder that tells Preview where to put the selector--&gt;
+    &lt;div class="selector-wrapper"&gt;&lt;/div&gt;
 &lt;/form&gt;
 </pre>
 <p>You then need to tell preview what field to listen to:</p>
-<pre class="literal-block">
+<pre class="prettyprint linenums">
 &lt;script&gt;
+    // Set up preview.
     $('#url').preview({key:'your_embedly_key'})
+
+    // On submit add hidden inputs to the form.
+    $('form').on('submit', function(){
+      $(this).addInputs($('#url').data('preview'));
+      return true;
+    });
 &lt;/script&gt;
 </pre>
 <p>And you are done setting up the front end solution for jQuery Preview. The
 rest of this document will go into how to customize Preview.</p>
-<p>Note that the <a class="reference external" href="http://embed.ly/docs/endpoints/1/preview">Preview</a> endpoint is
-only available to Embedly developers with a Starter plan or above. You can sign
-up for a Starter plan at <a class="reference external" href="http://embed.ly/pricing">embed.ly/pricing</a>.</p>
 </div>
 <div class="section" id="how-it-works">
-<h1>How it Works</h1>
-<p>The plugin works by listening to the field on <tt class="docutils literal">paste</tt>, <tt class="docutils literal">keyup</tt>, <tt class="docutils literal">attach</tt>
-and <tt class="docutils literal">blur</tt>. If a URL is entered a call is made to Embedly's <a class="reference external" href="http://embed.ly/docs/endpoints/1/preview">Preview</a> endpoint and the result is then
-passed to the Selector object and all the elements are added to the form as
-hidden inputs. The Selector is then rendered using a Mustache template. The
-user can use the selector to pick a thumbnail associated with the URL.</p>
-<p>When the form is submitted each attribute it passed back to the action URL.
-The server then saves the information and either echos or augments the object
-and passes it back to the fronted. The Display object then renders the obj into
-the feed.</p>
-<p>Each object is infinitely customizable, but the flow is the same. We will go
-over each object and how to customize them.</p>
-</div>
-<div class="section" id="objects">
-<h1>Objects</h1>
-<p>There are 3 basic objects that you should get familiar with in order to
-customize the selector.</p>
-<div class="section" id="id2">
-<h2>Preview</h2>
-<p>Preview holds all the logic for calls to Embedly. You shouldn't have to do a
-ton of customizations here.</p>
-<div class="section" id="functions">
-<h3>Functions</h3>
-<dl class="docutils">
-<dt><tt class="docutils literal">submit</tt></dt>
-<dd><p class="first">Called when the form is submitted and all the attributes are passed in as
-an object. If you want to do something other than a POST to the action you
-can overwrite the method like so:</p>
-<pre class="last literal-block">
-var preview = {
-  // Instead of posting to the server, send the object to display for
-  // rendering to the feed.
-  submit : function(e, data){
-    e.preventDefault();
-    this.display.create(data);
-  }
-}
-$('#url').preview({preview:preview});
+<h2>How it Works</h2>
+<p>The plugin works by listening to the field on <tt class="docutils literal">paste</tt>, <tt class="docutils literal">keyup</tt>, <tt class="docutils literal">preview</tt>
+and <tt class="docutils literal">blur</tt>. If a URL is entered a call is made to Embedly's <a class="reference external" href="http://embed.ly/docs/extract/api/endpoints/1/extract">Extract</a> endpoint and the
+result is then passed to the <tt class="docutils literal">render</tt> function. <tt class="docutils literal">render</tt> uses <tt class="docutils literal">sprintf</tt>
+to create a selector, so the user can pick a thumbnail associated with the
+URL.</p>
+<p>jQuery Preview just saves all the data and changes associated with the URL on
+the input using jQuery's data. It's up to the developer to choose how they want
+to deal with that data on submit. jQuery Preview comes with a helper function
+<tt class="docutils literal">addInputs</tt> so all the data can be added to the form. This is the code to
+enable it:</p>
+<pre class="prettyprint linenums">
+// On submit add hidden inputs to the form.
+$('form').on('submit', function(){
+  $(this).addInputs($('#url').data('preview'));
+  return true;
+});
 </pre>
-</dd>
-<dt><tt class="docutils literal">bind</tt></dt>
-<dd><p class="first">Called when the preview is set up to bind all the listeners to the file and
-the form. If you want to listen on custom events you can call it like so:</p>
-<pre class="last literal-block">
-var preview = {
-  bind : function(){
-    // Instead of listening to the field, wait for the user to click
-    // 'Attach Link'.
-    $('a.attach').bind('click', this.fetch);
+<p>The developer can then choose how they wish to display the preview in the feed.
+We will show some simple examples for handling this in the documentation.</p>
+</div>
+<div class="section" id="preview">
+<h2>Preview</h2>
+<p>Preview holds all the logic for calls to Embedly and rendering the selector.</p>
+<div class="section" id="options">
+<h3>Options</h3>
+<dl class="docutils"><dt><tt class="docutils literal">bind</tt></dt>
+<dd><p class="first">By default preview will bind to <tt class="docutils literal">keyup</tt>, <tt class="docutils literal">blur</tt> and <tt class="docutils literal">paste</tt> if you
+wish to define your own bindings you can set this attribute to false:</p>
+<pre class="prettyprint linenums">
+// Don't bind the listeners
+$('#url').preview({bind:false});
 
-    // Still bind the form to ``_submit`` that cleans up the data
-    // before calling ``submit``
-    $(this.form).bind('submit', this._submit);
-  }
-}
-$('#url').preview({preview:preview});
+// When a use hits Attach, trigger a preview of the link.
+$('a.attach').on('click', function(){$('#url').trigger('preview')});
 </pre>
 </dd>
 <dt><tt class="docutils literal">error</tt></dt>
@@ -255,315 +130,163 @@ $('#url').preview({preview:preview});
 the way. Depending on the use case you may want notify the user or hide it
 from them. The default behavior is to not notify the user. To notify them
 you can use:</p>
-<pre class="last literal-block">
-var preview = {
-  error : function(){
+<pre class="prettyprint linenums">
+$('#url').preview({
+  error: function(obj){
     alert('The URL you entered was not processed.');
-  }
-}
-$('#url').preview({preview:preview});
+  }});
 </pre>
 </dd>
-<dt><tt class="docutils literal">callback</tt></dt>
+<dt><tt class="docutils literal">success</tt></dt>
 <dd><p class="first">Called after a URL has been successfully rendered by the selector. Useful
 if you want to change state after the URL has been successfully processed.
-For example if you want to change a button from 'Share' to 'Attach' you can
+For example if you want to change a button from 'Share' to 'Submit' you can
 do it like so:</p>
-<pre class="last literal-block">
-var preview = {
-  callback : function(){
-    $('button').text('Attach');
+<pre class="prettyprint linenums">
+$('#url').preview({
+  success : function(obj){
+    $('button').text('Submit');
   }
-}
-$('#url').preview({preview:preview});
+});
 </pre>
 </dd>
-</dl>
+</dl><p><tt class="docutils literal">render</tt></p>
+<blockquote>
+<p>If you would like to create your own selector, overwrite <tt class="docutils literal">render</tt> with
+your own function. We will go in more detail, in the writing your own
+selector function, but here is the simplest example I could think of:</p>
+<pre class="prettyprint linenums">
+$('#url').preview({
+  render: function(obj, options){
+    // Put the title after the input.
+    $(this).after(obj.title);
+  }});
+</pre>
+</blockquote>
 </div>
-<div class="section" id="using-attach">
-<h3>Using Attach</h3>
-<p>If you missed it jQuery Preview listens to a special event <tt class="docutils literal">attach</tt> on the
-field. If you wish to have a two step process of attaching the link to the
-status and then sharing the link you can set something up like this:</p>
-<pre class="literal-block">
-&lt;form id=&quot;preview_form&quot; class=&quot;form-vertical&quot; method=&quot;post&quot; action=&quot;.&quot;&gt;
-    &lt;input type=&quot;text&quot; name=&quot;url&quot; id=&quot;id_url&quot; value=&quot;http://vimeo.com/18150336&quot; /&gt;
-    &lt;button id=&quot;id_attach&quot;&gt;Attach&lt;/button&gt;
-&lt;/form&gt;
-&lt;script&gt;
-$('#id_attach').bind('click', function(e){
-    e.preventDefault();
-    $('#id_url').trigger('attach');
+<div class="section" id="events">
+<h3>Events</h3>
+<dl class="docutils"><dt><tt class="docutils literal">preview</tt></dt>
+<dd><p class="first">Manually trigger the input to fetch the URL. This is generally only needed
+if <tt class="docutils literal">bind</tt> is set to false:</p>
+<pre class="prettyprint linenums">
+$('a.attach').on('click', function(){$('#url').trigger('preview')});
+</pre>
+</dd>
+<dt><tt class="docutils literal">loading</tt></dt>
+<dd><p class="first">Triggered when the request is being made to the API endpoint:</p>
+<pre class="prettyprint linenums">
+$('#url').on('loading', function(){$('.loading').show()});
+</pre>
+</dd>
+<dt><tt class="docutils literal">loaded</tt></dt>
+<dd><p class="first">Triggered when a response has been returned from the API endpoint:</p>
+<pre class="prettyprint linenums">
+$('#url').on('loaded', function(){$('.loading').hide()});
+</pre>
+</dd>
+<dt><tt class="docutils literal">close</tt></dt>
+<dd><p class="first">Triggered when the selector should be closed. If you are implementing a
+custom selector, you must listen for this event:</p>
+<pre class="prettyprint linenums">
+var render = function(data, options){
+  // Insert selector
+  $(this).on('close', function(){
+    //Remove selector.
+  });
+}
+</pre>
+</dd>
+</dl></div>
+</div>
+<div class="section" id="custom-selector">
+<h2>Custom Selector</h2>
+<p>It's actually recommended that you build a custom selector. While the default
+one is pretty good, you are going to want to customize it more than just the
+default styles. Here's how you can create your own.</p>
+<div class="section" id="render">
+<h3>Render</h3>
+<p>To create our own selector you just need to pass in a function into the
+<tt class="docutils literal">render</tt> option when calling preview:</p>
+<pre class="prettyprint linenums">
+var render = function(data, options){
+  // custom render
+};
+$('#url').preview({render:render});
+</pre>
+<p>The render function should accept a <tt class="docutils literal">data</tt> argument that is the response from
+the <tt class="docutils literal">extract</tt> endpoint. <tt class="docutils literal">options</tt> is also passed in if you would like to
+set custom options in preview. <tt class="docutils literal">this</tt> is the HTMLElement of the input. This
+will let you listen for events or trigger events on the input.</p>
+<p>The simplest version of a custom selector looks like so:</p>
+<pre class="prettyprint linenums">
+var render = function(data, options){
+  // Add the title after the input.
+  $(this).after('&lt;span&gt;'+data.title+'&lt;/span&gt;');
 
-    $('#id_attach').replaceWith($('&lt;input/&gt;').attr({
-      'id' : 'id_submit',
-      'value' : 'Share',
-      'type' : 'submit'
-    }));
-});
-&lt;/script&gt;
+  // remove the selector
+  $(this).on('close', function(){
+    $(this).siblings('span').remove();
+  });
+};
 </pre>
-<p>This triggers the <tt class="docutils literal">attach</tt> event on the field and that tells Preview to go
-fetch the url and show it in the Selector.</p>
-</div>
-</div>
-<div class="section" id="selector">
-<h2>Selector</h2>
-<p>Builds the selector that allows users to pick out a thumbnail.</p>
-<div class="section" id="attributes">
-<h3>Attributes</h3>
-<dl class="docutils">
-<dt><tt class="docutils literal">type</tt></dt>
-<dd><p class="first">There are 3 different built-in types that a developer can choose from</p>
-<ul class="simple">
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/link.html">small</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/large.html">large</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/rich.html">rich</a></li>
-</ul>
-<p class="last">Each allows for a different type of feel. We suggest using one of them to
-get started and customizing from there.</p>
-</dd>
-<dt><tt class="docutils literal">template</tt></dt>
-<dd><p class="first">If you would like to use your own Mustache template to render the selector
-you can add it here. The default looks like:</p>
-<pre class="literal-block">
-&lt;div id=&quot;selector&quot; class=&quot;small&quot;&gt;
-  &lt;div class=&quot;thumbnail&quot;&gt;
-    &lt;div class=&quot;controls&quot;&gt;
-      &lt;a class=&quot;left&quot; href=&quot;#&quot;&gt;&amp;#9664;&lt;/a&gt;
-      &lt;a class=&quot;right&quot; href=&quot;#&quot;&gt;&amp;#9654;&lt;/a&gt;
-      &lt;a class=&quot;nothumb&quot; href=&quot;#&quot;&gt;&amp;#10005;&lt;/a&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;items&quot;&gt;
-      &lt;ul class=&quot;images&quot;&gt;
-        {{#images}}
-        &lt;li&gt;&lt;img src=&quot;{{url}}&quot;/&gt;&lt;/li&gt;
-        {{/images}}
-      &lt;/ul&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;attributes&quot;&gt;
-    &lt;a class=&quot;title&quot; href=&quot;#&quot;&gt;{{title}}&lt;/a&gt;
-    &lt;p&gt;&lt;a class=&quot;description&quot; href=&quot;#&quot;&gt;{{description}}&lt;/a&gt;&lt;/p&gt;
-    &lt;span class=&quot;meta&quot;&gt;
-      &lt;img class=&quot;favicon&quot; src=&quot;{{favicon_url}}&quot;&gt;
-      &lt;a class=&quot;provider&quot; href=&quot;{{provider_url}}&quot;&gt;{{provider_display}}&lt;/a&gt;
-    &lt;/span&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;action&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;close&quot;&gt;&amp;#10005;&lt;/a&gt;&lt;/div&gt;
-&lt;/div&gt;
-</pre>
-<p>By default Preview passes the following attributes to the template</p>
-<ul class="simple">
-<li><tt class="docutils literal">type</tt></li>
-<li><tt class="docutils literal">original_url</tt></li>
-<li><tt class="docutils literal">url</tt></li>
-<li><tt class="docutils literal">title</tt></li>
-<li><tt class="docutils literal">description</tt></li>
-<li><tt class="docutils literal">favicon_url</tt></li>
-<li><tt class="docutils literal">provider_url</tt></li>
-<li><tt class="docutils literal">provider_display</tt></li>
-<li><tt class="docutils literal">safe</tt></li>
-<li><tt class="docutils literal">html</tt></li>
-<li><tt class="docutils literal">thumbnail_url</tt></li>
-<li><tt class="docutils literal">object_type</tt></li>
-<li><tt class="docutils literal">image_url</tt></li>
-</ul>
-<p>All these responses are defined <a class="reference external" href="http://embed.ly/docs/endpoints/1/preview#response">here</a> except for the
-following:</p>
-<dl class="docutils">
-<dt><tt class="docutils literal">object_type</tt></dt>
-<dd>The oEmbed of the preview response. Will be either <tt class="docutils literal">video</tt>,
-<tt class="docutils literal">rich</tt>, <tt class="docutils literal">photo</tt> or <tt class="docutils literal">link</tt>. We use this to decide weather to
-embed the <tt class="docutils literal">html</tt> attribute.</dd>
-<dt><tt class="docutils literal">image_url</tt></dt>
-<dd>If the <tt class="docutils literal">type</tt> is <tt class="docutils literal">image</tt> or the <tt class="docutils literal">object_type</tt> is <tt class="docutils literal">photo</tt> an
-<tt class="docutils literal">image_url</tt> will be the full sized image URL.</dd>
-<dt><tt class="docutils literal">thumbnail_url</tt></dt>
-<dd>The URL that the user selected as the thumbnail for the embed.</dd>
-</dl>
-<p><tt class="docutils literal">template</tt> can also be a dictionary if you want to use different
-templates for different <a href="#id3"><span class="problematic" id="id4">``</span></a>object_type``s. For instance:</p>
-<div class="system-message" id="id3">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 265); <em><a href="#id4">backlink</a></em></p>
-Inline literal start-string without end-string.</div>
-<pre class="last literal-block">
-template : {
-  'video' : 'Video Template',
-  'rich' : 'Rich Template',
-  'photo' : 'Photo Template',
-  'link' : 'Link Template'
-}
-</pre>
-</dd>
-</dl>
-</div>
-<div class="section" id="id5">
-<h3>Functions</h3>
-<dl class="docutils">
-<dt><tt class="docutils literal">title</tt></dt>
-<dd><p class="first">Allows users to click on the title in the selector and edit the text. It is
-set up like this in the <tt class="docutils literal">bind</tt> function:</p>
-<pre class="last literal-block">
-$('.selector .title').bind('click', this.title);
-</pre>
-</dd>
-<dt><tt class="docutils literal">description</tt></dt>
-<dd><p class="first">Allows users to click on the description in the selector and edit the text.
-It is set up like this in the <tt class="docutils literal">bind</tt> function:</p>
-<pre class="last literal-block">
-$('.selector .description').bind('click', this.description);
-</pre>
-</dd>
-<dt><tt class="docutils literal">scroll</tt></dt>
-<dd><p class="first">Simple logic that scrolls the image left and right in selector. It takes a
-direction (<tt class="docutils literal">left</tt> or <tt class="docutils literal">right</tt>) and an event. We set it up like so:</p>
-<pre class="last literal-block">
-$('.selector .left').bind('click', _.bind(this.scroll, {}, 'left'));
-$('.selector .right').bind('click', _.bind(this.scroll, {}, 'right'));
-</pre>
-</dd>
-<dt><tt class="docutils literal">nothumb</tt></dt>
-<dd><p class="first">Logic that tells the form NOT to use a thumbnail when rendering a preview.
-<tt class="docutils literal">bind</tt> calls it like so:</p>
-<pre class="last literal-block">
-$('.selector .nothumb').bind('click', this.nothumb);
-</pre>
-</dd>
-<dt><tt class="docutils literal">clear</tt></dt>
-<dd>Clears the selector, hides it and all the hidden inputs.</dd>
-<dt><tt class="docutils literal">update</tt></dt>
-<dd><p class="first">Update can be set to an input field to also update the value in the
-selector. This is useful if you want to have a different input field for
-title and selector. We use this from the Preview object like so:</p>
-<pre class="literal-block">
-$('#id_title').bind('keyup', function(e){
-  $.preview.selector.update(e);
-});
-</pre>
-<p class="last">The element must have a <tt class="docutils literal">name</tt> attribute of the <tt class="docutils literal">title</tt> or
-<tt class="docutils literal">description</tt>.</p>
-</dd>
-<dt><tt class="docutils literal">bind</tt></dt>
-<dd>Sets the listeners for the above functions. Don't overwrite this function
-unless you know what you are doing.</dd>
-<dt><tt class="docutils literal">render</tt></dt>
-<dd>Uses Mustache to render the template chosen by the developer. Don't
-overwrite this function unless you know what you are doing.</dd>
-</dl>
 </div>
 </div>
 <div class="section" id="display">
 <h2>Display</h2>
-<p>Create's a Feed item for a given object.</p>
-<div class="section" id="id6">
-<h3>Attributes</h3>
-<dl class="docutils">
-<dt><tt class="docutils literal">type</tt></dt>
-<dd><p class="first">There are 3 different built-in types that a developer can choose from</p>
-<ul class="simple">
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/link.html">small</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/status.html">status</a></li>
-<li><a class="reference external" href="http://embedly.github.com/jquery-preview/demo/rich.html">rich</a></li>
-</ul>
-<p class="last">Each allows for a different type of feel. We suggest using one of them to
-get started and customizing from there. The <tt class="docutils literal">status</tt> type is the same as
-<tt class="docutils literal">small</tt>, but takes an additional field <tt class="docutils literal">status</tt> and displays that in
-the item as well.</p>
-</dd>
-<dt><tt class="docutils literal">template</tt></dt>
-<dd><p class="first">The Mustache template that you would like to use to render the obj. The
-default one looks like this:</p>
-<pre class="literal-block">
-&lt;div class=&quot;item&quot;&gt;
-  &lt;div class=&quot;thumbnail&quot;&gt;
-    &lt;a href=&quot;{{orginal_url}}&quot;&gt;
-      &lt;img title=&quot;{{title}}&quot; src=&quot;{{thumbnail_url}}&quot;/&gt;
-      &lt;span class=&quot;overlay&quot;&gt;&lt;/span&gt;
-    &lt;/a&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;attributes&quot;&gt;
-    &lt;a class=&quot;title&quot; href=&quot;{{orginal_url}}&quot;&gt;{{title}}&lt;/a&gt;
-    &lt;p class=&quot;description&quot;&gt;{{description}}&lt;/p&gt;
-    &lt;span class=&quot;meta&quot;&gt;
-      &lt;img class=&quot;favicon&quot; src=&quot;{{favicon_url}}&quot;/&gt;
-      &lt;a class=&quot;provider&quot; href=&quot;{{provider_url}}&quot;&gt;{{provider_display}}&lt;/a&gt;
-    &lt;/span&gt;
-  &lt;div&gt;
-&lt;/div&gt;
+<p>jQuery Preview has no concept of displaying the item in a feed. This should be
+handled by the developer. This is a simple example from one of the demos:</p>
+<pre class="prettyprint linenums">
+$('#preview_form').on('submit', function(){
+  // Preview data.
+  var preview = $('#id_url').data('preview');
+
+  // Close the selector
+  $('#id_url').trigger('close');
+  $('#id_url').val('');
+
+  // Create a post using mustache, i.e. the nice way.
+  var template = ['&lt;div class="row"&gt;',
+    '&lt;div class="large-3 columns"&gt;',
+      '&lt;img class="thumb" src="{{thumbnail_url}}"&gt;&lt;/img&gt;',
+    '&lt;/div&gt;',
+    '&lt;div class="large-9 column"&gt;',
+      '&lt;a href="{{original_url}}"&gt;{{title}}&lt;/a&gt;',
+      '&lt;p&gt;{{description}}&lt;/p&gt;',
+    '&lt;/div&gt;',
+  '&lt;/div&gt;'].join('');
+
+  html = $(Mustache.to_html(template, preview));
+  html.data('preview', preview);
+  html.on('click', function(){
+    var data = $(this).data('preview');
+    // Insert the video or rich object.
+    if (data.media.type === 'video' || data.media.type === 'rich'){
+      $(this).html(data.media.html);
+      return false;
+    }
+    return true;
+  });
+  // Display the item in the feed.
+  $('#feed').append(html);
+  return false;
+});
 </pre>
-<p>By default Preview passes the following attributes to the template</p>
-<ul class="simple">
-<li><tt class="docutils literal">type</tt></li>
-<li><tt class="docutils literal">original_url</tt></li>
-<li><tt class="docutils literal">url</tt></li>
-<li><tt class="docutils literal">title</tt></li>
-<li><tt class="docutils literal">description</tt></li>
-<li><tt class="docutils literal">favicon_url</tt></li>
-<li><tt class="docutils literal">provider_url</tt></li>
-<li><tt class="docutils literal">provider_display</tt></li>
-<li><tt class="docutils literal">safe</tt></li>
-<li><tt class="docutils literal">html</tt></li>
-<li><tt class="docutils literal">thumbnail_url</tt></li>
-<li><tt class="docutils literal">object_type</tt></li>
-<li><tt class="docutils literal">image_url</tt></li>
-</ul>
-<p>All these responses are defined <a class="reference external" href="http://embed.ly/docs/endpoints/1/preview#response">here</a> except for the
-following:</p>
-<dl class="docutils">
-<dt><tt class="docutils literal">object_type</tt></dt>
-<dd>The oEmbed of the preview response. Will be either <tt class="docutils literal">video</tt>,
-<tt class="docutils literal">rich</tt>, <tt class="docutils literal">photo</tt> or <tt class="docutils literal">link</tt>. We use this to decide weather to
-embed the <tt class="docutils literal">html</tt> attribute.</dd>
-<dt><tt class="docutils literal">image_url</tt></dt>
-<dd>If the <tt class="docutils literal">type</tt> is <tt class="docutils literal">image</tt> or the <tt class="docutils literal">object_type</tt> is <tt class="docutils literal">photo</tt> an
-<tt class="docutils literal">image_url</tt> will be the full sized image URL.</dd>
-<dt><tt class="docutils literal">thumbnail_url</tt></dt>
-<dd>The URL that the user selected as the thumbnail for the embed.</dd>
-</dl>
-<p><tt class="docutils literal">template</tt> can also be a dictionary if you want to use different
-templates for different <a href="#id11"><span class="problematic" id="id12">``</span></a>object_type``s. For instance:</p>
-<div class="system-message" id="id11">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;string&gt;</tt>, line 400); <em><a href="#id12">backlink</a></em></p>
-Inline literal start-string without end-string.</div>
-<pre class="last literal-block">
-template : {
-  'video' : 'Video Template',
-  'rich' : 'Rich Template',
-  'photo' : 'Photo Template',
-  'link' : 'Link Template'
-}
-</pre>
-</dd>
-<dt><tt class="docutils literal">selector</tt></dt>
-<dd>Tells create where to prepend the Feed item html to. The default value is
-<tt class="docutils literal">#feed</tt>.</dd>
-</dl>
-</div>
-<div class="section" id="id13">
-<h3>Functions</h3>
-<dl class="docutils">
-<dt><tt class="docutils literal">create</tt></dt>
-<dd>Uses Mustache to render the template chosen by the developer. Don't
-overwrite this function unless you know what you are doing.</dd>
-</dl>
-</div>
-</div>
 </div>
 <div class="section" id="server-side">
-<h1>Server Side</h1>
+<h2>Server Side</h2>
 <p>When the user submits the link, we must save it and echo it back to the page
 so it can be displayed. The code contains a simple <a class="reference external" href="http://www.tornadoweb.org/">Tornado</a> example of this dance in <a class="reference external" href="https://github.com/embedly/jquery-preview/blob/master/demo/stream/app.py">app.py</a>.
 When we set up the form we need to specify where we are going to be making the
 the AJAX post. In this case it's '/update':</p>
-<pre class="literal-block">
-&lt;form method=&quot;post&quot; action=&quot;/update&quot;&gt;
-  &lt;input type=&quot;text&quot; class=&quot;xlarge&quot; name=&quot;url&quot; id=&quot;id_url&quot; /&gt;
-  &lt;input id=&quot;id_submit&quot; type=&quot;submit&quot; class=&quot;btn btn-primary&quot; value=&quot;Share&quot;/&gt;
+<pre class="prettyprint linenums">
+&lt;form method="post" action="/update"&gt;
+  &lt;input type="text" class="xlarge" name="url" id="id_url" /&gt;
+  &lt;input id="id_submit" type="submit" class="btn btn-primary" value="Share"/&gt;
 &lt;/form&gt;
 </pre>
 <p>We then build a handler to deal with the form data:</p>
-<pre class="literal-block">
+<pre class="prettyprint linenums">
 class UpdateHandler(tornado.web.RequestHandler):
 
     def post(self):
@@ -587,80 +310,82 @@ class UpdateHandler(tornado.web.RequestHandler):
 object to be rendered and displayed.</p>
 </div>
 <div class="section" id="cdn">
-<h1>CDN</h1>
+<h2>CDN</h2>
 <p>To get you going even faster, Embedly hosts all the files you need on
 scripts.embed.ly. The latest version is available here:</p>
-<pre class="literal-block">
-http://scripts.embed.ly/p/0.2/jquery.preview.min.js
-http://scripts.embed.ly/p/0.2/jquery.preview.full.min.js
-http://scripts.embed.ly/p/0.2/css/preview.css
+<pre class="prettyprint linenums">
+http://cdn.embed.ly/jquery.preview-0.3.0.min.js
+http://cdn.embed.ly/jquery.preview-0.3.0.css
 </pre>
-<p>The most current version of jQuery Preview will be available here:</p>
-<pre class="literal-block">
-http://scripts.embed.ly/p/jquery.preview.min.js
-http://scripts.embed.ly/p/jquery.preview.full.min.js
-http://scripts.embed.ly/p/css/preview.css
-</pre>
-</div>
-<div class="section" id="development">
-<h1>Development</h1>
-<p>The code is broken down into modules in the <tt class="docutils literal">src</tt> folder and built by
-<tt class="docutils literal">watch.py</tt>. If you want to modify anything in <tt class="docutils literal">preview.jquery.js</tt> please
-find the code in the module and run <tt class="docutils literal">python watch.py</tt> to build
-<tt class="docutils literal">preview.jquery.js</tt>. <tt class="docutils literal">preview.css</tt> is a <a class="reference external" href="http://sass-lang.com/">sass</a>
-generated file. Please modify <tt class="docutils literal">preview.scss</tt> by running <tt class="docutils literal">sass <span class="pre">--watch</span>
-preview.scss:preview.css</tt></p>
 </div>
 <div class="section" id="changelog">
-<h1>Changelog</h1>
-<div class="section" id="id14">
-<h2>0.2</h2>
-<ul class="simple">
-<li>Added the $.preview so it can be used before the a form is initialized.</li>
+<h2>Changelog</h2>
+<div class="section" id="id1">
+<h3>0.3</h3>
+<ul class="simple"><li>Full rewrite to simplify adding jQuery Preview to a site.</li>
+</ul></div>
+<div class="section" id="id2">
+<h3>0.2</h3>
+<ul class="simple"><li>Added the $.preview so it can be used before the a form is initialized.</li>
 <li>Added <tt class="docutils literal">error</tt> and <tt class="docutils literal">callback</tt> to the Preview object.</li>
-</ul>
+</ul></div>
 </div>
 </div>
-<!-- End Generated -->
-
         </div>
       </div>
-      <div class="clear"></div>
     </div>
 
     <script>
-
     $(document).ready(function(){
-      var preview = {
-        submit : function(e, data){
-          e.preventDefault();
-          this.display.create(data);
-        }
-      }
-      $('#id_url').preview({key:'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                            preview:preview,
-                            autoplay : 1,
-                            maxwidth: 600});
+      prettyPrint();
+      $('#id_url').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
+                            bind: false,
+                            query : {
+                              autoplay : 1,
+                              maxwidth: 600
+                            }})
+                  .on('loading', function(){
+                    $(this).prop('disabled', true);
+                    $('form .button').html('<i class="icon-spinner icon-spin"></i>');
+                  }).on('loaded', function(){
+                    $(this).prop('disabled', false);
+                    $('form .button').text('Share');
+                    $('.arrow p').text('Now Share it!');
+                  })
 
       $('#id_attach').bind('click', function(e){
-        e.preventDefault();
-        $('#id_url').trigger('attach');
+        if ($(this).text() == 'Attach'){
+          $('#id_url').trigger('preview');
+        } else {
 
-        $('.arrow p').text('Now Share it!')
+          var preview = $('#id_url').data('preview');
+          $('#id_url').trigger('close');
+          $('#id_url').val('');
 
-        $('#id_attach').replaceWith($('<input/>').attr({
-          'id' : 'id_submit',
-          'class' : 'btn btn-primary',
-          'value' : 'Share',
-          'type' : 'submit'
-        }));
+          // Create a post using mustache, i.e. the nice way.
+          var template = ['<div class="row">',
+            '<div class="large-3 columns">',
+              '<img class="thumb" src="{{thumbnail_url}}"></img>',
+            '</div>',
+            '<div class="large-9 column">',
+              '<a href="{{original_url}}">{{title}}</a>',
+              '<p>{{description}}</p>',
+            '</div>',
+          '</div>'].join('');
+
+          html = $(Mustache.to_html(template, preview));
+          html.data('preview', preview);
+          html.on('click', function(){
+            var data = $(this).data('preview');
+            // Insert the video or rich object.
+            if (data.media.type === 'video' || data.media.type === 'rich'){
+              $(this).html(data.media.html);
+              return false;
+            }
+            return true;
+          })
+          $('#feed').append(html);
+        }
       });
-
     });
-
-
-
-    </script>
-
-  </body>
-</html>
+    </script></body></html>
