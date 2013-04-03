@@ -1,128 +1,302 @@
-/* jQuery Preview - v0.2
- *
- * jQuery Preview is a plugin by Embedly that allows developers to create tools
- * that enable users to share links with rich previews attached.
- *
- */
+/*globals jQuery:true, sprintf:true*/
 
-// Base Preview Object. Holds a common set of functions to interact with
-// Embedly's Preview endpoint.
-function Preview(elem, options) {
+;(function($){
 
-  //Preview Object that We build from the options passed into the function
-  var Preview = {
 
-    // List of all the attrs that can be sent to Embedly
-    api_args : ['key', 'maxwidth', 'maxheight', 'width', 'wmode', 'autoplay',
-      'videosrc', 'allowscripts', 'words', 'chars', 'secure', 'frame'],
+  // Bunch of randoms that we will use throughout
+  var PreviewUtils = function(){};
+  PreviewUtils.prototype = {
+    protocolExp: /^http(s?):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i,
+    urlExp : /[\-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/gi,
 
-    // What attrs we are going to use.
-    display_attrs : ['type', 'original_url', 'url', 'title', 'description',
-      'favicon_url', 'provider_url', 'provider_display', 'provider_name', 'safe', 'html',
-      'thumbnail_url', 'object_type', 'image_url'],
-
-    default_data : {},
-    debug : false,
-    form : null,
-    type : 'link',
-    loading_selector : '.loading',
-    options : {
-      debug : false,
-      selector : {},
-      field : null,
-      display : {},
-      preview : {},
-      wmode : 'opaque',
-      words : 30,
-      maxwidth : 560
-    },
-
-    init : function (elem, settings) {
-
-      // Sets up options
-      this.options = _.extend(this.options, typeof settings !== "undefined" ? settings : {});
-
-      // Sets up the data args we are going to send to the API
-      var data = {};
-      _.each(_.intersection(_.keys(this.options), this.api_args), function (n) {
-        var v = settings[n];
-        // 0 or False is ok, but not null or undefined
-        if (!(_.isNull(v) || _.isUndefined(v))) {
-          data[n] = v;
-        }
-      });
-      this.default_data = data;
-
-      // Just reminds us which form we should be working on.
-      this.form = null;
-      if (elem){
-        this.form = options.form ? options.form : elem.parents('form');
-      }
-
-      //Debug used for logging
-      this.debug = this.options.debug;
-
-      //Sets up Selector
-      this.selector = Selector(this.form, this.options.selector);
-
-      // Sets up display
-      this.display = Display(this.options.display);
-
-      // Overwrites any funtions
-      _.extend(this, this.options.preview);
-
-      // Binds all the functions that you want.
-      if (elem){
-        this.bind();
-      }
-    },
-    /*
-     * Utils for handling the status.
-     */
-    getStatusUrl : function (obj) {
-      // Grabs the status out of the Form.
-      var status = elem.val();
+    // Finds the first URL in the status, we only ever work on one.
+    url: function(text){
+      // Kill whitespace.
+      text = $.trim(text);
 
       //ignore the status it's blank.
-      if (status === '') {
+      if (text === '') {
         return null;
       }
 
-      // Simple regex to make sure the url with a scheme is valid.
-      var urlexp = /^http(s?):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i;
-      var matches = status.match(urlexp);
+      // Simple regex to make sure the url with a protocol is valid.
+      var matches = text.match(this.protocolExp);
 
+      // see if we have a url
       var url = matches? matches[0] : null;
 
       //No urls is the status. Try for urls without scheme i.e. example.com
       if (url === null) {
-        urlexp = /[-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/gi;
-        matches = status.match(urlexp);
-        url = matches? 'http://'+matches[0] : null;
+        matches = text.match(this.urlExp);
+        url = matches ? 'http://'+matches[0] : null;
+      }
+      url = $.trim(url);
+
+      if (url === ""){
+        return null;
       }
 
       //Note that in both cases we only grab the first URL.
       return url;
     },
-    toggleLoading : function () {
-      this.form.find(this.loading_selector).toggle();
-    },
-    callback : function(obj) {
-      // empty. can be overridden by user
-    },
-    //Metadata Callback
-    _callback : function (obj) {
-      //tells the loader to stop
-      this.toggleLoading();
+    none: function(obj){
+      return (obj === null || obj === undefined);
+    }
+  };
+  // We use this a bunch of places.
+  var utils = new PreviewUtils();
 
+  var Selector = function(options){
+    this.init(options);
+  };
+
+  var render = function(data, options){
+
+    var $elem = $(this);
+
+    // Clone the data obj so we can add to it.
+    var obj = $.extend(true, {}, data);
+    obj.title = obj.title ? obj.title : obj.url;
+
+    // If there is a favicon we should add it.
+    var favicon = obj.favicon_url? '<img class="favicon" src="%(favicon_url)s">': '';
+    var images = $.map(obj.images, function(i){return sprintf('<li><img src="%(url)s"/></li>', i);}).join('');
+
+    // add the thumbnail controls.
+    if (images !== ''){
+      images = ['<div class="thumb">',
+        '<div class="controls">',
+          '<a class="left" href="#">&#9664;</a>',
+          '<a class="right" href="#">&#9654;</a>',
+          '<a class="nothumb" href="#">&#10005;</a>',
+        '</div>',
+        '<div class="items">',
+          '<ul class="images">',
+            images,
+          '</ul>',
+        '</div>',
+      '</div>'].join('');
+    }
+
+    // Create the final template.
+    var template = ['<div class="selector">',
+      images,
+      '<div class="attributes">',
+        '<a class="title" href="#" contenteditable=true>%(title)s</a>',
+        '<p><a class="description" href="#" contenteditable=true>%(description)s</a></p>',
+        '<span class="meta">',
+          favicon,
+          '<a class="provider" href="%(provider_url)s">%(provider_display)s</a>',
+        '</span>',
+      '</div>',
+      '<div class="action"><a href="#" class="close">&#10005;</a></div>',
+    '</div>'].join('');
+
+    // render the html.
+    var html = sprintf(template, obj);
+
+    // Figure out where to put it. If there is a contianer, then use that.
+    var $wrapper = $elem.closest(options.container).find(options.wrapper).eq(0);
+
+    if ($wrapper.length === 0){
+      $wrapper = $(options.wrapper).eq(0);
+    }
+
+    // If we found a wrapper, use it.
+    if ($wrapper.length !== 1){
+      return false;
+    }
+    // Set the URL
+    $wrapper.html($(html));
+
+    // Add the thumb scroller.
+    $wrapper.find('.thumb').thumb({
+      onchange: function(elem){
+        // Update the data.
+        var val = null;
+        if (!utils.none(elem)){
+          val = $(elem).attr('src');
+        }
+        $elem.data('preview').thumbnail_url = val;
+      }
+    });
+
+    // Add the blur on the title and description.
+    $wrapper.find('.title').on('blur', function(e){
+      $elem.data('preview').title = $(e.target).text();
+    });
+    $wrapper.find('.description').on('blur',function(e){
+      $elem.data('preview').description = $(e.target).text();
+    });
+
+    // Binds the close button.
+    $wrapper.find('.action .close').bind('click', $.proxy(function(e){
+      // Let elem know that the selector was closed
+      $elem.trigger('close');
+      $wrapper.find('.selector').remove();
+    }, this));
+
+    // the close button.
+    $wrapper.find('.selector').bind('mouseenter mouseleave', function () {
+      $(this).find('.action').toggle();
+    });
+
+    // bind to the close event on the element.
+    $elem.on('close', function(){
+      $wrapper.find('.selector').remove();
+    });
+  };
+
+  var defaults = {
+    debug : true,
+    bind : true,
+    error: null,
+    success: null,
+    render: render,
+
+    wrapper: '.selector-wrapper',
+    container: 'form',
+    field : null,
+    query: {
+      wmode : 'opaque',
+      words : 30,
+      maxwidth : 560
+    }
+  };
+
+  var Preview = function(elem, options){
+    this.init(elem, options);
+  };
+
+  Preview.prototype = {
+
+    $form: null,
+    data: {},
+
+    init: function(elem, options){
+      //set up the elem that we are working on.
+      this.elem = elem;
+      this.$elem = $(elem);
+
+      // Helps us key track so we don't make duplicate requests.
+      this.url = null;
+
+      // If the elem is inside a form, add it here.
+      var $form = this.$elem.parents('form').eq(0);
+      if ($form.length === 1){
+        this.$form = $form;
+      }
+      // Set up options.
+      this.options = $.extend({}, defaults, options);
+
+      // Allow people to do change the bind functionality.
+      if (this.options.bind === true){
+        // Attach events, proxy so "this" is correct.
+        this.$elem.on('keyup', $.proxy(this.keyUp, this));
+        this.$elem.on('paste', $.proxy(this.paste, this));
+        this.$elem.on('blur', $.proxy(this.paste, this));
+      }
+
+      // Set the data attr.
+      this.$elem.data('preview', {});
+
+      // A couple of custom events.
+      this.$elem.on('close', $.proxy(this.clear, this));
+      this.$elem.on('clear', $.proxy(this.clear, this));
+      this.$elem.on('preview', $.proxy(this.fetch, this));
+
+      // Update the preview data.
+      this.$elem.on('update', $.proxy(function(e, name, value){
+        this.$elem.data('preview')[name] = value;
+      }, this));
+
+    },
+    log: function(){
+      if (this.options.debug  && window.console){
+        window.console.log(Array.prototype.slice.call(arguments));
+      }
+    },
+    // data upkeep.
+    update: function(key, value){
+      var data = this.$elem.data('preview');
+      data[key] = value;
+    },
+    clear: function(){
+      this.$elem.data('preview', {});
+    },
+    /* EVENTS */
+    keyUp : function (e) {
+      // Only respond to keys that insert whitespace (spacebar, enter) or
+      // on delete 8.
+      if (e.which !== 32 && e.which !== 13 && e.which !== 8) {
+        return null;
+      }
+      //See if there is a url in the status textarea
+      var url = utils.url(this.$elem.val());
+      this.log('onKeyUp url:'+url);
+      if (url === null) {
+        // Close the selector
+        this.$elem.trigger('close');
+        return null;
+      }
+      // If there is a url, then we need to unbind the event so it doesn't fire
+      // again. This is very common for all status updaters as otherwise it
+      // would create a ton of unwanted requests.
+      //this.$elem.off('keyup');
+
+      //Fire the fetch metadata function
+      this.fetch(url);
+    },
+    paste : function (e) {
+      //We delay the fire on paste.
+      setTimeout($.proxy(function(){
+        this.fetch();
+      }, this), 200);
+    },
+    /* AJAX */
+    fetch: function(url){
+      if ($.type(url) !== "string"){
+        url = utils.url(this.$elem.val());
+      }
+      this.log(url);
+
+      if (url === null || this.url === url){
+        return false;
+      }
+      // Close the old selector if there was one.
+      this.$elem.trigger('close');
+
+      // Let's us know what URL we are currently working on.
+      this.url = url;
+
+      // Trigger loading.
+      this.$elem.trigger('loading');
+
+      // use Embedly jQuery to make the call.
+      $.embedly.extract(url, {
+        key: this.options.key,
+        query : this.options.query
+      }).progress($.proxy(this._callback,this));
+    },
+    error: function(obj){
+      // By default Preview does nothing for error cases. If you would
+      // like to do something else, you should overwrite this funciton.
+      if (this.options.error !== null){
+        $.proxy(this.options.error, this.elem)(obj);
+      }
+    },
+    _callback: function(obj){
       // Here is where you actually care about the obj
-      log(obj);
+      this.log(obj);
+
+      // Trigger loaded
+      this.$elem.trigger('loaded');
 
       // Every obj should have a 'type'. This is a clear sign that
       // something is off. This is a basic check to make sure we should
       // proceed. Generally will never happen.
       if (!obj.hasOwnProperty('type')) {
-        log('Embedly returned an invalid response');
+        this.log('Embedly returned an invalid response');
         this.error(obj);
         return false;
       }
@@ -131,13 +305,14 @@ function Preview(elem, options) {
       // endpoint will pass back an obj  of type 'error'. Generally this is
       // were the default workflow should happen.
       if (obj.type === 'error') {
-        log('URL ('+obj.url+') returned an error: '+ obj.error_message);
+        this.log('URL ('+obj.url+') returned an error: '+ obj.error_message);
         this.error(obj);
         return false;
       }
 
+      // Malicious URL.
       if (!obj.safe) {
-        log('URL ('+obj.url+') was deemed unsafe: ' + obj.safe_message);
+        this.log('URL ('+obj.url+') was deemed unsafe: ' + obj.safe_message);
         this.error(obj);
         return false;
       }
@@ -147,231 +322,34 @@ function Preview(elem, options) {
       // which I don't believe you have a good solution for yet. We could
       // wrap them in HTML5 tags, but won't work cross browser.
       if (!(obj.type in {'html':'', 'image':''})) {
-        log('URL ('+obj.url+') returned a type ('+obj.type+') not handled');
+        this.log('URL ('+obj.url+') returned a type ('+obj.type+') not handled');
         this.error(obj);
         return false;
       }
 
-      // If this is a change in the URL we need to delete all the old
-      // information first.
-      this.form.find('input[type="hidden"].preview_input').remove();
-
-
-      //Sets all the data to a hidden inputs for the post.
-      var form = this.form;
-      _.each(this.display_attrs, function (n) {
-
-        var v = null;
-
-        // Object type let's us know what we are working with.
-        if (n === 'object_type') {
-          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('type')) {
-            v = obj.object.type;
-          } else{
-            v = 'link';
-          }
-          obj.object_type = v;
-        }
-        // Sets up HTML for the video or rich type.
-        else if (n === 'html') {
-          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('html')) {
-            v = obj.object.html;
-          }
-        }
-        // Set up the image URL for previews of the ful image.
-        else if (n === 'image_url') {
-          if (obj.hasOwnProperty('object') && obj.object.hasOwnProperty('type') && obj.object.type === 'photo') {
-            v = obj.object.url;
-          } else if (obj.type === 'image') {
-            v = obj.url;
-          }
-          obj.image_url = v;
-        }
-        else {
-          v = obj[n];
-        }
-
-        var d = {
-          name : n,
-          type : 'hidden',
-          id : 'id_'+n,
-          value : v
-        };
-
-        // It's possible that the title or description or something else is
-        // already in the form. If it is then we need to Love them for who they
-        // are and fill in values.
-        var e = form.find('#id_'+n);
-
-        if(e.length) {
-          // It's hidden, use it
-          if (e.attr('type') === 'hidden') {
-            // jQuery doesn't allow changing the 'type' attribute
-            delete d.type;
-            
-            e.attr(d);
-          } else{
-            // Be careful here.
-            if (!e.val()) {
-              e.val(obj[n]);
-            } else {
-              // Use the value in the obj
-              obj[n] = e.val();
-            }
-            // Bind updates to the select.
-            e.bind('keyup', function (e) {
-              $.preview.selector.update(e);
-            });
-          }
-          e.addClass('preview_input');
-        } else{
-          d['class'] ='preview_input';
-          form.append($('<input />').attr(d));
-        }
-      });
-
-      // Now use the selector obj to render the selector.
-      this.selector.render(obj);
-      this.callback(obj);
-    },
-    // Used as a generic error callback if something fails.
-    error : function () {
-      log('error');
-      log(arguments);
-    },
-    // Actually makes the ajax call to Embedly. We make this a seperate
-    // function because implementations like Chrome Plugins need to overwrite
-    // how the call is made.
-    ajax : function(data){
-      // Make the request to Embedly. Note we are using the
-      // preview endpoint: http://embed.ly/docs/endpoints/1/preview
-      $.ajax({
-        url: document.location.protocol + '//api.embed.ly/1/preview',
-        dataType: 'jsonp',
-        data: data,
-        success: this._callback,
-        error: this.error
-      });
-    },
-    // Fetches the Metadata from the Embedly API
-    fetch: function (url) {
-      // Get a url out of the status box unless it was passed in.
-      if (typeof url === 'undefined' || typeof url !== 'string') {
-        url = this.getStatusUrl();
+      // set the thumb to the first url
+      if (obj.images.length > 0){
+        obj['thumbnail_url'] = obj.images[0].url;
       }
 
-      // If there is no url return false.
-      if (url === null) return true;
+      // We put the object into data, so we can use it elsewhere.
+      this.$elem.data('preview', obj);
 
-      //We need to trim the URL.
-      url = $.trim(url);
+      // Create a selector to render the bad boy.
+      $.proxy(this.options.render, this.elem)(obj, this.options);
 
-      // If we already looked for a url, there will be an original_url hidden
-      // input that we should look for and compare values. If they are the
-      // same we will ignore.
-      var original_url = this.form.find('#id_original_url').val();
-      if (original_url === url) {
-        return true;
+      if (this.options.success !== null){
+        $.proxy(this.options.success, this.elem)(obj);
       }
 
-      //Tells the loaded to start
-      this.toggleLoading();
-
-      //sets up the data we are going to use in the request.
-      var data = _.clone(this.default_data);
-      data.url = url;
-
-      // make the ajax call
-      this.ajax(data);
-
-      return true;
-    },
-    keyUp : function (e) {
-      // Only respond to keys that insert whitespace (spacebar, enter)
-      if (e.which !== 32 && e.which !== 13) {
-        return null;
-      }
-
-      //See if there is a url in the status textarea
-      var url = this.getStatusUrl();
-      if (url === null) {
-        return null;
-      }
-      log('onKeyUp url:'+url);
-
-      // If there is a url, then we need to unbind the event so it doesn't fire
-      // again. This is very common for all status updaters as otherwise it
-      // would create a ton of unwanted requests.
-      $(this.status_selector).unbind('keyup');
-
-      //Fire the fetch metadata function
-      this.fetch(url);
-    },
-    paste : function (e) {
-      //We delay the fire on paste.
-      _.delay(this.fetch, 200);
-    },
-    //The submit post back that readys the data for the actual submit.
-    _submit : function (e) {
-      var data = {};
-
-      this.form.find('textarea, input').not('input[type="submit"]').each(
-        function (i, e) {
-          var n = $(e).attr('name');
-          if (n !== undefined) {
-            data[n] = $(e).val();
-          }
-      });
-      // Clears the Selector.
-      this.selector.clear();
-
-      // Submits the Event and the Data to the submit function.
-      this.submit(e, data);
-
-      //Clear the form.
-      elem.val('');
-
-      // This happens in clear, but it may not get get called there. This
-      // Makes sure it's cleared.
-      this.form.find('input[type="hidden"].preview_input').remove();
-    },
-    //What we are actually going to do with the data.
-    submit : function (e, data) {
-      e.preventDefault();
-      // We need to submit the data back to the server via the action
-      var form = $(e.target);
-      $.ajax({
-        type : 'post',
-        url : form.attr('action'),
-        data : $.param(data),
-        dataType:'json',
-        success : this.display.create
-      });
-    },
-    //Bind a bunch of functions.
-    bind : function () {
-      log('Starting Bind');
-
-      // Bind Keyup, Blur and Paste
-      elem.bind('blur', this.fetch);
-      elem.bind('keyup', this.keyUp);
-      elem.bind('paste', this.paste);
-
-      //Bind Submit
-      this.form.bind('submit', this._submit);
-
-      // the event `attach` tells fetch to run on the input.
-      elem.bind('attach', this.fetch);
-
+      this.log('done', obj);
     }
   };
 
-  //Use Underscore to make ``this`` not suck.
-  _.bindAll(Preview);
-
-  //Bind Preview Function
-  Preview.init(elem, options);
-
-  //Return the Preview Function that will eventually be namespaced to $.preview.
-  return Preview;
-}
+  //Set up the Preview Functions for jQuery
+  $.fn.preview = function(options, callback){
+    return $(this).each(function(i,e){
+      new Preview(this, options);
+    });
+  };
+})(jQuery, window, document);

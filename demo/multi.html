@@ -2,90 +2,62 @@
 <html>
   <head>
     <link rel="shortcut icon" href="http://embed.ly/static/favicon.ico">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript" ></script>
-    <script src="../lib/underscore.js" type="text/javascript"></script>
+    <script src="../lib/jquery.min.js" type="text/javascript" ></script>
+    <script src="../lib/jquery.embedly.js" type="text/javascript"></script>
     <script src="../lib/mustache.js" type="text/javascript"></script>
-    <script src="../jquery.preview.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="common/css/bootstrap.min.css">
+    <script src="../dist/jquery.preview.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="common/css/foundation.min.css">
+    <link rel="stylesheet" href="common/css/font-awesome.min.css">
+    <link rel="stylesheet" href="common/css/demo.css" />
     <link rel="stylesheet" href="../css/preview.css" />
-    <title>jQuery Preview - Multi</title>
-    <style>
-      body {
-        background:#fff url(common/img/grid-18px-masked.png) repeat-x top left;
-      }
-      .navbar{
-        position:relative;
-      }
-    </style>
+    <title>jQuery Preview - Link</title>
   </head>
   <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href="index.html">jQuery Preview</a>
-          <ul class="nav">
-            <li><a href="status.html">Status</a></li>
-            <li><a href="link.html">Link</a></li>
-            <li><a href="large.html">Large Link</a></li>
-            <li><a href="rich.html">Rich Link</a></li>
-            <li class="active"><a href="multi.html">Multiple Inputs</a></li>
-            <li><a href="editable.html">Editable</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="span10 columns offset3">
-          <h3>Share what's new...</h3>
-          <form id="preview_form" class="form-vertical" method="post" action=".">
-            <fieldset>
-              <textarea class="xxlarge holler" name="status" id="id_status" ></textarea>
-              <span class="help-block">Enter a url.</span>
-            </fieldset>
-            <!-- Placeholder that tells Preview where to put the loading icon-->
-            <div class="loading">
-              <img src='../images/loading-rectangle.gif'>
-            </div>
-            <!-- Placeholder that tells Preview where to put the selector-->
-            <div class="selector"></div>
-            <div class="actions">
-              <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
-            </div>
-          </form>
-          <form id="link_form" class="form-vertical" method="post" action=".">
-            <fieldset>
-              <input type="text" class="xlarge holler" name="url" id="id_url" />
-              <span class="help-block">Enter a url.</span>
-            </fieldset>
-            <!-- Placeholder that tells Preview where to put the loading icon-->
-            <div class="loading">
-              <img src='../images/loading-rectangle.gif'>
-            </div>
-            <!-- Placeholder that tells Preview where to put the selector-->
-            <div class="selector"></div>
-            <div class="actions">
-              <input id="id_submit" type="submit" class="btn btn-primary" value="Share"/>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="row">
-        <div id="feed" class="span10 columns offset3">
+    <nav class="top-bar">
+      <ul class="title-area">
+        <li class="name">
+          <h1><a href="index.html">jQuery Preview</a></h1>
+        </li>
+      </ul>
+      <section class="top-bar-section">
+        <ul class="right">
+          <li><a href="status.html">Status</a></li>
+          <li><a href="link.html">Link</a></li>
+          <li class="active"><a href="multi.html">Multiple Inputs</a></li>
+        </ul>
+      </section>
+    </nav>
+    <div class="row">
+      <div class="large-8 large-centered columns">
+        <h3>Share what's new...</h3>
+        <form id="preview_form" class="form-vertical" method="post" action=".">
+          <textarea class="xxlarge holler" name="status" id="id_status" ></textarea>
 
-        </div>
+          <!-- Placeholder that tells Preview where to put the selector-->
+          <div class="selector-wrapper"></div>
+          <div class="actions">
+            <input id="id_submit" type="submit" class="button" value="Share"/>
+          </div>
+        </form>
+        <form id="link_form" class="form-vertical" method="post" action=".">
+          <input type="text" class="xlarge holler" name="url" id="id_url" placeholder="Enter a URL" />
+          <!-- Placeholder that tells Preview where to put the selector-->
+          <div class="selector-wrapper"></div>
+          <div class="actions">
+            <input id="id_submit" type="submit" class="button" value="Share"/>
+          </div>
+        </form>
+        <div id="feed"></div>
+
       </div>
-      <div class="clear"></div>
     </div>
     <script>
-      var preview = {
-        submit : function(e, data){
-          e.preventDefault();
-          this.display.create(data);
-        }
-      }
       $('.holler').preview({key: 'c31f5208f04511e0b79e4040d3dc5c07', // Sign up for a key: http://embed.ly/pricing
-                                preview:preview});
+                                });
+      $('form').on('submit', function(){
+        alert('You Selected: ' + $(this).find('.holler').data('preview').title);
+        return false;
+      });
     </script>
   </body>
 </html>
