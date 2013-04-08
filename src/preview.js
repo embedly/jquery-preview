@@ -8,7 +8,7 @@
   PreviewUtils.prototype = {
     protocolExp: /^http(s?):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i,
     urlExp : /[\-\w]+(\.[a-z]{2,})+(\S+)?(\/|\/[\w#!:.?+=&%@!\-\/])?/gi,
-
+    secure: window.location.protocol === 'https:'? true:false,
     // Finds the first URL in the status, we only ever work on one.
     url: function(text){
       // Kill whitespace.
@@ -41,13 +41,22 @@
     },
     none: function(obj){
       return (obj === null || obj === undefined);
+    },
+    image: function(url, options){
+      if (this.none(url)){
+        return url;
+      }
+      if (this.secure){
+        return 'https://i.embed.ly/1/display?' + $.param({key:options.key, url:url});
+      }
+      return url;
     }
   };
   // We use this a bunch of places.
   var utils = new PreviewUtils();
 
-  var render = function(data, options){
 
+  var render = function(data, options){
     var $elem = $(this);
 
     // Clone the data obj so we can add to it.
@@ -55,17 +64,12 @@
     obj.title = obj.title ? obj.title : obj.url;
 
     // If there is a favicon we should add it.
-    var favicon = obj.favicon_url? '<img class="favicon" src="%(favicon_url)s">': '';
+    var favicon = obj.favicon_url ? '<img class="favicon" src="%(favicon_url)s">': '';
 
     // Use Display proxy if we are on https.
-    var secure = window.location.protocol === 'https:'? true:false;
-
+    obj.favicon_url = utils.image(obj.favicon_url, options);
     var images = $.map(obj.images, function(i){
-      if (secure){
-        i.src = 'https://i.embed.ly/1/display?' + $.param({key:options.key, url:i.url});
-      } else {
-        i.src = i.url;
-      }
+      i.src = utils.image(i.url, options);
       return sprintf('<li><img src="%(src)s" data-url="%(url)s"/></li>', i);
     }).join('');
 
