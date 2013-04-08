@@ -46,10 +46,6 @@
   // We use this a bunch of places.
   var utils = new PreviewUtils();
 
-  var Selector = function(options){
-    this.init(options);
-  };
-
   var render = function(data, options){
 
     var $elem = $(this);
@@ -60,7 +56,18 @@
 
     // If there is a favicon we should add it.
     var favicon = obj.favicon_url? '<img class="favicon" src="%(favicon_url)s">': '';
-    var images = $.map(obj.images, function(i){return sprintf('<li><img src="%(url)s"/></li>', i);}).join('');
+
+    // Use Display proxy if we are on https.
+    var secure = window.location.protocol === 'https:'? true:false;
+
+    var images = $.map(obj.images, function(i){
+      if (secure){
+        i.src = 'https://i.embed.ly/1/display?' + $.param({key:options.key, url:i.url});
+      } else {
+        i.src = i.url;
+      }
+      return sprintf('<li><img src="%(src)s" data-url="%(url)s"/></li>', i);
+    }).join('');
 
     // add the thumbnail controls.
     if (images !== ''){
@@ -79,8 +86,7 @@
     }
 
     // Create the final template.
-    var template = ['<div class="selector">',
-      images,
+    var attributes = [
       '<div class="attributes">',
         '<a class="title" href="#" contenteditable=true>%(title)s</a>',
         '<p><a class="description" href="#" contenteditable=true>%(description)s</a></p>',
@@ -89,11 +95,16 @@
           '<a class="provider" href="%(provider_url)s">%(provider_display)s</a>',
         '</span>',
       '</div>',
-      '<div class="action"><a href="#" class="close">&#10005;</a></div>',
-    '</div>'].join('');
+      '<div class="action"><a href="#" class="close">&#10005;</a></div>'
+      ].join('');
 
     // render the html.
-    var html = sprintf(template, obj);
+    var html = [
+      '<div class="selector">',
+        images,
+        sprintf(attributes, obj),
+      '</div>'
+    ].join('');
 
     // Figure out where to put it. If there is a contianer, then use that.
     var $wrapper = $elem.closest(options.container).find(options.wrapper).eq(0);
@@ -115,7 +126,7 @@
         // Update the data.
         var val = null;
         if (!utils.none(elem)){
-          val = $(elem).attr('src');
+          val = $(elem).attr('data-url');
         }
         $elem.data('preview').thumbnail_url = val;
       }
@@ -148,7 +159,7 @@
   };
 
   var defaults = {
-    debug : true,
+    debug : false,
     bind : true,
     error: null,
     success: null,
