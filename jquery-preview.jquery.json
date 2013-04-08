@@ -2,7 +2,7 @@
   "name": "jquery.preview",
   "title": "jQuery Preview",
   "description": "Create an input that lets users preview the URL.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/embedly/jquery-preview",
   "author": {
     "name": "Sean Creeley",
