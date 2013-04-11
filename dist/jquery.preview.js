@@ -1,4 +1,4 @@
-/*! jQuery Preview - v0.3.0 - 2013-04-08
+/*! jQuery Preview - v0.3.1 - 2013-04-11
 * https://github.com/embedly/jquery-preview
 * Copyright (c) 2013 Sean Creeley; Licensed BSD */
 ;(function($){
@@ -205,7 +205,6 @@ var vsprintf = function(fmt, argv) {
     'author_url',
     'media_type',
     'media_html',
-    'media_url',
     'media_width',
     'media_height'
   ];
@@ -221,10 +220,10 @@ var vsprintf = function(fmt, argv) {
       $.each(args, function(i, key){
 
         var value = '';
-        if (key.indexOf('object') === 0){
+        if (key.indexOf('media') === 0){
           var name = key.split('_')[1];
-          if (data.object.hasOwnProperty(name)){
-            value = data.object[name];
+          if (data.media.hasOwnProperty(name)){
+            value = data.media[name];
           }
         } else if (data.hasOwnProperty(key)){
           value = data[key];
