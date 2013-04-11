@@ -1,4 +1,4 @@
-/*! jQuery Preview - v0.3.1 - 2013-04-11
+/*! jQuery Preview - v0.3.2 - 2013-04-11
 * https://github.com/embedly/jquery-preview
 * Copyright (c) 2013 Sean Creeley; Licensed BSD */
 ;(function($){
