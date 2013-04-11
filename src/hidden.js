@@ -17,7 +17,6 @@
     'author_url',
     'media_type',
     'media_html',
-    'media_url',
     'media_width',
     'media_height'
   ];
@@ -33,10 +32,10 @@
       $.each(args, function(i, key){
 
         var value = '';
-        if (key.indexOf('object') === 0){
+        if (key.indexOf('media') === 0){
           var name = key.split('_')[1];
-          if (data.object.hasOwnProperty(name)){
-            value = data.object[name];
+          if (data.media.hasOwnProperty(name)){
+            value = data.media[name];
           }
         } else if (data.hasOwnProperty(key)){
           value = data[key];
